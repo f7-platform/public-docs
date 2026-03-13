@@ -9,7 +9,6 @@ export default defineConfig({
   lastUpdated: true,
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#1a56db' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'F7 Trust Center' }],
@@ -18,7 +17,6 @@ export default defineConfig({
   ],
 
   themeConfig: {
-    logo: '/logo.svg',
     siteTitle: 'F7 Trust Center',
 
     nav: [

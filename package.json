@@ -1,0 +1,26 @@
+{
+  "name": "public-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/f7-platform/public-docs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/f7-platform/public-docs/issues"
+  },
+  "homepage": "https://github.com/f7-platform/public-docs#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

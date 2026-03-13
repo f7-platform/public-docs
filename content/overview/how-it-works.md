@@ -1,0 +1,98 @@
+# How It Works
+
+F7 uses a **local-first architecture** designed around a core principle: process data on the device, transmit only what's needed, and protect privacy at every step.
+
+## Data Flow
+
+```
+┌─────────────────────────────────────┐
+│          Employee's Device          │
+│                                     │
+│  Work activity → Privacy filter →   │
+│  Local AI model → Encrypted store   │
+│                                     │
+│  ✓ Only metadata (app names,        │
+│    timing, click counts)            │
+│  ✗ Never: prompts, files, emails,   │
+│    screenshots, clipboard           │
+└───────────────┬─────────────────────┘
+                │  Encrypted connection (TLS 1.3)
+                │  Only structured metadata
+                ▼
+┌─────────────────────────────────────┐
+│           F7 Controller             │
+│                                     │
+│  Receives metadata → Computes       │
+│  scores → Powers dashboards         │
+│                                     │
+│  ✓ Tenant isolation per org         │
+│  ✓ Role-based access control        │
+│  ✓ Comprehensive audit logging      │
+└───────────────┬─────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────┐
+│           Dashboards                │
+│                                     │
+│  Executives: team & org analytics   │
+│  Managers: team-level insights      │
+│  Employees: personal data only      │
+└─────────────────────────────────────┘
+```
+
+## Step 1: On-Device Observation
+
+The F7 agent runs on each employee's device and observes work patterns:
+
+- **Which applications** are in use (app name and category — never window content)
+- **Activity levels** (click counts, keystroke counts — never individual keystrokes)
+- **AI tool interactions** (which AI provider, turn count, response sizes — never prompt or response text)
+- **Session structure** (focus time, context switches, session duration)
+
+The agent includes a **privacy filter** that strips personally identifiable information before any further processing.
+
+## Step 2: Local AI Classification
+
+An AI model (Qwen2.5-3B) runs **entirely on the device** to classify work patterns:
+
+- Categorizes sessions by type (deep work, collaboration, admin, etc.)
+- Scores AI interaction depth (surface use vs. integrated workflow)
+- Detects anomalies locally
+
+This classification happens before any data leaves the device. The model never sends prompts, responses, or content to any server.
+
+## Step 3: Secure Transmission
+
+Only structured, classified metadata is transmitted to the F7 Controller:
+
+- Encrypted with **TLS 1.3** in transit
+- Authenticated with per-device cryptographic credentials
+- Compressed using Protocol Buffers for minimal bandwidth
+
+What's transmitted is a structured record — app names, timing, counts, and classification labels. Never raw content.
+
+## Step 4: Scoring & Analytics
+
+The F7 Controller computes insights from the metadata:
+
+- **AIQ Score**: A composite measure of AI adoption sophistication
+- **Workflow patterns**: How teams integrate AI into their work
+- **Trend analysis**: How adoption changes over time
+
+## Step 5: Dashboard Access
+
+Insights are presented through role-appropriate dashboards:
+
+| Role | Sees | Access Method |
+|------|------|---------------|
+| **Executive** | Org-wide and team aggregates | Authenticated web dashboard |
+| **Manager** | Their team's analytics | Authenticated web dashboard |
+| **Employee** | Only their own data | Opt-in personal dashboard |
+
+Managers see team-level patterns. They do not see individual employees' raw activity — only aggregate insights and scores.
+
+---
+
+::: info Key Takeaway
+The F7 agent does the heavy lifting on the device. By the time data reaches the server, it's already structured metadata — no content, no PII, no surprises.
+:::

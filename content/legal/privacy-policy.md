@@ -1,0 +1,125 @@
+# Privacy Policy
+
+**Effective Date:** March 13, 2026
+**Last Updated:** March 13, 2026
+
+This Privacy Policy describes how F7 Platform, Inc. ("F7," "we," "us," or "our") collects, uses, and discloses information in connection with the F7 AI Workforce Intelligence Platform (the "Service").
+
+## 1. Who This Policy Applies To
+
+This policy covers:
+- **Customer organizations** that deploy F7 in their workplace
+- **End users** (employees) whose devices run the F7 agent
+- **Visitors** to our website and documentation
+
+## 2. Information We Collect
+
+### From the F7 Agent (Deployed on Employee Devices)
+
+The F7 agent collects **work-pattern metadata only**. This includes:
+
+- **Application focus data:** Application name, window title category (never raw window titles for non-work apps), foreground/background transitions
+- **Input activity metadata:** Click count, keystroke count (never individual keystrokes), scroll events, idle periods
+- **Network metadata:** Destination domain and port only — never request or response content
+- **Session structure:** Session boundaries, duration, focus time, context switches
+- **AI interaction metadata:** AI provider name, turn count, request/response sizes, time-to-first-response — never prompt or response text
+
+### What the Agent Never Collects
+
+- Prompt or response text
+- File contents
+- Email or chat messages
+- Screenshots or screen recordings
+- Clipboard contents
+- Passwords or credentials
+- Full URLs, query parameters, or page content
+- Personal app activity (for user-excluded apps)
+
+For the complete data inventory, see [Data Collection Details](/privacy/data-collection).
+
+### From Our Website
+
+We collect standard web analytics (page views, referrer) and information you voluntarily provide (e.g., contact forms).
+
+## 3. How We Use Information
+
+We use collected metadata to:
+- Compute workforce analytics scores (AI adoption, productivity patterns)
+- Power management dashboards and team-level insights
+- Power individual personal dashboards (opt-in)
+- Improve the F7 service
+
+We do **not** use collected data to:
+- Make automated employment decisions
+- Sell to third parties
+- Target advertising
+- Profile individuals for purposes other than workforce analytics
+
+## 4. How We Protect Information
+
+- **Encryption in transit:** TLS 1.3 for all communications
+- **Encryption at rest:** AES-256-GCM (server-side), AES-256 (agent local storage)
+- **Access control:** Role-based access with four roles; row-level database tenant isolation
+- **Audit logging:** Append-only audit log with 24-month retention
+- **Local processing:** On-device AI model processes data locally before transmission
+
+See our [Security Overview](/security/) for full details.
+
+## 5. Data Retention
+
+| Data Type | Default Retention |
+|-----------|------------------|
+| Raw telemetry | 90 days |
+| Aggregated rollups | 12 months |
+| Audit logs | 24 months |
+
+Retention periods are configurable by the deploying organization. See [Data Retention & Deletion](/privacy/data-retention).
+
+## 6. Data Sharing
+
+F7 does not sell personal information. We share data only:
+
+- **With the deploying organization:** Aggregated analytics visible to authorized roles (managers see team data, not individual raw data)
+- **With service providers:** Infrastructure providers necessary to operate the Service (see [Sub-processors](/legal/subprocessors))
+- **As required by law:** In response to valid legal process
+
+## 7. Your Rights
+
+Depending on your jurisdiction, you may have the right to:
+- **Access** your personal data (via the personal dashboard)
+- **Delete** your data (full erasure on request)
+- **Correct** your data
+- **Port** your data (export from the personal dashboard)
+- **Object** to processing
+- **Restrict** processing (pause observation, exclude apps)
+
+To exercise these rights, contact your organization's F7 administrator or reach us at **privacy@fseven.ai**.
+
+## 8. International Data Transfers
+
+For customers outside the United States, data processing may involve transfers to the U.S. These transfers are governed by the [Data Processing Agreement](/legal/dpa), which includes Standard Contractual Clauses where applicable.
+
+On-premise deployments keep all data within the customer's infrastructure.
+
+## 9. Children's Privacy
+
+F7 is a workplace tool and is not directed at children under 16. We do not knowingly collect information from children.
+
+## 10. Changes to This Policy
+
+We may update this Privacy Policy from time to time. We will notify customers of material changes via email or in-product notification.
+
+## 11. Contact Us
+
+For privacy inquiries:
+
+- **Email:** privacy@fseven.ai
+- **Mail:** F7 Platform, Inc., [address to be published]
+
+---
+
+::: info Related Documents
+- [Data Processing Agreement](/legal/dpa)
+- [Sub-processors](/legal/subprocessors)
+- [Terms of Service](/legal/terms-of-service)
+:::

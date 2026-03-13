@@ -9,7 +9,7 @@ F7 is a workforce intelligence platform that observes how employees use AI tools
 **No.** F7 never captures individual keystrokes, screenshots, file contents, emails, chat messages, or any content. It captures metadata only — things like "which application was in the foreground" and "how many clicks occurred," not "what was typed" or "what was on screen."
 
 ### Who can see my data?
-- **You** can see your own data through an opt-in personal dashboard
+- **You** will be able to see your own data through a personal dashboard (planned)
 - **Your manager** can see team-level aggregates, not your individual raw data
 - **Executives** see department and organization-level analytics
 - **F7 staff** cannot see your data — it's encrypted and tenant-isolated
@@ -28,7 +28,7 @@ Prompt text, file contents, emails, chat messages, screenshots, clipboard conten
 **Yes.** You can pause observation at any time using the agent's tray icon. You can also exclude specific apps and restrict observation to work hours. See [Employee Controls](/privacy/employee-controls).
 
 ### Can I see what F7 has collected about me?
-**Yes.** The personal dashboard shows all data associated with your account. It's opt-in — you choose whether to access it.
+**Yes.** A personal dashboard is planned that will show all data associated with your account. In the meantime, you can request your data through your organization's F7 administrator.
 
 ### Can I delete my data?
 **Yes.** Data deletion can be requested through your organization's F7 administrator. Deletion removes data from both the agent (your device) and the server.

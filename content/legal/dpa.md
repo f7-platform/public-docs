@@ -58,9 +58,9 @@ F7 will:
 ## 6. Data Subject Rights
 
 F7 will assist Customer in responding to data subject requests, including:
-- **Right of access:** Personal dashboard provides individual data access
+- **Right of access:** Data access available via administrator; personal dashboard planned for self-service
 - **Right to erasure:** Full data deletion capability (agent and server)
-- **Right to portability:** Data export from personal dashboard
+- **Right to portability:** Data export available via administrator; personal dashboard with self-service export planned
 - **Right to restriction:** Observation pause, app exclusion, work-hours restriction
 
 ## 7. Data Breach Notification

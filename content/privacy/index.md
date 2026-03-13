@@ -19,16 +19,16 @@ Every captured field has a documented purpose. If a data point isn't needed for 
 ## 4. Aggregation Over Identification
 
 Management dashboards show **team and department aggregates**. Individual-level data is visible only to:
-- The person themselves (through an opt-in personal dashboard)
+- The person themselves (through a planned personal dashboard)
 - Authorized roles with explicit audit logging of every access
 
 Scores and insights are designed to inform workforce strategy, not to surveil individuals.
 
 ## 5. Consent, Not Coercion
 
-- The **personal dashboard** is opt-in — employees choose whether to view their own data.
-- The **vision model** (advanced Tier 3 feature) requires explicit consent.
-- Employees can **pause observation** at any time.
+- A **personal dashboard** is planned — employees will be able to view their own data.
+- The **vision model** (advanced Tier 3 feature) must be explicitly enabled by the organization.
+- Organizations can **pause observation** for employees at any time.
 - Exercising privacy controls has no impact on work status — by design.
 
 ## 6. Right to Erasure
@@ -42,7 +42,7 @@ Any employee's data can be fully deleted on request:
 
 We publish exactly what we collect, what we never collect, and how every piece of data is used. See our [Data Collection Details](/privacy/data-collection) for the complete breakdown.
 
-Employees with access to the personal dashboard can see every data point captured from their device.
+Once the personal dashboard is available, employees will be able to see every data point captured from their device.
 
 ---
 

@@ -69,7 +69,7 @@ We collect standard web analytics (page views, referrer) and information you vol
 We use collected metadata to:
 - Compute workforce analytics scores (AI adoption, productivity patterns)
 - Power management dashboards and team-level insights
-- Power individual personal dashboards (opt-in)
+- Power individual personal dashboards (planned)
 - Improve the F7 service
 
 We do **not** use collected data to:
@@ -109,10 +109,10 @@ F7 does not sell personal information. We share data only:
 ## 7. Your Rights
 
 Depending on your jurisdiction, you may have the right to:
-- **Access** your personal data (via the personal dashboard)
+- **Access** your personal data (via your organization's F7 administrator; personal dashboard planned)
 - **Delete** your data (full erasure on request)
 - **Correct** your data
-- **Port** your data (export from the personal dashboard)
+- **Port** your data (export via administrator; self-service export planned)
 - **Object** to processing
 - **Restrict** processing (pause observation, exclude apps)
 

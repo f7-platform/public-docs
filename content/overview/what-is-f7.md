@@ -25,14 +25,14 @@ Organizations are investing heavily in AI tools but have no visibility into whet
 |-----------|-------------|
 | **Device Agent** | A lightweight agent on each machine that observes work patterns — app usage, AI interactions, workflow structure. Runs a local AI model to classify behavior on-device. No content ever leaves the machine. |
 | **Controller** | A central server that receives structured metadata from agents, computes scores, and powers dashboards. Enforces tenant isolation and access control. |
-| **Dashboard** | A web-based interface for executives and managers to view team analytics, AI adoption trends, and workforce insights. Individual employees access only their own data through a personal dashboard. |
+| **Dashboard** | A web-based interface for executives and managers to view team analytics, AI adoption trends, and workforce insights. A personal dashboard for individual employees to access their own data is planned. |
 
 ## Who Uses F7
 
 - **Executives (CTO, CHRO, CFO):** Strategic workforce planning, AI ROI measurement, headcount optimization
 - **HR Leaders:** Skills gap analysis, training prioritization, change management
 - **IT & Security:** Agent deployment, compliance verification, tool utilization reporting
-- **Employees:** Personal productivity insights through an opt-in dashboard
+- **Employees:** Personal productivity insights through a personal dashboard (planned)
 
 ---
 

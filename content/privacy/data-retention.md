@@ -42,7 +42,7 @@ The erasure is complete and permanent. There is no "soft delete" or recoverabili
 
 ## Data Portability
 
-Employees with access to the personal dashboard can view all data captured about their work patterns. Data export in JSON format is available through the personal dashboard.
+A personal dashboard is planned that will allow employees to view all data captured about their work patterns and export it in JSON format. In the meantime, data access requests can be made through the organization's F7 administrator.
 
 ## Deletion on Offboarding
 

@@ -94,7 +94,7 @@ Insights are presented through role-appropriate dashboards:
 |------|------|---------------|
 | **Executive** | Org-wide and team aggregates | Authenticated web dashboard |
 | **Manager** | Their team's analytics | Authenticated web dashboard |
-| **Employee** | Only their own data | Opt-in personal dashboard |
+| **Employee** | Only their own data | Personal dashboard (planned) |
 
 Managers see team-level patterns. They do not see individual employees' raw activity — only aggregate insights and scores.
 

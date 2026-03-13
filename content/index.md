@@ -30,7 +30,7 @@ features:
     link: /compliance/
   - icon: 👤
     title: Employee Controls
-    details: Employees can pause observation, exclude apps, set work hours, and access their own data through a personal dashboard.
+    details: Organizations can pause observation, exclude apps, and set work hours. A personal dashboard for employees to access their own data is planned.
     link: /privacy/employee-controls
   - icon: 🏠
     title: Local-First Processing

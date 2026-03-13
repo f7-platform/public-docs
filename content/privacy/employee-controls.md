@@ -1,66 +1,65 @@
 # Employee Controls
 
-F7 is designed to give employees direct, meaningful control over how their work data is collected and used. These controls are built into the product — they cannot be overridden by administrators.
+F7 includes privacy controls that limit what data is collected and when. These controls are configured by your organization's F7 administrator.
 
 ## Pause Observation
 
-Any employee can **pause the F7 agent** at any time through the system tray icon.
+Administrators can **pause the F7 agent** for individual employees or teams via the controller.
 
 - While paused, **zero data** is captured — no activity, no network metadata, no timing.
-- Pausing does not require approval or notification.
-- There is no penalty or flag for using the pause function.
+- Pause state persists across agent restarts.
+- Employees can request a pause through their organization's normal channels.
 
-## Exclude Applications
+## Application Exclusion List
 
-Employees can add applications to a **personal exclusion list** (blocklist).
+Organizations can configure an **application exclusion list** that prevents the agent from capturing any data about specified applications.
 
 - Excluded apps generate **zero telemetry** — no app name, no timing, no activity counts.
 - The exclusion is absolute — it's as if the app isn't running.
-- Excludable apps include personal tools, health apps, banking apps, or anything else.
+- Common exclusions include personal messaging apps, health apps, and banking apps.
+- Employees can request additions to the exclusion list through their organization.
 
 ## Work Hours Mode
 
 Observation can be configured to run **only during defined work hours**.
 
 - Outside configured hours, the agent does not observe or transmit any data.
-- Work hours boundaries are configurable per device.
+- Supports timezone-aware scheduling and configurable work days (e.g., Monday–Friday only).
+- Work hours are set by the organization and apply per-device.
 
-## Personal Dashboard
+## Personal Dashboard (Planned)
 
-Employees can opt in to a **personal dashboard** that shows exactly what data F7 has captured about their work patterns.
+F7 will include a **personal dashboard** that gives employees direct visibility into the data captured about their work patterns.
 
-- The dashboard is **opt-in** — it must be actively enabled by the employee.
-- It shows the individual's own data **only** — no access to team or organizational data.
-- Access is through a separate authentication mechanism scoped to the individual.
-- All access to the personal dashboard is logged in the audit trail.
+- View all data associated with your account — activity metadata, scores, and session history.
+- Export your data in JSON format for portability.
+- Opt-in — employees choose whether to access it.
 
-## Vision Model Consent
+This feature is on the roadmap but has not yet been prioritized for release.
+
+## Vision Model (Tier 3)
 
 F7 offers an optional advanced feature (Tier 3) that uses an on-device vision model for deeper workflow analysis.
 
-- This feature is **disabled by default**.
-- Enabling it requires **explicit, individual consent** — it cannot be force-enabled by an administrator.
-- When enabled, the vision model processes screen frames **entirely on the device** and discards them immediately. No frames are stored, transmitted, or accessible to anyone.
+- This feature is **disabled by default** and must be enabled by the organization.
+- When enabled, the vision model processes screen frames **entirely on the device** and discards them immediately.
+- No frames are stored, transmitted, or accessible to anyone — only structured classification labels (e.g., "deep work", "code review") are produced.
 
 ## What Managers and Admins Can See
 
-| Data | Employee | Manager | Admin |
-|------|----------|---------|-------|
-| Individual's raw activity | Via personal dashboard (opt-in) | No | Audit-logged access only |
-| Individual's scores | Via personal dashboard | For their direct reports | Audit-logged access |
-| Team aggregates | No | Yes | Yes |
-| Organization aggregates | No | No | Yes |
+| Data | Manager | Admin |
+|------|---------|-------|
+| Individual's raw activity | No | Audit-logged access only |
+| Individual's scores | For their direct reports | Audit-logged access |
+| Team aggregates | Yes | Yes |
+| Organization aggregates | No | Yes |
 
 Managers see team-level patterns and aggregated insights. They do not have access to raw activity logs for individual employees.
 
-## No Retaliation Guarantee
+## Privacy by Design
 
-By design, exercising any privacy control — pausing observation, excluding apps, declining the vision model — does not generate any negative signal, flag, or marker visible to managers or administrators.
+F7's scoring system is designed to assess AI adoption patterns at the team and organizational level. The controls described on this page are **technical enforcement mechanisms** — when observation is paused, the agent's event pipeline stops. When an app is excluded, the filter runs before any data enters the pipeline.
 
-The F7 scoring system is designed to assess AI adoption patterns, not to penalize people for exercising their privacy rights.
-
----
-
-::: info For Employees
-The F7 agent works for your organization, but these controls work for you. Pause when you want, exclude what you want, and see exactly what's captured through the personal dashboard.
+::: info How Controls Are Administered
+Privacy controls are configured by your organization's F7 administrator. If you have questions about how F7 is deployed at your company — or want to request changes to your observation settings — contact your IT or HR team.
 :::

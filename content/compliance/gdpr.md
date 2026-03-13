@@ -19,17 +19,17 @@ F7 processes data only as directed by the deploying organization. A [Data Proces
 
 | Article | Requirement | How F7 Complies |
 |---------|-------------|-----------------|
-| **Art. 5(1)(a)** | Lawfulness, fairness, transparency | Organizational deployment with employee notification; personal dashboard shows what's captured |
+| **Art. 5(1)(a)** | Lawfulness, fairness, transparency | Organizational deployment with employee notification; published Trust Center details what's captured |
 | **Art. 5(1)(b)** | Purpose limitation | Each captured field has a documented purpose (scoring inputs only) |
 | **Art. 5(1)(c)** | Data minimization | Metadata only — never content, screenshots, clipboard, or passwords |
 | **Art. 5(1)(d)** | Accuracy | Real-time capture with session boundaries; daily rollups reconciled |
 | **Art. 5(1)(e)** | Storage limitation | Configurable retention: 90 days raw, 12 months rollups |
 | **Art. 5(1)(f)** | Integrity and confidentiality | TLS 1.3 in transit; AES-256-GCM at rest; role-based access control |
-| **Art. 12** | Transparent information | Personal dashboard shows all captured data; this Trust Center is published publicly |
-| **Art. 13** | Information at collection | Agent tray icon indicates active observation; personal dashboard accessible |
-| **Art. 15** | Right of access | Personal dashboard provides full access to an individual's own data |
+| **Art. 12** | Transparent information | Published Trust Center details all captured data; personal dashboard planned |
+| **Art. 13** | Information at collection | Agent tray icon indicates active observation; Trust Center published publicly |
+| **Art. 15** | Right of access | Data access available via administrator; personal dashboard planned |
 | **Art. 17** | Right to erasure | Full data deletion on request — agent wipes local data, server deletes all records |
-| **Art. 20** | Right to data portability | Data export available via personal dashboard |
+| **Art. 20** | Right to data portability | Data export available via administrator; personal dashboard with self-service export planned |
 | **Art. 22** | Automated decision-making | Scores are advisory only — they inform managers but are never used for automated employment decisions |
 | **Art. 25** | Data protection by design | Local-first processing; PII filtering before transmission; encryption at rest and in transit |
 | **Art. 28** | Processor obligations | Data Processing Agreement available; F7 acts as processor under customer's controllership |

@@ -51,11 +51,11 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 
 | Criteria | Requirement | F7 Controls |
 |----------|------------|-------------|
-| **P1.1** | Privacy notice | Personal dashboard; agent tray icon; this published Trust Center |
-| **P2.1** | Consent | Organizational deployment consent; individual opt-in for personal dashboard |
+| **P1.1** | Privacy notice | Agent tray icon; this published Trust Center; personal dashboard planned |
+| **P2.1** | Consent | Organizational deployment consent; personal dashboard will be opt-in |
 | **P3.1** | Collection limited to purpose | Metadata-only capture; documented field purposes |
 | **P4.1** | Restricted use | Data used only for scoring and analytics |
-| **P5.1** | Access to personal data | Personal dashboard scoped to individual's own data |
+| **P5.1** | Access to personal data | Data access via administrator; personal dashboard planned for self-service |
 | **P6.1** | Disclosure restricted | Row-level tenant isolation; anonymized cross-organization analytics |
 | **P7.1** | Accuracy maintained | Real-time capture; daily rollup reconciliation |
 

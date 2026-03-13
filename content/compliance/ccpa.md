@@ -26,7 +26,7 @@ Under CCPA's data category framework:
 |---------------|-----------------|
 | **Identifiers** | Device ID, user ID (assigned by organization) |
 | **Internet or network activity** | Application usage patterns, AI tool interaction metadata (domains and timing only — never content) |
-| **Professional or employment info** | Work patterns, productivity metrics (metadata only) |
+| **Professional or employment info** | Work patterns, productivity metrics (agent-captured metadata); job title, salary, department, employment type, hire date (employer-provided via HRIS/IdP/CSV) |
 | **Geolocation** | Not collected |
 | **Biometric information** | Not collected |
 | **Audio, electronic, visual** | Not collected — no screenshots, recordings, or captures |

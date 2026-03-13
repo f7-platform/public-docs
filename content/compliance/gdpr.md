@@ -43,6 +43,9 @@ F7 processes data only as directed by the deploying organization. A [Data Proces
 ### Local-First Processing
 The on-device AI model classifies behavior locally before any data is transmitted. Only structured, PII-scrubbed metadata reaches the server.
 
+### Employer-Provided HR Data
+In addition to agent-captured metadata, F7 processes HR data provided by the deploying organization (compensation, job title, department, hire date, etc.). This data is provided under the controller's authority — F7 does not independently collect it. Lawful basis and employee notification for this data is the responsibility of the deploying organization as data controller. See [Data Collection Details](/privacy/data-collection#employer-provided-data) for the full inventory.
+
 ### Content Is Never Captured
 F7 never captures prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
 

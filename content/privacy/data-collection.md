@@ -68,6 +68,59 @@ This page provides a detailed breakdown of every category of data the F7 agent c
 
 **Not captured:** Diff content, file contents, commit messages.
 
+## Employer-Provided Data
+
+The deploying organization can provide HR data to F7 via HRIS integration (Workday, BambooHR, SAP SuccessFactors, Rippling, HiBob, Deel, Oracle HCM), identity provider sync (Entra ID, Okta, Google Workspace, JumpCloud, SCIM), or CSV/Excel upload.
+
+F7 does **not** independently collect this data — it is supplied entirely by the employer.
+
+### Compensation
+
+| Field | Example | Purpose |
+|-------|---------|---------||
+| Annual salary | $120,000 | Financial modeling, ROI calculations |
+| Stock annual value | $30,000 | Total compensation for cost analysis |
+| Benefits annual value | $15,000 | Fully-loaded employee cost |
+| Currency | USD, EUR, GBP | Multi-currency normalization |
+
+**Employer controls:** Compensation sync can be disabled entirely. The `sync_compensation` flag controls whether salary, stock, and benefits fields are imported.
+
+### Job Metadata
+
+| Field | Example | Purpose |
+|-------|---------|---------||
+| Job title | "Senior Backend Engineer" | Role-level segmentation and benchmarking |
+| Employment type | Full-time, part-time, contractor | Workforce composition analytics |
+| Cost center | "Engineering - Platform" | Financial attribution |
+| Location | "San Francisco" | Geographic analysis |
+
+### Org Hierarchy
+
+| Field | Example | Purpose |
+|-------|---------|---------||
+| Department / team | "Engineering" → "Platform Team" | Reporting structure (up to 16 levels) |
+| Manager | Manager email or UPN | Manager-level dashboards |
+| Headcount | 12 people on team | Team sizing (includes non-enrolled employees) |
+
+### Employment Lifecycle
+
+| Field | Example | Purpose |
+|-------|---------|---------||
+| Hire date | 2024-03-15 | Tenure analysis |
+| Termination date | (when applicable) | Automatic deactivation |
+| Active status | Active / Inactive | Accurate headcount |
+
+### Identity (for account linkage)
+
+| Field | Example | Purpose |
+|-------|---------|---------||
+| Email | user@company.com | Primary join key for HR sync |
+| Display name | "Jane Smith" | Dashboard display |
+| User principal name | user@company.onmicrosoft.com | IdP sync key |
+| External ID | IdP object ID | Deduplication across syncs |
+
+**Not provided by employer:** Anything about work behavior, AI usage, or application activity — that data comes only from the agent.
+
 ## Data Never Captured
 
 These are absolute guarantees about data F7 will never collect:

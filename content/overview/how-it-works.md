@@ -16,20 +16,23 @@ F7 uses a **local-first architecture** designed around a core principle: process
 │  ✗ Never: prompts, files, emails,   │
 │    screenshots, clipboard           │
 └───────────────┬─────────────────────┘
-                │  Encrypted connection (TLS 1.3)
-                │  Only structured metadata
+                │  Encrypted (TLS 1.3)
+                │  Structured metadata only
                 ▼
 ┌─────────────────────────────────────┐
 │           F7 Controller             │
 │                                     │
-│  Receives metadata → Computes       │
-│  scores → Powers dashboards         │
-│                                     │
-│  ✓ Tenant isolation per org         │
-│  ✓ Role-based access control        │
-│  ✓ Comprehensive audit logging      │
-└───────────────┬─────────────────────┘
-                │
+│  Receives metadata → Computes       │◄──────────────────────┐
+│  scores → Powers dashboards         │                       │
+│                                     │   ┌───────────────────┴───────┐
+│  ✓ Tenant isolation per org         │   │  Third-Party APIs (opt-in)│
+│  ✓ Role-based access control        │   │                           │
+│  ✓ Comprehensive audit logging      │   │  ChatGPT, Microsoft 365,  │
+└───────────────┬─────────────────────┘   │  GitHub Copilot, etc.     │
+                │                         │                           │
+                │                         │  ✓ Usage metadata only    │
+                │                         │  ✗ Never content          │
+                │                         └───────────────────────────┘
                 ▼
 ┌─────────────────────────────────────┐
 │           Dashboards                │

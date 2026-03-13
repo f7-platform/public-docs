@@ -29,6 +29,25 @@ In addition to agent-captured metadata, F7 processes HR data that the deploying 
 F7 does not independently collect HR data — it is provided entirely by the deploying organization. The organization decides which fields to sync and can disable compensation sync at any time.
 :::
 
+## Third-Party App Integrations
+
+With your organization's authorization, F7 can connect to third-party applications via their APIs to retrieve **usage metadata**. This provides richer analytics without relying solely on network-level observation from the agent.
+
+| Integration Category | Example Apps | Data Retrieved |
+|---------------------|--------------|----------------|
+| **AI platforms** | OpenAI / ChatGPT, Anthropic / Claude, Google Gemini | Usage frequency, session counts, token/seat usage, workspace membership |
+| **Productivity suites** | Microsoft 365 / SharePoint, Google Workspace | Document activity counts, collaboration metrics, license utilization |
+| **Writing & communication tools** | Grammarly, Notion, Confluence | Feature adoption, usage frequency |
+| **Developer tools** | GitHub Copilot, GitLab Duo | Suggestion acceptance rates, seat utilization |
+
+::: warning Metadata Only — Never Content
+Third-party integrations retrieve **usage statistics and activity counts** — never document contents, message text, prompt/response text, or file contents. F7 requests only the minimum API scopes required for usage analytics.
+:::
+
+::: info Opt-In Only
+Third-party integrations are **not enabled by default**. Each integration must be explicitly authorized by an organization administrator, who grants the specific API credentials and scopes. Integrations can be disconnected at any time.
+:::
+
 ### Important Details
 
 - **Keystroke count, not keystrokes.** We count how many keys were pressed. We never record which keys or what was typed.

@@ -36,6 +36,17 @@ Your organization may provide the following data to F7:
 
 F7 does not independently collect this data — it is provided by your employer via HRIS integration (e.g., Workday, BambooHR), identity provider sync (e.g., Entra ID, Okta), or manual upload.
 
+### From Third-Party App Integrations (Opt-In)
+
+With your organization's authorization, F7 can connect to third-party applications via their APIs to retrieve **usage metadata**:
+
+- **AI platforms** (e.g., ChatGPT, Claude, Gemini): Usage frequency, session counts, token/seat usage
+- **Productivity suites** (e.g., Microsoft 365, Google Workspace): Document activity counts, collaboration metrics, license utilization
+- **Writing & communication tools** (e.g., Grammarly, Notion): Feature adoption, usage frequency
+- **Developer tools** (e.g., GitHub Copilot): Suggestion acceptance rates, seat utilization
+
+These integrations retrieve usage statistics only — never document contents, message text, prompt/response text, or file contents. Each integration must be explicitly authorized by an organization administrator and can be disconnected at any time.
+
 ### What the Agent Never Collects
 
 - Prompt or response text

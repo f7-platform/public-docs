@@ -71,9 +71,13 @@ Only structured, classified metadata is transmitted to the F7 Controller:
 
 What's transmitted is a structured record — app names, timing, counts, and classification labels. Never raw content.
 
+## Third-Party Integrations (Opt-In)
+
+Organizations can optionally connect F7 to third-party apps (e.g., ChatGPT, Microsoft 365, GitHub Copilot, Grammarly) via their APIs. When enabled, F7 retrieves **usage metadata** — session counts, feature adoption, seat utilization — never document contents, message text, or prompts. Each integration must be explicitly authorized by an administrator.
+
 ## Step 4: Scoring & Analytics
 
-The F7 Controller computes insights from the metadata:
+The F7 Controller computes insights from all data sources — agent metadata, employer-provided HR data, and third-party integration data:
 
 - **AIQ Score**: A composite measure of AI adoption sophistication
 - **Workflow patterns**: How teams integrate AI into their work

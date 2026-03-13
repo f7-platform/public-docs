@@ -46,6 +46,9 @@ The on-device AI model classifies behavior locally before any data is transmitte
 ### Employer-Provided HR Data
 In addition to agent-captured metadata, F7 processes HR data provided by the deploying organization (compensation, job title, department, hire date, etc.). This data is provided under the controller's authority — F7 does not independently collect it. Lawful basis and employee notification for this data is the responsibility of the deploying organization as data controller. See [Data Collection Details](/privacy/data-collection#employer-provided-data) for the full inventory.
 
+### Third-Party App Integrations
+With the controller's authorization, F7 can connect to third-party applications (e.g., ChatGPT, Microsoft 365, GitHub Copilot, Grammarly) via their APIs to retrieve usage metadata — session counts, feature adoption, seat utilization. These integrations are opt-in, admin-authorized, and retrieve **usage statistics only** — never document contents, prompts, messages, or file data. Under GDPR, the deploying organization (as data controller) is responsible for ensuring appropriate legal basis and notice before enabling each integration. See [Data Collection Details](/privacy/data-collection#third-party-app-integrations) for the full inventory.
+
 ### Content Is Never Captured
 F7 never captures prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
 

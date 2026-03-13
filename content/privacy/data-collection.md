@@ -121,6 +121,67 @@ F7 does **not** independently collect this data — it is supplied entirely by t
 
 **Not provided by employer:** Anything about work behavior, AI usage, or application activity — that data comes only from the agent.
 
+## Third-Party App Integrations
+
+With the deploying organization's authorization, F7 can connect to third-party applications via their APIs to retrieve usage metadata. These integrations are **opt-in** — each must be explicitly configured by an organization administrator.
+
+### AI Platforms
+
+| Field | Example | Purpose |
+|-------|---------|--------|
+| Usage frequency | 45 sessions this week | Measure AI adoption across the org |
+| Token / seat usage | 12,000 tokens consumed | Understand consumption levels |
+| Workspace membership | User is member of ChatGPT Team workspace | License utilization |
+| Session counts | 8 conversations today | Activity volume |
+
+Example integrations: OpenAI / ChatGPT, Anthropic / Claude, Google Gemini.
+
+**Not retrieved:** Conversation content, prompts, responses, uploaded files, or chat history.
+
+### Productivity Suites
+
+| Field | Example | Purpose |
+|-------|---------|--------|
+| Document activity count | 12 documents edited this week | Measure collaboration levels |
+| Collaboration metrics | 3 co-editing sessions | Understand team workflows |
+| License utilization | User has E5 license, active in SharePoint | Optimize license spend |
+| Feature adoption | Uses Power Automate, Teams, SharePoint | Track tool adoption |
+
+Example integrations: Microsoft 365 / SharePoint, Google Workspace.
+
+**Not retrieved:** Document contents, email bodies, chat messages, file contents, or shared links.
+
+### Writing & Communication Tools
+
+| Field | Example | Purpose |
+|-------|---------|--------|
+| Usage frequency | Active 4 days this week | Track tool adoption |
+| Feature usage | Uses tone detection, rewrite suggestions | Measure feature engagement |
+
+Example integrations: Grammarly, Notion, Confluence.
+
+**Not retrieved:** Text content, corrections, suggestions, page contents, or message bodies.
+
+### Developer Tools
+
+| Field | Example | Purpose |
+|-------|---------|--------|
+| Suggestion acceptance rate | 32% of completions accepted | Measure Copilot effectiveness |
+| Seat utilization | Active Copilot user | License optimization |
+| Feature adoption | Uses chat, completions, CLI | Track adoption depth |
+
+Example integrations: GitHub Copilot, GitLab Duo.
+
+**Not retrieved:** Code content, suggestions, prompts, repository contents, or diffs.
+
+### Integration Controls
+
+- **Opt-in only:** No integrations are enabled by default
+- **Admin-authorized:** Each integration requires explicit administrator configuration with API credentials
+- **Minimum scopes:** F7 requests only the API permissions needed for usage analytics — never broad read access
+- **Disconnectable:** Any integration can be revoked at any time; historical data from that integration follows standard retention policies
+- **Audited:** All integration connections and data retrievals are recorded in the audit log
+
 ## Data Never Captured
 
 These are absolute guarantees about data F7 will never collect:

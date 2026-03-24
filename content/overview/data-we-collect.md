@@ -15,17 +15,18 @@ Transparency is a core F7 value. This page provides a complete breakdown of what
 
 ## Employer-Provided Data
 
-In addition to agent-captured metadata, F7 processes HR data that the deploying organization provides — via identity provider sync or CSV/Excel upload.
+In addition to agent-captured metadata, F7 processes HR data that the deploying organization provides — via HRIS integration, identity provider sync, or CSV/Excel upload.
 
 | Data Category | Examples | Why It's Used |
 |---------------|----------|---------------|
+| **Compensation** | Annual salary, stock value, benefits value, currency | Financial modeling and ROI projections |
 | **Job metadata** | Job title, employment type, cost center, location | Team-level analytics and segmentation |
 | **Org hierarchy** | Department, division, team, manager | Reporting structure and rollup views |
 | **Employment lifecycle** | Hire date, termination date, active status | Accurate headcount and tenure analysis |
 | **Identity** | Email, display name, user principal name | Account linkage and HRIS/IdP sync |
 
 ::: warning Employer-Controlled Data
-F7 does not independently collect HR data — it is provided entirely by the deploying organization. The organization decides which fields to sync.
+F7 does not independently collect HR data — it is provided entirely by the deploying organization. The organization decides which fields to sync and can disable compensation sync at any time.
 :::
 
 ## Third-Party App Integrations

@@ -56,7 +56,7 @@ The agent includes a **privacy filter** that strips personally identifiable info
 
 ## Step 2: Local AI Classification
 
-An AI model (Qwen2.5-3B) runs **entirely on the device** to classify work patterns:
+A purpose-built on-device AI model runs **entirely on the device** to classify work patterns:
 
 - Categorizes sessions by type (deep work, collaboration, admin, etc.)
 - Scores AI interaction depth (surface use vs. integrated workflow)

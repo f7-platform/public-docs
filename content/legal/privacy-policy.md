@@ -24,17 +24,16 @@ The F7 agent collects **work-pattern metadata only**. This includes:
 - **Session structure:** Session boundaries, duration, focus time, context switches
 - **AI interaction metadata:** AI provider name, turn count, request/response sizes, time-to-first-response — never prompt or response text
 
-### From Employer-Provided Sources (HRIS, IdP, CSV Upload)
+### From Employer-Provided Sources (IdP, CSV Upload)
 
 Your organization may provide the following data to F7:
 
-- **Compensation data:** Annual salary, stock value, benefits value, currency
 - **Job metadata:** Job title, employment type, cost center, location
 - **Org hierarchy:** Department, division, team, manager assignment
 - **Employment lifecycle:** Hire date, termination date, active status
 - **Identity:** Email, display name, user principal name (for account linkage)
 
-F7 does not independently collect this data — it is provided by your employer via HRIS integration (e.g., Workday, BambooHR), identity provider sync (e.g., Entra ID, Okta), or manual upload.
+F7 does not independently collect this data — it is provided by your employer via identity provider sync (e.g., Entra ID, Okta) or CSV/Excel upload.
 
 ### From Third-Party App Integrations (Opt-In)
 

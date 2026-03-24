@@ -8,7 +8,7 @@ All communication between F7 components is encrypted in transit.
 
 - **TLS 1.3** for all agent-to-controller communication
 - **HSTS** with a one-year max-age, enforced on all responses
-- **Certificate pinning** (SPKI) to prevent man-in-the-middle attacks on agent connections
+- **Certificate pinning** (SPKI) for agent connections — the agent validates the controller's public key hash on every connection
 - **Mutual TLS** for controller-to-controller federation (multi-site deployments)
 
 No data is ever transmitted in plaintext.
@@ -75,13 +75,7 @@ All inputs are validated before processing:
 
 - Request payload size limits enforced (1 MB for telemetry, 256 KB general)
 - Content-type verification on all requests
-- Rate limiting per endpoint category:
-
-| Endpoint | Limit |
-|----------|-------|
-| Enrollment | 10 per hour |
-| Authentication | 20 per hour |
-| Telemetry | 60 per minute |
+- Endpoint-specific rate limiting to prevent abuse
 
 Requests exceeding rate limits receive a standard `429 Too Many Requests` response.
 

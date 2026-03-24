@@ -22,7 +22,7 @@ Raw observation → Privacy filter → Local AI model → Encrypted local store 
 
 1. **Raw observation**: The agent observes app names, activity counts, and timing.
 2. **Privacy filter**: PII is stripped. Content (keystrokes, prompts, file data) is never captured.
-3. **Local AI model**: A Qwen2.5-3B model running on-device classifies sessions and scores AI interaction depth. No data leaves the device for this step.
+3. **Local AI model**: A purpose-built on-device AI model classifies sessions and scores AI interaction depth. No data leaves the device for this step.
 4. **Encrypted local store**: Classified metadata is stored in an AES-256 encrypted database (SQLCipher).
 5. **Sync**: Only structured, classified metadata is transmitted to the controller over TLS 1.3.
 
@@ -64,7 +64,7 @@ Credentials are never written to disk as plaintext files, logged, or included in
 
 - The agent binary is signed to verify integrity before execution.
 - Configuration updates from the controller are authenticated using the agent's device credentials.
-- The agent validates the controller's TLS certificate on every connection (certificate pinning).
+- The agent validates the controller's TLS certificate on every connection with SPKI (Subject Public Key Info) certificate pinning, ensuring connections are only established with the expected server.
 
 ---
 

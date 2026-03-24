@@ -45,6 +45,7 @@ export default defineConfig({
           items: [
             { text: 'Security Overview', link: '/security/' },
             { text: 'Architecture', link: '/security/architecture' },
+            { text: 'Authorization', link: '/security/authorization' },
             { text: 'Encryption', link: '/security/encryption' },
             { text: 'Agent Security', link: '/security/agent-security' },
           ],

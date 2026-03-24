@@ -54,7 +54,7 @@ Every employee has direct control over the agent:
 
 Agent credentials are stored in the operating system's native secure credential store:
 
-- **macOS**: Keychain Services
+- **macOS**: Keychain Services — requires the agent binary to be code-signed with an Apple Developer ID certificate for silent access. In enterprise (MDM) deployments, a PPPC configuration profile pre-authorizes Keychain access so no password prompts appear, even on first enrollment.
 - **Windows**: Credential Manager
 - **Linux**: Secret Service API (libsecret)
 
@@ -62,9 +62,38 @@ Credentials are never written to disk as plaintext files, logged, or included in
 
 ## Update & Integrity
 
-- The agent binary is signed to verify integrity before execution.
-- Configuration updates from the controller are authenticated using the agent's device credentials.
-- The agent validates the controller's TLS certificate on every connection with SPKI (Subject Public Key Info) certificate pinning, ensuring connections are only established with the expected server.
+The agent updates itself through a secure, controller-managed pipeline. Updates are never pulled from public repositories — every binary is verified cryptographically before execution.
+
+### How Updates Work
+
+```
+Controller publishes update → Agent checks eligibility → Download → Verify → Swap → Restart
+```
+
+1. **Controller-driven distribution.** The F7 Controller includes update instructions in its periodic configuration response. This means administrators control exactly when and how updates roll out — there is no autonomous update behavior.
+2. **Download.** The agent downloads the new binary from the URL specified by the controller.
+3. **SHA-256 hash verification.** The downloaded binary is compared against the expected hash digest. Any mismatch aborts the update immediately.
+4. **Ed25519 signature verification.** The binary's integrity is verified against an Ed25519 digital signature using a public key compiled into the agent at build time. This ensures the binary was produced by F7 and has not been tampered with.
+5. **Atomic A/B swap.** The current binary is moved to a rollback slot, and the verified new binary takes its place. This is an atomic file operation — the agent is never in a partially-updated state.
+6. **Supervised restart.** The agent exits with a well-known code, and the process supervisor restarts it with the new binary.
+
+### Rollback Protection
+
+If the new binary crashes repeatedly within five minutes of an update, the agent automatically restores the previous version from the rollback slot. Failed updates are reported to the controller for administrator visibility.
+
+### Administrator Controls
+
+| Control | Description |
+|---------|-------------|
+| **Gradual rollout** | Updates can target a percentage of devices (1–100%) using deterministic device hashing — no random selection |
+| **Update windows** | Restrict updates to specific hours (e.g., overnight) to avoid disrupting work |
+| **Version pinning** | Lock specific devices or groups to a maximum version, preventing updates beyond that release |
+| **Update channels** | Choose between stable, beta, or nightly update tracks per organization |
+| **Pause rollout** | Set rollout percentage to 0% to immediately halt an in-progress rollout |
+
+### Configuration Authentication
+
+Configuration updates from the controller are authenticated using the agent's device credentials. The agent validates the controller's TLS certificate on every connection (certificate pinning). No unsigned or unauthenticated configuration is ever applied.
 
 ---
 

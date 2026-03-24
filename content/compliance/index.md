@@ -19,10 +19,11 @@ This table addresses the most common vendor security questionnaire items. Every 
 |---|----------|--------|
 | 1 | Is data encrypted in transit? | **Yes** — TLS 1.3 for all communications |
 | 2 | Is data encrypted at rest? | **Yes** — AES-256-GCM (server), AES-256 (agent) |
-| 3 | Is role-based access control implemented? | **Yes** — Four roles: owner, admin, manager, viewer |
-| 4 | Is multi-tenant isolation enforced? | **Yes** — PostgreSQL Row-Level Security |
-| 5 | Is audit logging implemented? | **Yes** — Append-only, 24-month retention |
+| 3 | Is role-based access control implemented? | **Yes** — Hybrid ReBAC+ABAC with PDP, manager-chain scoping, compensation masking, k-anonymity |
+| 4 | Is multi-tenant isolation enforced? | **Yes** — PostgreSQL Row-Level Security on all org-scoped tables |
+| 5 | Is audit logging implemented? | **Yes** — Immutable (trigger-protected), 24-month retention |
 | 6 | Are passwords hashed securely? | **Yes** — Argon2id with per-password salts |
+| 6a | Is SSO supported? | **Yes** — OAuth 2.0/OIDC (Entra ID, Okta, Google Workspace, JumpCloud, generic OIDC) |
 | 7 | Is the application memory-safe? | **Yes** — Written in Rust |
 | 8 | Is PII collected? | **Minimal** — Metadata only, never content |
 | 9 | Is right to erasure supported? | **Yes** — Full data deletion on request |

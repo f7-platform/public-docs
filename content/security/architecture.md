@@ -20,39 +20,84 @@ F7 uses distinct authentication mechanisms for different trust levels:
 | Actor | Method |
 |-------|--------|
 | **Device agent** | Ed25519 signed JWT with per-device cryptographic credentials |
-| **Admin user** | Argon2id password hash + session tokens (HttpOnly, Secure, SameSite cookies) |
+| **Admin user (password)** | Argon2id password hash + session tokens (HttpOnly, Secure, SameSite cookies) |
+| **Admin user (SSO)** | OAuth 2.0 / OIDC authorization code flow with PKCE |
 | **Personal dashboard** | Agent-issued JWT scoped to individual's own data |
+| **API integrations** | Org-scoped API keys for programmatic access |
 | **Webhooks** | HMAC-SHA256 per-organization tokens for integrity verification |
 
-There are no shared secrets or static API keys. Every device has its own unique cryptographic identity, established during a one-time enrollment process.
+There are no shared secrets. Every device has its own unique cryptographic identity, established during a one-time enrollment process.
+
+### Single Sign-On (SSO)
+
+F7 supports enterprise SSO via the **OAuth 2.0 / OIDC** authorization code flow with PKCE:
+
+- **Supported identity providers:** Microsoft Entra ID (Azure AD), Okta, Google Workspace, JumpCloud, and any generic OIDC-compliant provider
+- **IdP directory sync:** F7 can sync user identities and group memberships from your IdP, enabling automatic role provisioning based on IdP group claims
+- **Auto-provisioning:** New users authenticated via SSO are automatically created with the role mapped from their IdP group membership
+- **CSRF protection:** OAuth state is stored server-side in the database (not in-memory), surviving restarts and working across replicas
+
+### API Keys
+
+Organizations can generate **org-scoped API keys** for programmatic access to the F7 API. API keys are hashed before storage and carry the same role-based permissions as the admin user who created them.
 
 ## Layer 3: Authorization
 
-Access is controlled by roles and scopes:
+F7 implements a **hybrid Relationship-Based Access Control (ReBAC) + Attribute-Based Access Control (ABAC)** authorization model powered by an [OpenFGA](https://openfga.dev)-compatible Policy Decision Point (PDP).
+
+### Roles
 
 | Role | Can See |
 |------|---------|
 | **Owner** | Full organization administration + all data |
 | **Admin** | Organization configuration + all analytics |
-| **Manager** | Their team's analytics and scores |
+| **Manager** | Their direct reports' analytics and scores |
 | **Viewer** | Read-only access to permitted dashboards |
+
+### Beyond Static Roles: Policy Decision Point
+
+Unlike simple RBAC, F7's PDP evaluates **relationships and context** on every request:
+
+- **Manager-chain scoping:** Managers see only data for their direct and indirect reports, determined by a recursive subordinate query with cycle detection
+- **Purpose-specific enforcement:** Authorization is evaluated per data purpose — `compensation`, `user_data`, `app_categories`, and `team_data` — each with independent enforcement toggles
+- **App-category delegation:** Admins can be granted access to specific app categories (e.g., "can view AI tool usage") without blanket access to all data
+- **Department scoping:** Access can be scoped by department for cross-functional visibility without full organizational access
+
+### Post-Response Obligations
+
+The PDP attaches **obligations** to authorization decisions that transform responses after they are generated:
+
+- **Compensation masking:** Salary and compensation fields are automatically redacted for roles that lack the `can_view_compensation` permission
+- **k-Anonymity enforcement:** Aggregate views suppress groups smaller than a configurable threshold (default: 5) to prevent re-identification
+
+### Implementation
+
+- **Fail-closed:** If the PDP is unreachable, admin-facing routes deny access. Agent and personal-data paths are exempt (they use device/personal-JWT authentication)
+- **Decision caching:** Authorization decisions are cached for 30 seconds to minimize latency
+- **Exempt paths:** Agent telemetry ingestion, health checks, and personal-data endpoints bypass the PDP
 
 Agent access tokens carry explicit scopes (e.g., `telemetry:write`, `config:read`) that restrict what each device can do.
 
+See [Authorization](/security/authorization) for the full authorization model.
+
 ## Layer 4: Database Isolation
 
-In multi-tenant deployments, PostgreSQL **Row-Level Security (RLS)** ensures that every database query is automatically scoped to the requesting organization. There is no way for one organization to access another's data, even through application-level bugs.
+PostgreSQL **Row-Level Security (RLS)** ensures that every database query is automatically scoped to the requesting organization. There is no way for one organization to access another's data, even through application-level bugs.
+
+- **Read and write enforcement:** RLS policies include `WITH CHECK` clauses that prevent INSERT and UPDATE operations from targeting another organization's rows — not just reads
+- **Comprehensive coverage:** RLS is enforced on every organization-scoped table including users, teams, telemetry, scores, coaching, role profiles, enrollment tokens, and admin users
+- **No bypass path:** Even direct SQL access through the application's database role is scoped by RLS. Only the superuser role (used for migrations) bypasses RLS.
 
 ## Layer 5: Audit & Monitoring
 
-Every significant action is recorded in an **append-only audit log**:
+Every significant action is recorded in an **append-only, immutable audit log**:
 
 - **What was done** (action type, target resource)
 - **Who did it** (actor identity)
 - **When** (timestamp)
 - **From where** (IP address)
 
-The audit log cannot be modified or deleted. It is retained for a minimum of 24 months.
+The audit log is protected by a **database trigger** that physically prevents UPDATE and DELETE operations — any attempt to modify or remove an audit entry raises a database exception. It is retained for a minimum of 24 months.
 
 Additional monitoring includes:
 - Rate limiting on all endpoint categories to prevent abuse

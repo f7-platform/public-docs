@@ -15,10 +15,10 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 | Layer | What It Does |
 |-------|-------------|
 | **1. Transport Security** | TLS 1.3 for all communications. HSTS enforced. Certificate pinning for agent connections. |
-| **2. Authentication** | Per-device Ed25519 cryptographic credentials for agents. Argon2id password hashing for admins. |
-| **3. Authorization** | Role-based access control with four roles (owner, admin, manager, viewer). Scope-based access tokens. |
-| **4. Database Isolation** | Row-Level Security ensures each organization can only access its own data. |
-| **5. Audit & Monitoring** | Append-only audit log recording every significant action with actor, timestamp, and IP address. |
+| **2. Authentication** | Per-device Ed25519 credentials for agents. Argon2id passwords or OAuth 2.0/OIDC SSO for admins. IdP directory sync with auto-provisioning. |
+| **3. Authorization** | Hybrid ReBAC+ABAC policy decision point. Four roles with manager-chain scoping, purpose-specific enforcement, compensation masking, and k-anonymity. |
+| **4. Database Isolation** | Row-Level Security on every org-scoped table with read and write enforcement. |
+| **5. Audit & Monitoring** | Immutable, trigger-protected audit log. Cannot be modified or deleted even by the application. |
 | **6. Encryption at Rest** | AES-256-GCM for server-side secrets. AES-256 encrypted local database on each device. |
 
 ## Compliance Quick Reference
@@ -27,9 +27,10 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 |----------|--------|
 | Data encrypted in transit? | **Yes** — TLS 1.3 |
 | Data encrypted at rest? | **Yes** — AES-256-GCM (server), AES-256 (agent) |
-| Role-based access control? | **Yes** — Four roles with scope-based tokens |
-| Tenant isolation? | **Yes** — PostgreSQL Row-Level Security |
-| Audit logging? | **Yes** — Append-only, 24-month retention |
+| Role-based access control? | **Yes** — Hybrid ReBAC+ABAC with PDP, four roles, manager-chain scoping, compensation masking |
+| SSO / OIDC? | **Yes** — Entra ID, Okta, Google Workspace, JumpCloud, generic OIDC |
+| Tenant isolation? | **Yes** — PostgreSQL Row-Level Security on all org-scoped tables |
+| Audit logging? | **Yes** — Immutable (trigger-protected), 24-month retention |
 | Modern password hashing? | **Yes** — Argon2id |
 | Memory-safe language? | **Yes** — Rust |
 | Dependency auditing? | **Yes** — Automated in CI pipeline |
@@ -46,6 +47,7 @@ Independent third-party penetration testing and SOC 2 Type II certification are 
 
 ::: info Deeper Dives
 - [Architecture](/security/architecture) — The six-layer model in detail
+- [Authorization](/security/authorization) — PDP authorization model, obligations, and IdP integration
 - [Encryption](/security/encryption) — Complete cryptographic inventory
 - [Agent Security](/security/agent-security) — How data is protected on the device
 :::

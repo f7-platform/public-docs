@@ -51,6 +51,10 @@ Device credentials (enrollment keys, refresh tokens) are stored in the operating
 
 Credentials are never stored in plaintext files, environment variables, or application configuration.
 
+::: info macOS Keychain & Code Signing
+On macOS, seamless Keychain access requires the agent binary to be code-signed with an Apple Developer ID certificate. The Keychain records the code signing identity when credentials are first stored, and silently grants access to the same signed binary on subsequent launches. In enterprise deployments, an MDM-deployed PPPC configuration profile pre-authorizes Keychain access so that even the initial enrollment is fully silent — no password prompts appear.
+:::
+
 ## Password Security
 
 Admin passwords are hashed with **Argon2id** — the winner of the Password Hashing Competition and the current OWASP recommendation.

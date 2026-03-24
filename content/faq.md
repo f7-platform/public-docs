@@ -10,8 +10,9 @@ F7 is a workforce intelligence platform that observes how employees use AI tools
 
 ### Who can see my data?
 - **You** will be able to see your own data through a personal dashboard (planned)
-- **Your manager** can see team-level aggregates, not your individual raw data
-- **Executives** see department and organization-level analytics
+- **Your manager** can see analytics for their direct and indirect reports only — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
+- **Admins** see organization-level analytics. Salary and compensation data is automatically masked unless the admin has explicit compensation permissions
+- **Aggregate views** enforce k-anonymity — groups smaller than 5 people are suppressed to prevent re-identification
 - **F7 staff** cannot see your data — it's encrypted and tenant-isolated
 
 ---

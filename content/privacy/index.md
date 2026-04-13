@@ -27,7 +27,7 @@ Scores and insights are designed to inform workforce strategy, not to surveil in
 ## 5. Consent, Not Coercion
 
 - A **personal dashboard** is planned — employees will be able to view their own data.
-- The **vision model** (advanced Tier 3 feature) must be explicitly enabled by the organization.
+- The **vision model** (advanced Interpret mode feature) must be explicitly enabled by the organization.
 - Organizations can **pause observation** for employees at any time.
 - Exercising privacy controls has no impact on work status — by design.
 

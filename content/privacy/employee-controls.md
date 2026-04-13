@@ -37,9 +37,9 @@ F7 will include a **personal dashboard** that gives employees direct visibility 
 
 This feature is on the roadmap but has not yet been prioritized for release.
 
-## Vision Model (Tier 3)
+## Vision Model (Interpret Mode)
 
-F7 offers an optional advanced feature (Tier 3) that uses an on-device vision model for deeper workflow analysis.
+F7 offers an optional advanced feature (Interpret mode) that uses an on-device vision model for deeper workflow analysis.
 
 - This feature is **disabled by default** and must be enabled by the organization.
 - When enabled, the vision model processes screen frames **entirely on the device** and discards them immediately.

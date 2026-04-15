@@ -19,7 +19,7 @@ F7 uses modern, industry-standard cryptographic algorithms throughout the platfo
 All data moving between any F7 component is encrypted with **TLS 1.3** — the most current version of the Transport Layer Security protocol.
 
 - HSTS headers enforce HTTPS on all connections.
-- Certificate pinning prevents man-in-the-middle attacks.
+- Certificate pinning infrastructure is compiled into the agent; operational pins are applied per-deployment to prevent man-in-the-middle attacks.
 - Data is serialized using Protocol Buffers and transmitted over HTTPS — never in plaintext.
 
 ## Encryption at Rest

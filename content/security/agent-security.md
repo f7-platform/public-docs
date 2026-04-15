@@ -73,7 +73,7 @@ Controller publishes update → Agent checks eligibility → Download → Verify
 1. **Controller-driven distribution.** The F7 Controller includes update instructions in its periodic configuration response. This means administrators control exactly when and how updates roll out — there is no autonomous update behavior.
 2. **Download.** The agent downloads the new binary from the URL specified by the controller.
 3. **SHA-256 hash verification.** The downloaded binary is compared against the expected hash digest. Any mismatch aborts the update immediately.
-4. **Ed25519 signature verification.** The binary's integrity is verified against an Ed25519 digital signature using a public key compiled into the agent at build time. This ensures the binary was produced by F7 and has not been tampered with.
+4. **Ed25519 signature verification.** The binary's integrity is verified against an Ed25519 digital signature using a public key compiled into the agent at build time. This ensures the binary was produced by F7 and has not been tampered with. Signing keys are managed in the controller's model signing infrastructure.
 5. **Atomic A/B swap.** The current binary is moved to a rollback slot, and the verified new binary takes its place. This is an atomic file operation — the agent is never in a partially-updated state.
 6. **Supervised restart.** The agent exits with a well-known code, and the process supervisor restarts it with the new binary.
 

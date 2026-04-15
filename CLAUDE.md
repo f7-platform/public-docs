@@ -31,6 +31,16 @@
 | Data classification | `fseven-agent/agent-core/src/config.rs` (PrivacyConfig) |
 | Controller security | `fseven-controller/server/src/` |
 
+## Pre-Push CI Gate
+
+**Before pushing any changes**, verify the VitePress site builds without errors:
+
+```bash
+pnpm install && pnpm build
+```
+
+Never push content that breaks the docs build. Fix locally first — do not iterate on CI remotely.
+
 ## Critical Reminders
 
 - **No sprint docs, handoff docs, or completion summaries anywhere in the platform.**

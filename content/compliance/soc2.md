@@ -63,7 +63,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 
 F7 maintains an ongoing security program:
 
-- **19 completed security audit runs** with documented findings, remediation, and delta tracking
+- **21 completed security audit runs** with documented findings, remediation, and delta tracking
 - **Automated dependency auditing** in CI on every commit
 - **Memory-safe codebase** (Rust) eliminating buffer overflows, use-after-free, and data races at compile time
 - **Third-party penetration testing** planned

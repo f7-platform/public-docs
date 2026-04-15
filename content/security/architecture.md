@@ -8,7 +8,7 @@ All communication between F7 components is encrypted in transit.
 
 - **TLS 1.3** for all agent-to-controller communication
 - **HSTS** with a one-year max-age, enforced on all responses
-- **Certificate pinning** (SPKI) for agent connections — the agent validates the controller's public key hash on every connection
+- **Certificate pinning** (SPKI) for agent connections — the agent validates the controller's public key hash on every connection when operational pins are configured. Pin infrastructure is compiled into the agent binary; pins are rotated via agent updates.
 - **Mutual TLS** for controller-to-controller federation (multi-site deployments)
 
 No data is ever transmitted in plaintext.

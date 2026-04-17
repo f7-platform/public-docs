@@ -17,7 +17,7 @@
    - Internal architecture decisions or ADR references
 3. **No unimplemented integrations.** Only list integrations that exist in code (e.g., HRIS providers are NOT implemented — do not list Workday, BambooHR, etc.).
 4. **Compensation data ingestion is not implemented.** Do not reference salary, stock value, or benefits value fields.
-5. **Audit count:** Currently 19 completed security audit runs. Update this number when new runs are added.
+5. **Audit count:** Currently 22 completed security audit runs. Update this number when new runs are added.
 6. **Cross-check with internal docs:** The authoritative security documentation lives in `fseven-docs/docs/security/`. Public docs should be a simplified, non-proprietary subset.
 
 ## Verification Sources

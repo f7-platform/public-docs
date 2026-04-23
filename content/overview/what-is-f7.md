@@ -1,6 +1,6 @@
 # What Is F7?
 
-F7 is a **workforce intelligence platform** that helps organizations understand how their teams adopt and use AI tools. It provides objective, behavioral data — not surveys or self-assessments — to inform workforce strategy.
+F7 is a **workforce transformation platform** that observes how teams work with AI — and continuously coaches them to work better. Organizations use F7 to measure AI adoption across their workforce, develop individual capabilities through 24/7 automated coaching, and make data-driven decisions about where to invest, elevate, and redeploy. The coaching engine runs autonomously on every device; no HR program management required.
 
 ## The Problem F7 Solves
 

@@ -21,6 +21,5 @@ See [`CLAUDE.md`](../CLAUDE.md) for the authoritative repo-level contributor gui
 ## Forbidden Claims (until implemented)
 
 - "Authenticode-signed Windows installer" — currently only macOS-style signing is in CI
-- "HMAC-SHA256 signed telemetry uploads" — planned, not shipped
 - "HRIS connector for Deel or Oracle HCM" — those two connectors are not implemented. (Workday, BambooHR, SAP SuccessFactors, Rippling, HiBob ARE implemented in `fseven-controller/server/src/hr_sync/`.)
 - Specific SLM architecture or parameter count

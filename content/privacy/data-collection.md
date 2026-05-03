@@ -192,7 +192,7 @@ These are absolute guarantees about data F7 will never collect:
 - **Screenshots** (even when the optional vision model is enabled — frames are processed locally and immediately discarded)
 - **Clipboard contents**
 - **Passwords, tokens, or credentials**
-- **Full browsing URLs** (only domain, never path or query string)
+- **Full browsing URLs** — only the destination domain, optional API endpoint path (e.g. `/v1/chat/completions`) for AI-provider classification, and approximate byte counts. Never query strings, request bodies, or response content.
 - **Activity from excluded apps** (zero telemetry)
 - **Individual keystrokes** (only aggregate counts)
 

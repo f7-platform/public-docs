@@ -20,7 +20,7 @@ The F7 agent collects **work-pattern metadata only**. This includes:
 
 - **Application focus data:** Application name, window title category (never raw window titles for non-work apps), foreground/background transitions
 - **Input activity metadata:** Click count, keystroke count (never individual keystrokes), scroll events, idle periods
-- **Network metadata:** Destination domain and port only — never request or response content
+- **Network metadata:** Destination domain, optional HTTP method and API endpoint path for AI-provider classification (e.g. `POST /v1/chat/completions`), and approximate request/response byte counts — never query strings, request bodies, or response content
 - **Session structure:** Session boundaries, duration, focus time, context switches
 - **AI interaction metadata:** AI provider name, turn count, request/response sizes, time-to-first-response — never prompt or response text
 
@@ -47,16 +47,18 @@ With your organization's authorization, F7 can connect to third-party applicatio
 
 These integrations retrieve usage statistics only — never document contents, message text, prompt/response text, or file contents. Each integration must be explicitly authorized by an organization administrator and can be disconnected at any time.
 
-### What the Agent Never Collects
+### What the Agent Never Transmits
 
 - Prompt or response text
 - File contents
 - Email or chat messages
-- Screenshots or screen recordings
+- Screenshots or screen recordings (see Mode 3 note below)
 - Clipboard contents
 - Passwords or credentials
 - Full URLs, query parameters, or page content
 - Personal app activity (for user-excluded apps)
+
+**Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are processed in memory and discarded immediately after inference; they are never persisted to disk and never transmitted off the device.
 
 For the complete data inventory, see [Data Collection Details](/privacy/data-collection).
 

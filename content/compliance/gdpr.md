@@ -21,7 +21,7 @@ F7 processes data only as directed by the deploying organization. A [Data Proces
 |---------|-------------|-----------------|
 | **Art. 5(1)(a)** | Lawfulness, fairness, transparency | Organizational deployment with employee notification; published Trust Center details what's captured |
 | **Art. 5(1)(b)** | Purpose limitation | Each captured field has a documented purpose (scoring inputs only) |
-| **Art. 5(1)(c)** | Data minimization | Metadata only — never content, screenshots, clipboard, or passwords |
+| **Art. 5(1)(c)** | Data minimization | Metadata only — never content, clipboard, or passwords transmitted. Mode 3 vision frames (opt-in) are processed locally and discarded after inference. |
 | **Art. 5(1)(d)** | Accuracy | Real-time capture with session boundaries; daily rollups reconciled |
 | **Art. 5(1)(e)** | Storage limitation | Configurable retention: 90 days raw, 12 months rollups |
 | **Art. 5(1)(f)** | Integrity and confidentiality | TLS 1.3 in transit; AES-256-GCM at rest; role-based access control |
@@ -50,7 +50,7 @@ In addition to agent-captured metadata, F7 processes HR data provided by the dep
 With the controller's authorization, F7 can connect to third-party applications (e.g., ChatGPT, Microsoft 365, GitHub Copilot, Grammarly) via their APIs to retrieve usage metadata — session counts, feature adoption, seat utilization. These integrations are opt-in, admin-authorized, and retrieve **usage statistics only** — never document contents, prompts, messages, or file data. Under GDPR, the deploying organization (as data controller) is responsible for ensuring appropriate legal basis and notice before enabling each integration. See [Data Collection Details](/privacy/data-collection#third-party-app-integrations) for the full inventory.
 
 ### Content Is Never Captured
-F7 never captures prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
+F7 never transmits prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. Mode 3 — Interpret (opt-in) processes screen frames locally on-device and discards them after inference; frames never leave the device. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
 
 ### Employee Controls
 Employees can pause observation, exclude specific apps, restrict to work hours, and access their own data. See [Employee Controls](/privacy/employee-controls).

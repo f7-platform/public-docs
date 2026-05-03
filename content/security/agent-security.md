@@ -36,7 +36,7 @@ Raw observation → Privacy filter → Local AI model → Encrypted local store 
 | Access clipboard | **No** — never under any circumstances |
 | Read email or chat content | **No** — only time-in-app and domain |
 | Access passwords or credentials | **No** — the agent never reads credential stores |
-| Record browsing URLs | **No** — only the active domain, never the full URL |
+| Record browsing URLs | **No full URL** — the active domain, optional API endpoint path for AI-provider classification, and approximate byte counts only; never query strings or content |
 | Monitor excluded apps | **No** — apps on the exclusion list generate zero telemetry |
 
 ## Employee Controls

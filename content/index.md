@@ -22,7 +22,7 @@ features:
     link: /security/
   - icon: 🛡️
     title: Privacy First
-    details: We capture work-pattern metadata — never content. No prompts, no files, no emails, no screenshots. Ever.
+    details: We capture work-pattern metadata — never content. No prompts, no files, no emails uploaded; no screenshots ever leave the device.
     link: /privacy/
   - icon: 📋
     title: Compliance Ready

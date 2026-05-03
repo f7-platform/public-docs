@@ -4,9 +4,11 @@ Privacy is not an add-on feature in F7 — it's a design constraint that shapes 
 
 ## 1. Metadata, Never Content
 
-The F7 agent captures work-pattern metadata — application names, activity counts, timing, and session structure. It never captures content: no prompts, no files, no emails, no screenshots, no clipboard data.
+The F7 agent captures work-pattern metadata — application names, activity counts, timing, and session structure. It never uploads content: no prompts, no files, no emails, no clipboard data, and no screenshots.
 
 This isn't a policy choice. The agent's code physically does not have the capability to read prompt text, file contents, or clipboard data.
+
+**Vision (Mode 3 — Interpret) caveat.** When an organization explicitly enables Mode 3, the agent processes screen frames locally for an on-device vision-language model and discards them immediately after inference. Frames are never uploaded, never persisted to disk, and never leave the device. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
 
 ## 2. Local-First Processing
 

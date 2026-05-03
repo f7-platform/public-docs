@@ -23,7 +23,7 @@ F7 processes the following categories of Personal Data:
 - Work-pattern metadata (application usage, session timing, AI tool interaction metadata)
 - Aggregated scoring data
 
-F7 does **not** process: content data, communications, screenshots, file contents, or browsing history.
+F7 does **not** transmit or persist: content data, communications, screenshots, file contents, or browsing history off the device. Mode 3 — Interpret (opt-in) processes screen frames locally on the employee's device and discards them after inference; frames are never uploaded to the controller and never leave the device.
 
 ## 3. Processing Instructions
 

@@ -6,7 +6,9 @@
 F7 is a workforce intelligence platform that observes how employees use AI tools and work applications. It captures behavioral metadata — not content — to help organizations measure AI adoption, identify skill gaps, and optimize workforce strategy.
 
 ### Is F7 a keylogger or surveillance tool?
-**No.** F7 never captures individual keystrokes, screenshots, file contents, emails, chat messages, or any content. It captures metadata only — things like "which application was in the foreground" and "how many clicks occurred," not "what was typed" or "what was on screen."
+**No.** F7 never captures individual keystrokes, file contents, emails, chat messages, or any content sent off the device. It captures metadata only — things like "which application was in the foreground" and "how many clicks occurred," not "what was typed."
+
+The optional Mode 3 — Interpret vision feature processes screen frames **locally on the device** for an on-device vision-language model and discards them immediately after inference; frames never leave the device and are never uploaded. Mode 3 is opt-in and must be explicitly enabled by the organization. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
 
 ### Who can see my data?
 - **You** will be able to see your own data through a personal dashboard (planned)

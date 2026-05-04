@@ -36,7 +36,7 @@
 **Before pushing any changes**, verify the VitePress site builds without errors:
 
 ```bash
-pnpm install && pnpm build
+pnpm install && pnpm check:claims && pnpm build
 ```
 
 Never push content that breaks the docs build. Fix locally first — do not iterate on CI remotely.

@@ -95,6 +95,8 @@ If the new binary crashes repeatedly within five minutes of an update, the agent
 
 Configuration updates from the controller are authenticated using the agent's device credentials. The agent validates the controller's TLS certificate on every connection using the OS trust store and webpki root certificates. Optional SPKI certificate pinning is available as an additional hardening measure for deployments that require it. No unsigned or unauthenticated configuration is ever applied.
 
+Telemetry uploads are signed with a per-device HMAC key issued at enrollment and stored in the operating system keychain. The controller verifies the signature over the exact compressed request body before accepting telemetry.
+
 ---
 
 ::: info Designed for Trust

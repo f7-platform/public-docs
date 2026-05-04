@@ -7,7 +7,6 @@ F7 implements a **hybrid ReBAC + ABAC** (Relationship-Based + Attribute-Based Ac
 Simple role-based access (owner/admin/manager/viewer) doesn't express real-world data visibility rules:
 
 - A **manager** should see data only for their **direct and indirect reports**, not all managers in the organization
-- **Compensation data** should only be visible to roles with an explicit **compensation permission**, regardless of their general access level
 - **Aggregate views** must enforce **k-anonymity** — if a department has fewer than 5 people, their data shouldn't appear in aggregate charts
 - Some admins need access to **specific app categories** (e.g., "AI tools") without seeing all data
 
@@ -21,7 +20,7 @@ The authorization model defines six entity types and their relationships:
 |--------|--------------|
 | **Organization** | `owner`, `admin`, `member` |
 | **Team** | `org` (parent organization), `manager`, `member` |
-| **User data** | `can_view`, `can_view_compensation`, `can_view_aggregate` |
+| **User data** | `can_view`, `can_view_aggregate` |
 | **App category** | `admin`, `can_view_app_data` |
 | **Department** | Scopes visibility by organizational unit |
 | **User** | Identity — the subject of authorization decisions |
@@ -42,7 +41,6 @@ Authorization is evaluated independently for each **data purpose**:
 | Purpose | What It Controls |
 |---------|-----------------|
 | `user_data` | Access to individual employee telemetry, scores, and profiles |
-| `compensation` | Access to salary, compensation, and economic valuation data |
 | `app_categories` | Access to application-level usage data filtered by category |
 | `team_data` | Access to team-level aggregates and comparisons |
 
@@ -60,16 +58,13 @@ When a user with the `manager` role requests employee data, the PDP evaluates th
 
 The PDP can attach **obligations** to an authorization decision that transform the API response:
 
-### Compensation Masking
-If the requesting user lacks `can_view_compensation`, salary and economic valuation fields are automatically redacted from the response. The rest of the profile or dashboard data is returned normally.
-
 ### k-Anonymity Enforcement
 Aggregate views (team analytics, department summaries) suppress groups smaller than a configurable threshold (default: 5 members). This prevents re-identification of individuals through small-group aggregation.
 
 ## Fail-Closed Design
 
 - If the PDP sidecar is unreachable, **all admin-facing routes deny access**
-- Agent telemetry ingestion, health checks, and personal-data endpoints are **exempt** — they use device or personal-JWT authentication, not the PDP
+- Agent telemetry ingestion and health checks are **exempt** — they use device authentication, not the PDP
 - Authorization decisions are **cached for 30 seconds** to minimize latency impact
 
 ## IdP Group Mapping

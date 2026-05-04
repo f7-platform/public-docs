@@ -19,7 +19,7 @@ This table addresses the most common vendor security questionnaire items. Every 
 |---|----------|--------|
 | 1 | Is data encrypted in transit? | **Yes** — TLS 1.3 for all communications |
 | 2 | Is data encrypted at rest? | **Yes** — AES-256-GCM (server), AES-256 (agent) |
-| 3 | Is role-based access control implemented? | **Yes** — Hybrid ReBAC+ABAC with PDP, manager-chain scoping, compensation masking, k-anonymity |
+| 3 | Is role-based access control implemented? | **Yes** — Hybrid ReBAC+ABAC with PDP, manager-chain scoping, app-category delegation, k-anonymity |
 | 4 | Is multi-tenant isolation enforced? | **Yes** — PostgreSQL Row-Level Security on all org-scoped tables |
 | 5 | Is audit logging implemented? | **Yes** — Immutable (trigger-protected), 24-month retention |
 | 6 | Are passwords hashed securely? | **Yes** — Argon2id with per-password salts |

@@ -18,7 +18,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 | **CC5.1** | Control activities over technology | Six authentication layers; role-based access control; input validation; rate limiting; security headers |
 | **CC6.1** | Logical access controls | Cryptographic device authentication (Ed25519); Argon2id admin password hashing; OAuth 2.0/OIDC SSO with PKCE; constant-time secret comparison |
 | **CC6.2** | Credential issuance controls | Enrollment tokens with usage limits, expiry, and organization binding |
-| **CC6.3** | Access restricted to authorized users | Hybrid ReBAC+ABAC PDP authorization; four roles with manager-chain scoping; purpose-specific enforcement toggles; compensation masking; k-anonymity; row-level database security |
+| **CC6.3** | Access restricted to authorized users | Hybrid ReBAC+ABAC PDP authorization; four roles with manager-chain scoping; purpose-specific enforcement toggles; app-category delegation; k-anonymity; row-level database security |
 | **CC6.6** | Infrastructure credential management | Environment-based key management; key rotation procedures; OS keychain for device credentials |
 | **CC6.7** | Transmission restrictions | TLS 1.3; HSTS with 1-year max-age; certificate pinning for agent connections |
 | **CC6.8** | Prevention of unauthorized changes | Cryptographic integrity verification on configuration; digital signing on licensing data; trigger-protected immutable audit log |

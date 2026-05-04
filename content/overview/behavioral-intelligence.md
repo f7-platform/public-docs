@@ -170,11 +170,11 @@ F7's data is most valuable when it informs **development conversations and strat
 | **Understanding load imbalances** | Compare active time, work span, and meeting density across teams and roles. Surface where some people are carrying disproportionate load — especially in coordination-heavy roles that traditional metrics miss. |
 | **Tracking tool adoption** | See how new tools (including AI) are actually being integrated into workflows over time, not just whether licenses are activated. Adoption isn't a binary — it's a behavioral curve. |
 | **Guiding enablement investments** | When a team shows low integration scores, it may mean they need training — or it may mean their tools don't support integrated workflows. The data points to where to dig deeper. |
-| **Informing resource conversations** | When salary, headcount, and observable effort don't align, leaders need data to have honest conversations. F7 makes effort and engagement patterns visible — not to punish, but to inform. |
+| **Informing resource conversations** | When team capacity, headcount, and observable work patterns don't align, leaders need data to have honest conversations. F7 makes effort and engagement patterns visible — not to punish, but to inform. |
 
 ### For Individuals (Personal Dashboard)
 
-Every employee sees their own behavioral data on a personal dashboard — their engagement trends, tool distribution, focus patterns, and scores over time. This supports:
+F7's planned personal dashboard will give employees direct visibility into their own behavioral data — their engagement trends, tool distribution, focus patterns, and scores over time. This supports:
 
 - **Self-awareness:** "I didn't realize I spend 40% of my time in meetings and only 15% in deep focus."
 - **Personal development:** "My integration score has been flat — I'm not using the new tools my team adopted."
@@ -265,12 +265,12 @@ The honest position: F7's scores are a starting approximation built on the best 
 ### F7 Is Not:
 
 - **Not a productivity score.** Long hours do not equal good work. High tool usage does not equal effective work. F7 provides data for conversations, not rankings.
-- **Not a performance management tool.** F7 data is designed for workforce intelligence and development conversations — not for individual performance reviews, disciplinary decisions, or ranking employees. Managers see team-level aggregates; individuals see their own data.
+- **Not a performance management tool.** F7 data is designed for workforce intelligence and development conversations — not for individual performance reviews, disciplinary decisions, or ranking employees. Managers see team-level aggregates; individual self-service access is planned through the personal dashboard.
 - **Not an AI-only tool.** AI adoption is one dimension F7 measures. Engagement, effort, focus, meeting load, tool breadth, and work patterns are measured across all applications. A highly engaged person who hasn't adopted AI yet is clearly visible — and clearly valuable.
 - **Not a perfect measure.** Behavioral proxies have inherent limits. F7 is transparent about what it can and cannot see. The scores are a structured starting point, not a final judgment.
 - **Not equally deep for all roles.** Behavioral craft patterns are strongest for desktop-app workflows. For browser-heavy roles, F7 provides strong effort visibility but limited behavioral depth. This is stated honestly.
 - **Not a content inspector.** F7 never reads prompts, responses, code, documents, emails, or messages. The architecture is designed to make this impossible, not just policy.
-- **Not a surveillance system.** Employees see their own data on a personal dashboard. Managers see team-level aggregates — never individual behavioral details. The design includes structural guardrails, not just usage guidelines.
+- **Not a surveillance system.** A personal dashboard is planned for employees to inspect their own data. Managers see team-level aggregates — never individual behavioral details. The design includes structural guardrails, not just usage guidelines.
 
 ---
 
@@ -296,10 +296,10 @@ Behavioral intelligence raises legitimate questions about employee experience an
 
 | Concern | F7's Approach |
 |---|---|
-| **"Will my manager see how I spend every minute?"** | Managers see team-level aggregates and distributions only. Individual behavioral details are visible only on the employee's personal dashboard. |
+| **"Will my manager see how I spend every minute?"** | Managers see team-level aggregates and distributions only. Self-service visibility into individual behavioral details is planned for the employee's personal dashboard. |
 | **"Will this be used in my performance review?"** | F7 is designed for workforce intelligence and development conversations. Individual-level behavioral scores are not exportable. Team-level aggregates are. |
 | **"What if I work in ways the system can't see?"** | F7 is transparent about its observation limits. When the system doesn't have enough signal to assess behavioral patterns, it says so — rather than guessing. |
-| **"Can I see what F7 knows about me?"** | Yes. The personal dashboard gives every employee visibility into their own data, patterns, and scores. |
+| **"Can I see what F7 knows about me?"** | Data access is available through your organization's F7 administrator today. A personal dashboard for direct self-service access is planned. |
 | **"Can I pause or exclude apps?"** | Yes. Employees can pause observation and exclude specific applications from tracking. |
 
 For full privacy details, see the [Privacy Overview](/privacy/) and [Data We Collect](/overview/data-we-collect).

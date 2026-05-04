@@ -16,7 +16,7 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 |-------|-------------|
 | **1. Transport Security** | TLS 1.3 for all communications. HSTS enforced. Certificate pinning for agent connections. |
 | **2. Authentication** | Per-device Ed25519 credentials for agents. Argon2id passwords or OAuth 2.0/OIDC SSO for admins. IdP directory sync with auto-provisioning. |
-| **3. Authorization** | Hybrid ReBAC+ABAC policy decision point. Four roles with manager-chain scoping, purpose-specific enforcement, compensation masking, and k-anonymity. |
+| **3. Authorization** | Hybrid ReBAC+ABAC policy decision point. Four roles with manager-chain scoping, purpose-specific enforcement, app-category delegation, and k-anonymity. |
 | **4. Database Isolation** | Row-Level Security on every org-scoped table with read and write enforcement. |
 | **5. Audit & Monitoring** | Immutable, trigger-protected audit log. Cannot be modified or deleted even by the application. |
 | **6. Encryption at Rest** | AES-256-GCM for server-side secrets. AES-256 encrypted local database on each device. |
@@ -27,7 +27,7 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 |----------|--------|
 | Data encrypted in transit? | **Yes** — TLS 1.3 |
 | Data encrypted at rest? | **Yes** — AES-256-GCM (server), AES-256 (agent) |
-| Role-based access control? | **Yes** — Hybrid ReBAC+ABAC with PDP, four roles, manager-chain scoping, compensation masking |
+| Role-based access control? | **Yes** — Hybrid ReBAC+ABAC with PDP, four roles, manager-chain scoping, app-category delegation |
 | SSO / OIDC? | **Yes** — Entra ID, Okta, Google Workspace, JumpCloud, generic OIDC |
 | Tenant isolation? | **Yes** — PostgreSQL Row-Level Security on all org-scoped tables |
 | Audit logging? | **Yes** — Immutable (trigger-protected), 24-month retention |

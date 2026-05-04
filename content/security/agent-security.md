@@ -48,7 +48,7 @@ Every employee has direct control over the agent:
 | **Pause observation** | Click the system tray icon to pause — no data is captured while paused |
 | **Exclude apps** | Add apps to a blocklist — excluded apps generate zero telemetry |
 | **Work hours only** | Configure observation to run only during defined work hours |
-| **Personal dashboard** | Opt-in to see exactly what data has been captured about your work patterns |
+| **Personal dashboard** | Planned self-service access to data captured about your work patterns |
 
 ## Credential Protection
 

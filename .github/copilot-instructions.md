@@ -21,5 +21,6 @@ See [`CLAUDE.md`](../CLAUDE.md) for the authoritative repo-level contributor gui
 ## Forbidden Claims (until implemented)
 
 - "Authenticode-signed Windows installer" — currently only macOS-style signing is in CI
-- "HRIS connector for Deel or Oracle HCM" — those two connectors are not implemented. (Workday, BambooHR, SAP SuccessFactors, Rippling, HiBob ARE implemented in `fseven-controller/server/src/hr_sync/`.)
+- Specific HRIS connector names unless verified against implemented controller code in the same change
+- Compensation data ingestion, salary fields, stock value fields, benefits value fields, or compensation masking as a current customer-facing capability
 - Specific SLM architecture or parameter count

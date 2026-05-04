@@ -70,20 +70,9 @@ This page provides a detailed breakdown of every category of data the F7 agent c
 
 ## Employer-Provided Data
 
-The deploying organization can provide HR data to F7 via HRIS integration (Workday, BambooHR, SAP SuccessFactors, Rippling, HiBob), identity provider sync (Entra ID, Okta, Google Workspace, JumpCloud, SCIM), or CSV/Excel upload.
+The deploying organization can provide workforce directory data to F7 through configured identity, directory, or file-based syncs.
 
 F7 does **not** independently collect this data — it is supplied entirely by the employer.
-
-### Compensation
-
-| Field | Example | Purpose |
-|-------|---------|---------|
-| Annual salary | $120,000 | Financial modeling, ROI calculations |
-| Stock annual value | $30,000 | Total compensation for cost analysis |
-| Benefits annual value | $15,000 | Fully-loaded employee cost |
-| Currency | USD, EUR, GBP | Multi-currency normalization |
-
-**Employer controls:** Compensation sync can be disabled entirely. The `sync_compensation` flag controls whether salary, stock, and benefits fields are imported.
 
 ### Job Metadata
 

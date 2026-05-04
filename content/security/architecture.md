@@ -22,7 +22,7 @@ F7 uses distinct authentication mechanisms for different trust levels:
 | **Device agent** | Ed25519 signed JWT with per-device cryptographic credentials |
 | **Admin user (password)** | Argon2id password hash + session tokens (HttpOnly, Secure, SameSite cookies) |
 | **Admin user (SSO)** | OAuth 2.0 / OIDC authorization code flow with PKCE |
-| **Personal dashboard** | Agent-issued JWT scoped to individual's own data |
+| **Personal dashboard (planned)** | Agent-issued JWT scoped to individual's own data |
 | **API integrations** | Org-scoped API keys for programmatic access |
 | **Webhooks** | HMAC-SHA256 per-organization tokens for integrity verification |
 
@@ -59,7 +59,7 @@ F7 implements a **hybrid Relationship-Based Access Control (ReBAC) + Attribute-B
 Unlike simple RBAC, F7's PDP evaluates **relationships and context** on every request:
 
 - **Manager-chain scoping:** Managers see only data for their direct and indirect reports, determined by a recursive subordinate query with cycle detection
-- **Purpose-specific enforcement:** Authorization is evaluated per data purpose — `compensation`, `user_data`, `app_categories`, and `team_data` — each with independent enforcement toggles
+- **Purpose-specific enforcement:** Authorization is evaluated per data purpose — `user_data`, `app_categories`, and `team_data` — each with independent enforcement toggles
 - **App-category delegation:** Admins can be granted access to specific app categories (e.g., "can view AI tool usage") without blanket access to all data
 - **Department scoping:** Access can be scoped by department for cross-functional visibility without full organizational access
 
@@ -67,14 +67,13 @@ Unlike simple RBAC, F7's PDP evaluates **relationships and context** on every re
 
 The PDP attaches **obligations** to authorization decisions that transform responses after they are generated:
 
-- **Compensation masking:** Salary and compensation fields are automatically redacted for roles that lack the `can_view_compensation` permission
 - **k-Anonymity enforcement:** Aggregate views suppress groups smaller than a configurable threshold (default: 5) to prevent re-identification
 
 ### Implementation
 
-- **Fail-closed:** If the PDP is unreachable, admin-facing routes deny access. Agent and personal-data paths are exempt (they use device/personal-JWT authentication)
+- **Fail-closed:** If the PDP is unreachable, admin-facing routes deny access. Agent telemetry and health-check paths are exempt because they use device authentication
 - **Decision caching:** Authorization decisions are cached for 30 seconds to minimize latency
-- **Exempt paths:** Agent telemetry ingestion, health checks, and personal-data endpoints bypass the PDP
+- **Exempt paths:** Agent telemetry ingestion and health checks bypass the PDP
 
 Agent access tokens carry explicit scopes (e.g., `telemetry:write`, `config:read`) that restrict what each device can do.
 

@@ -13,7 +13,7 @@ F7 provides a workforce intelligence platform that observes work-pattern metadat
 
 - A device agent that captures work-pattern metadata
 - A controller that processes metadata and computes analytics
-- Dashboards for management and individual employees
+- Dashboards for management and IT/security stakeholders. An individual-employee personal dashboard is planned and not part of the current Service scope.
 
 ## 2. Account and Access
 

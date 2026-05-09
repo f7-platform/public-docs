@@ -34,7 +34,9 @@ This page provides a detailed breakdown of every category of data the F7 agent c
 | Process name | "chrome" | Associate network activity with apps |
 | Detected AI provider | "OpenAI" | Track AI adoption metrics |
 
-**Not captured:** Full URL, URL path, query parameters, request body, response body, cookies, headers.
+**Not captured:** Full URL, query parameters, request body, response body, cookies, headers.
+
+**Limited capture:** For traffic identified as AI-provider API calls (for example `api.openai.com`, `api.anthropic.com`), the path component of the URL alone (e.g. `/v1/chat/completions`) is recorded for provider classification. No query strings, fragments, headers, or request/response bodies are captured for any traffic.
 
 ### Session Structure
 

@@ -66,6 +66,19 @@ check_absent \
   "open-source license overclaim" \
   'fully open.source|100% open.source|open source forever'
 
+# Stale audit run reference — must not cite Run 27b as the current baseline.
+# Update to the most recent completed run before publishing.
+check_absent \
+  "stale audit run reference (Run 27b)" \
+  'Run 27b security audit baseline'
+
+# Blanket URL-path not-captured wording — the AI-provider path IS captured for
+# classification; any document that says "URL path" is in the "Not captured" list
+# contradicts this and must be removed.
+check_absent \
+  "blanket URL-path not-captured (contradicts AI-provider path capture)" \
+  'URL path, query parameters, request body'
+
 # ── required files (structural checks) ───────────────────────────────────────
 
 check_present "claims registry" "$REGISTRY"
@@ -74,6 +87,12 @@ check_present "privacy data collection page" "$CONTENT_DIR/privacy/data-collecti
 check_present "privacy data retention page" "$CONTENT_DIR/privacy/data-retention.md"
 check_present "legal privacy policy" "$CONTENT_DIR/legal/privacy-policy.md"
 check_present "legal terms of service" "$CONTENT_DIR/legal/terms-of-service.md"
+
+# Root protocol files — all public repos must carry these; they must not be absent.
+check_present "root README" "$ROOT_DIR/README.md"
+check_present "root LICENSE" "$ROOT_DIR/LICENSE"
+check_present "root CONTRIBUTING" "$ROOT_DIR/CONTRIBUTING.md"
+check_present "root SECURITY" "$ROOT_DIR/SECURITY.md"
 
 # ── claims registry validation ────────────────────────────────────────────────
 # Verify every "not-available" claim in the registry is absent from content.

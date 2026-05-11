@@ -20,7 +20,7 @@ The F7 agent collects **work-pattern metadata only**. This includes:
 
 - **Application focus data:** Application name, window title category (never raw window titles for non-work apps), foreground/background transitions
 - **Input activity metadata:** Click count, keystroke count (never individual keystrokes), scroll events, idle periods
-- **Network metadata:** Destination domain, optional HTTP method and API endpoint path for AI-provider classification (e.g. `POST /v1/chat/completions`), and approximate request/response byte counts — never query strings, request bodies, or response content
+- **Network metadata:** Destination domain, and for AI-provider API calls, the API endpoint path for classification (e.g. `/v1/chat/completions`), and approximate request/response byte counts — never query strings, request bodies, or response content
 - **Session structure:** Session boundaries, duration, focus time, context switches
 - **AI interaction metadata:** AI provider name, turn count, request/response sizes, time-to-first-response — never prompt or response text
 

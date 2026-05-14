@@ -86,14 +86,14 @@ check_absent \
 check_repo_absent \
   "stale latest-audit reference" \
   'Run 27b security audit baseline|Current latest security audit is Run 27b|most recently Run 29|Run 29 security audit baseline|Public audit references now use Run 27b' \
-  "$CONTENT_DIR" "$ROOT_DIR/CLAUDE.md" "$ROOT_DIR/CHANGELOG.md"
+  "$CONTENT_DIR" "$ROOT_DIR/CLAUDE.md" "$ROOT_DIR/.github/copilot-instructions.md" "$ROOT_DIR/CHANGELOG.md"
 
 # Blanket URL-path not-captured wording — the AI-provider path IS captured for
 # classification; any document that says "URL path" is in the "Not captured" list
 # contradicts this and must be removed.
 check_absent \
   "blanket URL-path not-captured (contradicts AI-provider path capture)" \
-  'URL path, query parameters, request body'
+  'URL path, query parameters, request body|Never the full URL, path|Only the active domain is captured — never full URLs, paths|Destination domain only; never URL paths'
 
 check_absent \
   "unimplemented third-party app API integration examples" \

@@ -52,7 +52,7 @@ Third-party integrations are **not enabled by default**. Each integration must b
 
 - **Keystroke count, not keystrokes.** We count how many keys were pressed. We never record which keys or what was typed.
 - **App name, not window title.** For non-work applications, we capture only the app name and category.
-- **Domain, not URL.** We record the destination domain (e.g., `openai.com`). Never the full URL, path, query parameters, or page content.
+- **Domain plus AI-provider endpoint path, not full URL.** We record the destination domain and, for AI-provider API calls, the endpoint path used for classification. We never capture query parameters, request bodies, response content, or page content.
 - **Sizes, not content.** For AI interactions, we record how large requests and responses were. Never the actual prompt or response text.
 
 ## What We Never Capture
@@ -65,7 +65,7 @@ Third-party integrations are **not enabled by default**. Each integration must b
 | **Screenshots** | Never transmitted off the device — if the optional vision model is enabled, frames are processed locally; current macOS capture may create a temporary OS-local PNG that is read and deleted after inference |
 | **Clipboard contents** | Never captured under any circumstances |
 | **Passwords or credentials** | Never accessed or stored |
-| **Browsing history** | Only the active domain is captured — never full URLs, paths, or page content |
+| **Browsing history** | Only the active destination domain is captured, with AI-provider API endpoint paths used for classification — never full URLs, query parameters, request bodies, response content, or page content |
 | **Personal app activity** | Apps on the exclusion list generate zero telemetry |
 | **Individual keystrokes** | Only aggregate counts — never what was typed |
 

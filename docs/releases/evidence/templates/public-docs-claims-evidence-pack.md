@@ -43,11 +43,26 @@ Review every claim in `content/compliance/claims-registry.json`:
 | CLM-008 | Data retention and deletion | active | ✅ / ❌ | |
 | CLM-009 | Personal behavioral dashboard | not-available | N/A — forbidden | Confirm absent from content |
 
+## Required Public Claim Evidence Entries
+
+Every completed pack must include evidence for these high-risk claim areas when
+the release touches public docs, installer docs, compliance pages, or trust copy.
+
+| Claim area | Required evidence | Audit IDs | Verified Accurate? | Notes |
+|---|---|---|---|---|
+| Dependency-audit cadence | Link the workflow or release evidence that actually runs dependency audit; do not claim every commit/code change unless CI proves that scope | `PDC5`, `PUBDOC-3` | ✅ / ❌ | |
+| Public integration provider scope | Compare public provider lists against implemented controller integration sources | `PUBDOC-1` | ✅ / ❌ | |
+| Mode 3 capture persistence wording | Confirm public wording says frames are not uploaded, and discloses temporary local OS capture files when implementation still uses them | `PUBDOC-2`, `AGT-LOCAL-2` | ✅ / ❌ | |
+| Manual installer verification | Confirm public-agent manual snippets include checksum/signature verification for macOS, Windows, and Linux | `PUB-DIST-2` | ✅ / ❌ | |
+
 ## New Claims Check
 
 - [ ] No new capability claims added to content since last review
 - [ ] If new claims added: each has a claims-registry.json entry
 - [ ] If new claims are `in-progress` or `not-available`: check script updated
+- [ ] `scripts/check-public-claims.sh` rejects stale audit references, overbroad
+  provider examples, absolute Mode 3 no-disk wording, and overbroad
+  dependency-audit cadence claims
 
 ## Evidence Signoff
 

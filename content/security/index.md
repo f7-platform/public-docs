@@ -39,7 +39,7 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 
 ## Audit & Testing
 
-F7 undergoes regular internal security audits following a structured three-pass methodology. We also run automated dependency auditing on every code change to catch known vulnerabilities in third-party libraries.
+F7 undergoes regular internal security audits following a structured three-pass methodology. This Trust Center's deploy workflow runs `npm audit --audit-level=moderate` before publishing to catch known vulnerabilities in its documentation dependencies; product dependency evidence is tracked in release evidence for the owning private repositories.
 
 Independent third-party penetration testing and SOC 2 Type II certification are on our roadmap.
 

@@ -87,6 +87,10 @@ check_absent \
   "absolute Mode 3 no-disk/immediate-discard claim" \
   'never persisted to disk|persisted to disk|discarded immediately|immediately discarded'
 
+check_absent \
+  "overbroad dependency-audit cadence claim" \
+  'automated dependency auditing on every code change|Automated in CI on every commit|`npm audit` on every build|dependency auditing.*every commit|dependency auditing.*every code change'
+
 # ── required files (structural checks) ───────────────────────────────────────
 
 check_present "claims registry" "$REGISTRY"

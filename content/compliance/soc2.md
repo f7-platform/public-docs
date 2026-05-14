@@ -24,8 +24,8 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 | **CC6.8** | Prevention of unauthorized changes | Cryptographic integrity verification on configuration; digital signing on licensing data; trigger-protected immutable audit log |
 | **CC7.1** | Detection of unauthorized activity | Rate limiting; audit logging; CSP violation reporting; license tamper detection |
 | **CC7.2** | Anomaly monitoring | Clock-jump detection; token replay detection with full device revocation |
-| **CC8.1** | Change management | Changelog requirements; `npm audit` on every build; proto-drift detection across services |
-| **CC9.1** | Vendor risk mitigation | Dependency auditing; memory-safe language (Rust); vetted cryptographic libraries |
+| **CC8.1** | Change management | Changelog requirements; `npm audit --audit-level=moderate` in Trust Center deploy CI; proto-drift detection across services |
+| **CC9.1** | Vendor risk mitigation | Trust Center dependency audit before publication; release-scoped product dependency evidence; memory-safe language (Rust); vetted cryptographic libraries |
 
 ### Availability
 
@@ -64,7 +64,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 F7 maintains an ongoing security program:
 
 - **Run 29 security audit baseline** with documented findings, remediation, and delta tracking
-- **Automated dependency auditing** (`npm audit`) on every build
+- **Automated Trust Center dependency auditing** (`npm audit --audit-level=moderate`) before GitHub Pages publication
 - **Memory-safe codebase** (Rust) eliminating buffer overflows, use-after-free, and data races at compile time
 - **Third-party penetration testing** planned
 

@@ -79,6 +79,14 @@ check_absent \
   "blanket URL-path not-captured (contradicts AI-provider path capture)" \
   'URL path, query parameters, request body'
 
+check_absent \
+  "unimplemented third-party app API integration examples" \
+  'OpenAI / ChatGPT|Anthropic / Claude|Google Gemini|Microsoft 365 / SharePoint|Grammarly, Notion, Confluence|GitHub Copilot, GitLab Duo|third-party applications via their APIs'
+
+check_absent \
+  "absolute Mode 3 no-disk/immediate-discard claim" \
+  'never persisted to disk|persisted to disk|discarded immediately|immediately discarded'
+
 # ── required files (structural checks) ───────────────────────────────────────
 
 check_present "claims registry" "$REGISTRY"

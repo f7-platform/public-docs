@@ -12,20 +12,19 @@ F7 Platform, Inc. uses the following sub-processors to provide the F7 AI Workfor
 | **PostgreSQL (via Railway)** | Primary data storage | All server-side data (tenant-isolated via Row-Level Security) | United States |
 | **GitHub** | Source code hosting, CI/CD | No customer data | United States |
 
-## Third-Party App Integrations
+## Third-Party Event Integrations
 
-When an organization enables third-party app integrations, F7 connects to those providers' APIs on behalf of the customer. These are **not sub-processors** — F7 retrieves data from them using credentials the customer provides. The third-party providers' own privacy policies and terms govern their platforms.
+When an organization enables third-party event integrations, F7 ingests event metadata from configured providers using credentials the customer provides. These providers are **not sub-processors** for F7-hosted processing — the third-party providers' own privacy policies and terms govern their platforms.
 
-| Provider | Data Retrieved | Enabled By |
-|-----------|---------------|------------|
-| **OpenAI / ChatGPT** | Usage frequency, session counts, token consumption | Admin opt-in |
-| **Microsoft 365 / SharePoint** | Document activity counts, collaboration metrics, license usage | Admin opt-in |
-| **Google Workspace** | Usage metrics, license utilization | Admin opt-in |
-| **GitHub Copilot** | Suggestion acceptance rates, seat utilization | Admin opt-in |
-| **Grammarly** | Usage frequency, feature adoption | Admin opt-in |
-| **Other integrations** | Usage metadata only — never content | Admin opt-in |
+| Provider Category | Implemented Sources | Data Retrieved | Enabled By |
+|-------------------|---------------------|----------------|------------|
+| **Source control** | GitHub, GitLab, Bitbucket | Commit, pull request, branch, and review event metadata | Admin opt-in |
+| **Issue/project management** | Jira, Linear, Asana | Ticket and sprint event metadata | Admin opt-in |
+| **CI/CD** | Jenkins, GitHub Actions, GitLab CI, CircleCI | Build, test, and deployment event metadata | Admin opt-in |
+| **Calendar/support/feature flags** | Google Calendar, Microsoft Outlook, Zendesk, LaunchDarkly | Meeting, support-ticket, and flag-change event metadata | Admin opt-in |
+| **Custom workflows** | Generic webhooks | Customer-defined event metadata | Admin opt-in |
 
-F7 never retrieves document contents, message text, prompt/response text, or file contents from any third-party integration.
+F7 never retrieves document contents, message text, prompt/response text, code diffs, repository contents, support conversation bodies, or file contents from any third-party integration.
 
 ## On-Premise Deployments
 

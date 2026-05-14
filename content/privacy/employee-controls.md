@@ -42,7 +42,7 @@ This feature is on the roadmap but has not yet been prioritized for release.
 F7 offers an optional advanced feature (Mode 3 — Interpret) that uses an on-device vision model for continuous interpretation of work activity.
 
 - This feature is **disabled by default** and must be enabled by the organization.
-- When enabled, the vision model processes screen frames **entirely on the device** and discards them immediately.
+- When enabled, the vision model processes screen frames **entirely on the device**. Frames are never uploaded; current macOS builds may use a temporary OS-local PNG during capture, which the agent reads and deletes after inference.
 - No frames are stored, transmitted, or accessible to anyone — only structured classification labels (e.g., "deep work", "code review") are produced.
 
 ## What Managers and Admins Can See

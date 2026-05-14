@@ -35,16 +35,11 @@ Your organization may provide the following data to F7:
 
 F7 does not independently collect this data — it is provided by your employer through configured identity, directory, or file-based syncs.
 
-### From Third-Party App Integrations (Opt-In)
+### From Third-Party Event Integrations (Opt-In)
 
-With your organization's authorization, F7 can connect to third-party applications via their APIs to retrieve **usage metadata**:
+With your organization's authorization, F7 can ingest **event metadata** from configured controller integrations. The currently implemented sources are GitHub, GitLab, Bitbucket, Jira, Linear, Asana, Jenkins, GitHub Actions, GitLab CI, CircleCI, Google Calendar, Microsoft Outlook, LaunchDarkly, Zendesk, and Generic webhooks.
 
-- **AI platforms** (e.g., ChatGPT, Claude, Gemini): Usage frequency, session counts, token/seat usage
-- **Productivity suites** (e.g., Microsoft 365, Google Workspace): Document activity counts, collaboration metrics, license utilization
-- **Writing & communication tools** (e.g., Grammarly, Notion): Feature adoption, usage frequency
-- **Developer tools** (e.g., GitHub Copilot): Suggestion acceptance rates, seat utilization
-
-These integrations retrieve usage statistics only — never document contents, message text, prompt/response text, or file contents. Each integration must be explicitly authorized by an organization administrator and can be disconnected at any time.
+These integrations retrieve event metadata only — never document contents, message text, prompt/response text, code diffs, repository contents, calendar descriptions, support conversation bodies, or file contents. Each integration must be explicitly authorized by an organization administrator and can be disconnected at any time.
 
 ### What the Agent Never Transmits
 
@@ -57,7 +52,7 @@ These integrations retrieve usage statistics only — never document contents, m
 - Full URLs, query parameters, or page content
 - Personal app activity (for user-excluded apps)
 
-**Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are processed in memory and discarded immediately after inference; they are never persisted to disk and never transmitted off the device.
+**Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are never transmitted off the device. Current macOS builds may use a temporary OS-local PNG during capture; the agent reads and deletes that file after inference, and organizations should treat crash-left temp files as local endpoint data covered by device controls.
 
 For the complete data inventory, see [Data Collection Details](/privacy/data-collection).
 

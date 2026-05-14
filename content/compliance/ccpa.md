@@ -29,7 +29,7 @@ Under CCPA's data category framework:
 | **Professional or employment info** | Work patterns, productivity metrics (agent-captured metadata); job title, department, employment type, hire date (employer-provided directory or file-based data) |
 | **Geolocation** | Not collected |
 | **Biometric information** | Not collected |
-| **Audio, electronic, visual** | Not collected for transmission — no recordings or uploads. Mode 3 (opt-in) processes screen frames locally on-device and discards them after inference; frames never leave the device. |
+| **Audio, electronic, visual** | Not collected for transmission — no recordings or uploads. Mode 3 (opt-in) processes screen frames locally on-device; frames never leave the device, and current macOS builds may use a temporary OS-local PNG that is read and deleted after inference. |
 | **Protected classifications** | Not collected |
 
 ## Service Provider Obligations

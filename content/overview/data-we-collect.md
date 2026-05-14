@@ -28,19 +28,20 @@ In addition to agent-captured metadata, F7 processes organization-provided workf
 F7 does not independently collect workforce directory data — it is provided entirely by the deploying organization. The organization decides which supported fields to sync and can disable those syncs at any time.
 :::
 
-## Third-Party App Integrations
+## Third-Party Event Integrations
 
-With your organization's authorization, F7 can connect to third-party applications via their APIs to retrieve **usage metadata**. This provides richer analytics without relying solely on network-level observation from the agent.
+With your organization's authorization, F7 can ingest **event metadata** from configured controller integrations. This provides richer analytics without relying solely on network-level observation from the agent.
 
-| Integration Category | Example Apps | Data Retrieved |
-|---------------------|--------------|----------------|
-| **AI platforms** | OpenAI / ChatGPT, Anthropic / Claude, Google Gemini | Usage frequency, session counts, token/seat usage, workspace membership |
-| **Productivity suites** | Microsoft 365 / SharePoint, Google Workspace | Document activity counts, collaboration metrics, license utilization |
-| **Writing & communication tools** | Grammarly, Notion, Confluence | Feature adoption, usage frequency |
-| **Developer tools** | GitHub Copilot, GitLab Duo | Suggestion acceptance rates, seat utilization |
+| Integration Category | Implemented Sources | Data Retrieved |
+|---------------------|---------------------|----------------|
+| **Source control** | GitHub, GitLab, Bitbucket | Commit, pull request, branch, and review event metadata |
+| **Issue/project management** | Jira, Linear, Asana | Ticket and sprint event metadata |
+| **CI/CD** | Jenkins, GitHub Actions, GitLab CI, CircleCI | Build, test, and deployment event metadata |
+| **Calendar/support/feature flags** | Google Calendar, Microsoft Outlook, Zendesk, LaunchDarkly | Meeting, support-ticket, and flag-change event metadata |
+| **Custom workflows** | Generic webhooks | Customer-defined event metadata |
 
 ::: warning Metadata Only — Never Content
-Third-party integrations retrieve **usage statistics and activity counts** — never document contents, message text, prompt/response text, or file contents. F7 requests only the minimum API scopes required for usage analytics.
+Third-party integrations retrieve **event metadata only** — never document contents, message text, prompt/response text, code diffs, repository contents, calendar descriptions, support conversation bodies, or file contents. F7 requests only the minimum scopes required for the configured event source.
 :::
 
 ::: info Opt-In Only
@@ -61,7 +62,7 @@ Third-party integrations are **not enabled by default**. Each integration must b
 | **Prompt and response text** | Never captured — not even with advanced features enabled |
 | **File contents** | Never read — only metadata like file count and type |
 | **Email and chat content** | Never captured — only time-in-app and domain |
-| **Screenshots** | Never transmitted or stored — if the optional vision model is enabled, frames are processed locally and immediately discarded |
+| **Screenshots** | Never transmitted off the device — if the optional vision model is enabled, frames are processed locally; current macOS capture may create a temporary OS-local PNG that is read and deleted after inference |
 | **Clipboard contents** | Never captured under any circumstances |
 | **Passwords or credentials** | Never accessed or stored |
 | **Browsing history** | Only the active domain is captured — never full URLs, paths, or page content |

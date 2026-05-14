@@ -27,8 +27,8 @@ F7 uses a **local-first architecture** designed around a core principle: process
 │                                     │   ┌───────────────────┴───────┐
 │  ✓ Tenant isolation per org         │   │  Third-Party APIs (opt-in)│
 │  ✓ Role-based access control        │   │                           │
-│  ✓ Comprehensive audit logging      │   │  ChatGPT, Microsoft 365,  │
-└───────────────┬─────────────────────┘   │  GitHub Copilot, etc.     │
+│  ✓ Comprehensive audit logging      │   │  GitHub, Jira, CI/CD,     │
+└───────────────┬─────────────────────┘   │  calendar, support, etc.  │
                 │                         │                           │
                 │                         │  ✓ Usage metadata only    │
                 │                         │  ✗ Never content          │
@@ -76,7 +76,7 @@ What's transmitted is a structured record — app names, timing, counts, and cla
 
 ## Third-Party Integrations (Opt-In)
 
-Organizations can optionally connect F7 to third-party apps (e.g., ChatGPT, Microsoft 365, GitHub Copilot, Grammarly) via their APIs. When enabled, F7 retrieves **usage metadata** — session counts, feature adoption, seat utilization — never document contents, message text, or prompts. Each integration must be explicitly authorized by an administrator.
+Organizations can optionally connect F7 to implemented event integrations such as source control, issue/project, CI/CD, calendar, feature-flag, support, and Generic webhook sources. When enabled, F7 retrieves **event metadata** — never document contents, message text, prompts, code diffs, repository contents, or support conversation bodies. Each integration must be explicitly authorized by an administrator.
 
 ## Step 4: Scoring & Analytics
 

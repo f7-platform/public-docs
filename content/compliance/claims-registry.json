@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle.",
   "version": "1",
-  "updated": "2025-06-01",
-  "audit_run": 28,
+  "updated": "2026-05-14",
+  "audit_run": 30,
   "claims": [
     {
       "id": "CLM-001",
@@ -116,6 +116,65 @@
       "release_status": "not-available",
       "soc2_criteria": [],
       "notes": "FORBIDDEN CLAIM: personal-dashboard feature is not yet shipped. This claim must never appear in public-docs. Checked by scripts/check-public-claims.sh."
+    },
+    {
+      "id": "CLM-010",
+      "summary": "Implemented third-party event integration provider scope",
+      "source_files": [
+        "content/overview/data-we-collect.md",
+        "content/overview/how-it-works.md",
+        "content/privacy/data-collection.md",
+        "content/legal/privacy-policy.md",
+        "content/legal/subprocessors.md",
+        "content/compliance/gdpr.md"
+      ],
+      "evidence": [
+        "fseven-controller: server/src/integrations/models.rs — implemented event/webhook source enum",
+        "public-docs: content/privacy/data-collection.md — public provider list scoped to implemented event/webhook sources"
+      ],
+      "audit_refs": ["PUBDOC-1"],
+      "release_status": "active",
+      "soc2_criteria": [],
+      "notes": "Do not add AI/productivity/writing/dev-tool API provider examples unless the controller integration model implements them."
+    },
+    {
+      "id": "CLM-011",
+      "summary": "Mode 3 frames stay local and current macOS capture may use temporary OS-local PNG files",
+      "source_files": [
+        "content/overview/data-we-collect.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/legal/privacy-policy.md",
+        "content/legal/dpa.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/ccpa.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-agent: agent-core/src/lifecycle/vision_capture.rs — current macOS path uses a temporary PNG before read/remove cleanup",
+        "public-docs: privacy and legal pages disclose local-only processing plus temporary OS-local PNG behavior"
+      ],
+      "audit_refs": ["PUBDOC-2", "AGT-LOCAL-2"],
+      "release_status": "active",
+      "soc2_criteria": ["P3.1"],
+      "notes": "Do not claim frames are never written to disk until the macOS implementation removes the temporary PNG path."
+    },
+    {
+      "id": "CLM-012",
+      "summary": "Trust Center dependency audit runs before GitHub Pages publication",
+      "source_files": [
+        "content/security/index.md",
+        "content/compliance/index.md",
+        "content/compliance/soc2.md"
+      ],
+      "evidence": [
+        "public-docs: .github/workflows/deploy.yml — runs npm audit --audit-level=moderate before claim checks and build",
+        "public-docs: scripts/check-public-claims.sh — rejects overbroad every-commit/every-code-change dependency-audit claims"
+      ],
+      "audit_refs": ["PDC5", "PUBDOC-3"],
+      "release_status": "active",
+      "soc2_criteria": ["CC8.1", "CC9.1"],
+      "notes": "This claim is scoped to the public-docs Trust Center deploy workflow; product dependency evidence is release-scoped in owning repos."
     }
   ]
 }

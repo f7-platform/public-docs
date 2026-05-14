@@ -11,6 +11,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONTENT_DIR="$ROOT_DIR/content"
 REGISTRY="$CONTENT_DIR/compliance/claims-registry.json"
+EXPECTED_AUDIT_RUN=30
 
 failures=0
 
@@ -22,6 +23,16 @@ check_absent() {
   # Exclude the registry file itself (it intentionally documents forbidden claims)
   if grep -RInE --exclude="claims-registry.json" -- "$pattern" "$CONTENT_DIR"; then
     printf '\nERROR: forbidden public-docs claim found: %s\n' "$label" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+check_repo_absent() {
+  local label="$1"
+  local pattern="$2"
+  shift 2
+  if grep -RInE -- "$pattern" "$@"; then
+    printf '\nERROR: forbidden public-docs repo claim found: %s\n' "$label" >&2
     failures=$((failures + 1))
   fi
 }
@@ -72,6 +83,11 @@ check_absent \
   "stale audit run reference (Run 27b)" \
   'Run 27b security audit baseline'
 
+check_repo_absent \
+  "stale latest-audit reference" \
+  'Run 27b security audit baseline|Current latest security audit is Run 27b|most recently Run 29|Run 29 security audit baseline|Public audit references now use Run 27b' \
+  "$CONTENT_DIR" "$ROOT_DIR/CLAUDE.md" "$ROOT_DIR/CHANGELOG.md"
+
 # Blanket URL-path not-captured wording — the AI-provider path IS captured for
 # classification; any document that says "URL path" is in the "Not captured" list
 # contradicts this and must be removed.
@@ -107,9 +123,39 @@ check_present "root CONTRIBUTING" "$ROOT_DIR/CONTRIBUTING.md"
 check_present "root SECURITY" "$ROOT_DIR/SECURITY.md"
 
 # ── claims registry validation ────────────────────────────────────────────────
-# Verify every "not-available" claim in the registry is absent from content.
-# Requires jq; skip with a warning if not installed.
+# Verify registry freshness, required material claim registrations, and every
+# "not-available" claim in the registry. jq is required so CI cannot silently
+# skip deep claim validation.
 if command -v jq &>/dev/null; then
+  registry_audit_run=$(jq -r '.audit_run // empty' "$REGISTRY")
+  if [[ "$registry_audit_run" != "$EXPECTED_AUDIT_RUN" ]]; then
+    printf '\nERROR: claims registry audit_run must be %s, got %s\n' "$EXPECTED_AUDIT_RUN" "${registry_audit_run:-<missing>}" >&2
+    failures=$((failures + 1))
+  fi
+
+  require_claim_registration() {
+    local claim_id="$1"
+    local audit_ref="$2"
+    local source_file="$3"
+    if ! jq -e --arg id "$claim_id" --arg ref "$audit_ref" --arg src "$source_file" '
+      .claims[]
+      | select(.id == $id)
+      | select(.release_status == "active")
+      | select((.audit_refs // []) | index($ref))
+      | select((.source_files // []) | index($src))
+      | select((.evidence // []) | length > 0)
+    ' "$REGISTRY" >/dev/null; then
+      printf '\nERROR: claims registry missing active evidence registration: %s (%s, %s)\n' "$claim_id" "$audit_ref" "$source_file" >&2
+      failures=$((failures + 1))
+    fi
+  }
+
+  require_claim_registration "CLM-010" "PUBDOC-1" "content/privacy/data-collection.md"
+  require_claim_registration "CLM-011" "PUBDOC-2" "content/privacy/index.md"
+  require_claim_registration "CLM-011" "AGT-LOCAL-2" "content/legal/privacy-policy.md"
+  require_claim_registration "CLM-012" "PUBDOC-3" "content/compliance/soc2.md"
+  require_claim_registration "CLM-012" "PDC5" "content/security/index.md"
+
   while IFS= read -r claim_id; do
     # Each not-available claim id is checked via its "summary" keyword
     summary=$(jq -r --arg id "$claim_id" \
@@ -125,7 +171,8 @@ if command -v jq &>/dev/null; then
   done < <(jq -r '.claims[] | select(.release_status == "not-available") | .id' "$REGISTRY")
   printf 'claims registry validation: OK (%s)\n' "$REGISTRY"
 else
-  printf 'WARNING: jq not installed — skipping claims registry deep validation\n' >&2
+  printf '\nERROR: jq is required for claims registry validation\n' >&2
+  failures=$((failures + 1))
 fi
 
 # ── result ────────────────────────────────────────────────────────────────────

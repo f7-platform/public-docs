@@ -12,10 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Security architecture: qualified SPKI certificate pinning claims (infrastructure present, operational pins per-deployment)
 - Encryption: clarified certificate pinning status
 - Agent security: added note on signing key management in update verification pipeline
-- Public audit references now use Run 27b as the latest security audit baseline.
+- Public audit references now use Run 30 as the latest security audit baseline.
+- Claims registry updated to Run 30 and now registers material integration provider, Mode 3 capture, and Trust Center dependency-audit claims.
 
 ### Added
 - Public-claim checks for unimplemented third-party API integration examples and absolute Mode 3 no-disk/immediate-discard wording.
+- Public-claim checks for stale audit-run references and missing evidence registrations for material public claims.
 
 ### Added
 - This CHANGELOG file to track documentation changes

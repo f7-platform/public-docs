@@ -141,7 +141,7 @@ These are absolute guarantees about data F7 will never collect:
 - **Prompt and response text** from any AI tool
 - **File contents** of any kind
 - **Email or chat message content**
-- **Screenshots transmitted off-device** (even when the optional vision model is enabled — frames are processed locally; current macOS builds may use a temporary OS-local PNG that is read and deleted after inference)
+- **Screenshots transmitted off-device** (even when the optional vision model is enabled — frames are processed locally; current macOS builds stream capture bytes through stdout and scrub stale legacy vision temp files on startup)
 - **Clipboard contents**
 - **Passwords, tokens, or credentials**
 - **Full browsing URLs** — only the destination domain, optional API endpoint path (e.g. `/v1/chat/completions`) for AI-provider classification, and approximate byte counts. Never query strings, request bodies, or response content.

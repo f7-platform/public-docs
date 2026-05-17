@@ -8,7 +8,7 @@ The agent does not ship with any pre-configured credentials. Instead, it goes th
 
 1. An administrator creates a time-limited enrollment token with a maximum number of uses.
 2. The agent presents this token to the F7 Controller during first-run setup.
-3. The controller verifies the token and issues a unique device identity (Ed25519 key pair).
+3. The controller verifies the token and issues a unique device identity with a per-device credential and signed access token.
 4. The agent stores the device credentials in the OS-native secure credential store (Keychain, Credential Manager, or Secret Service).
 5. The enrollment token's use count is decremented. Once exhausted or expired, it cannot be reused.
 

@@ -29,7 +29,7 @@ Under CCPA's data category framework:
 | **Professional or employment info** | Work patterns, productivity metrics (agent-captured metadata); job title, department, employment type, hire date (employer-provided directory or file-based data) |
 | **Geolocation** | Not collected |
 | **Biometric information** | Not collected |
-| **Audio, electronic, visual** | Not collected for transmission — no recordings or uploads. Mode 3 (opt-in) processes screen frames locally on-device; frames never leave the device, and current macOS builds may use a temporary OS-local PNG that is read and deleted after inference. |
+| **Audio, electronic, visual** | Not collected for transmission — no recordings or uploads. Mode 3 (opt-in) processes screen frames locally on-device; frames never leave the device, and current macOS builds stream capture bytes through stdout for local inference while scrubbing stale legacy vision temp files on startup. |
 | **Protected classifications** | Not collected |
 
 ## Service Provider Obligations
@@ -48,7 +48,7 @@ CCPA §1798.150 requires "reasonable security procedures and practices." F7 exce
 - **AES-256-GCM** encryption at rest
 - **TLS 1.3** encryption in transit
 - **Argon2id** password hashing
-- **Ed25519** cryptographic authentication
+- **EdDSA-signed** agent JWTs with per-device credentials
 - **Row-Level Security** for multi-tenant isolation
 - **Append-only audit logging** with 24-month retention
 - **Memory-safe implementation** (Rust)

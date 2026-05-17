@@ -19,7 +19,7 @@ F7 uses distinct authentication mechanisms for different trust levels:
 
 | Actor | Method |
 |-------|--------|
-| **Device agent** | Ed25519 signed JWT with per-device cryptographic credentials |
+| **Device agent** | EdDSA-signed JWT with per-device credentials |
 | **Admin user (password)** | Argon2id password hash + session tokens (HttpOnly, Secure, SameSite cookies) |
 | **Admin user (SSO)** | OAuth 2.0 / OIDC authorization code flow with PKCE |
 | **Personal dashboard (planned)** | Agent-issued JWT scoped to individual's own data |

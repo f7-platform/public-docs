@@ -29,6 +29,8 @@ jobs:
 
       - run: npm audit --audit-level=moderate
 
+      - run: npm run test:claims
+
       - run: npm run check:claims
 
       - run: npm run build

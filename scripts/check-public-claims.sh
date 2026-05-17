@@ -8,10 +8,12 @@
 #   1 — one or more forbidden claims found
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DEFAULT_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="${PUBLIC_DOCS_ROOT:-$DEFAULT_ROOT_DIR}"
+PLATFORM_ROOT="${PUBLIC_DOCS_PLATFORM_ROOT:-$(cd "$ROOT_DIR/.." && pwd)}"
 CONTENT_DIR="$ROOT_DIR/content"
 REGISTRY="$CONTENT_DIR/compliance/claims-registry.json"
-EXPECTED_AUDIT_RUN=30
+EXPECTED_AUDIT_RUN="${PUBLIC_DOCS_EXPECTED_AUDIT_RUN:-30}"
 
 failures=0
 
@@ -44,6 +46,79 @@ check_present() {
     printf '\nERROR: required public-docs file missing: %s (%s)\n' "$label" "$file" >&2
     failures=$((failures + 1))
   fi
+}
+
+trim() {
+  sed 's/^[[:space:]]*//;s/[[:space:]]*$//' <<<"$1"
+}
+
+record_failure() {
+  printf '\nERROR: %s\n' "$1" >&2
+  failures=$((failures + 1))
+}
+
+validate_repo_relative_path() {
+  local claim_id="$1"
+  local repo="$2"
+  local rel_path="$3"
+  local label="$4"
+  local target
+
+  rel_path="$(trim "$rel_path")"
+
+  if [[ -z "$rel_path" || "$rel_path" == /* || "$rel_path" == *..* ]]; then
+    record_failure "claims registry $label for $claim_id is not a safe repo-relative path: ${repo}:${rel_path}"
+    return
+  fi
+
+  if [[ "$rel_path" == fseven-*/* || "$rel_path" == public-*/* ]]; then
+    record_failure "claims registry $label for $claim_id crosses repo boundary: ${repo}:${rel_path}"
+    return
+  fi
+
+  if [[ "$repo" == "public-docs" ]]; then
+    target="$ROOT_DIR/$rel_path"
+  else
+    target="$PLATFORM_ROOT/$repo/$rel_path"
+  fi
+
+  if [[ ! -e "$target" ]]; then
+    record_failure "claims registry $label for $claim_id points to missing path: ${repo}:${rel_path} ($target)"
+  fi
+}
+
+validate_evidence_path() {
+  local claim_id="$1"
+  local evidence="$2"
+  local anchor repo rel_path
+
+  anchor="${evidence%% — *}"
+  anchor="$(trim "$anchor")"
+
+  if [[ "$anchor" == NOTE:* ]]; then
+    return
+  fi
+
+  if [[ "$anchor" == *:* ]]; then
+    repo="$(trim "${anchor%%:*}")"
+    rel_path="$(trim "${anchor#*:}")"
+  elif [[ "$anchor" == fseven-*/* || "$anchor" == public-*/* ]]; then
+    repo="${anchor%%/*}"
+    rel_path="${anchor#*/}"
+  else
+    repo="public-docs"
+    rel_path="$anchor"
+  fi
+
+  case "$repo" in
+    fseven-agent|fseven-controller|fseven-schemas|fseven-docs|fseven-atlas|fseven-atlas-mvp|public-agent-binaries|public-docs) ;;
+    *)
+      record_failure "claims registry evidence for $claim_id uses unknown repo boundary: $repo"
+      return
+      ;;
+  esac
+
+  validate_repo_relative_path "$claim_id" "$repo" "$rel_path" "evidence path"
 }
 
 # ── forbidden claims ──────────────────────────────────────────────────────────
@@ -155,6 +230,25 @@ if command -v jq &>/dev/null; then
   require_claim_registration "CLM-011" "AGT-LOCAL-2" "content/legal/privacy-policy.md"
   require_claim_registration "CLM-012" "PUBDOC-3" "content/compliance/soc2.md"
   require_claim_registration "CLM-012" "PDC5" "content/security/index.md"
+
+  while IFS=$'\t' read -r claim_id source_file; do
+    validate_repo_relative_path "$claim_id" "public-docs" "$source_file" "source_file"
+  done < <(jq -r '.claims[] | .id as $id | (.source_files // [])[] | [$id, .] | @tsv' "$REGISTRY")
+
+  while IFS=$'\t' read -r claim_id release_status evidence_count audit_ref_count; do
+    if [[ "$release_status" == "active" || "$release_status" == "in-progress" ]]; then
+      if (( evidence_count == 0 )); then
+        record_failure "active public claim $claim_id has no registry evidence"
+      fi
+      if (( audit_ref_count == 0 )); then
+        record_failure "active public claim $claim_id has no audit_refs traceability"
+      fi
+    fi
+  done < <(jq -r '.claims[] | [.id, (.release_status // ""), ((.evidence // []) | length), ((.audit_refs // []) | length)] | @tsv' "$REGISTRY")
+
+  while IFS=$'\t' read -r claim_id evidence; do
+    validate_evidence_path "$claim_id" "$evidence"
+  done < <(jq -r '.claims[] | .id as $id | (.evidence // [])[] | [$id, .] | @tsv' "$REGISTRY")
 
   while IFS= read -r claim_id; do
     # Each not-available claim id is checked via its "summary" keyword

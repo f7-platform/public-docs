@@ -10,8 +10,8 @@
       "summary": "Metadata-only capture — no content stored",
       "source_files": ["content/overview/data-we-collect.md", "content/privacy/data-collection.md"],
       "evidence": [
-        "fseven-agent: agent-core/src/capture/ — only activity metadata events emitted",
-        "fseven-controller: server/src/ingest/ — no content fields accepted in schema"
+        "fseven-agent: agent-core/src/event_log.rs — activity/event metadata structures",
+        "fseven-controller: server/src/services/ingestion.rs — telemetry ingestion uses structured activity fields"
       ],
       "audit_refs": ["AO1", "AO3"],
       "release_status": "active",
@@ -20,11 +20,21 @@
     },
     {
       "id": "CLM-002",
-      "summary": "Ed25519 cryptographic device authentication",
-      "source_files": ["content/security/encryption.md", "content/security/authorization.md"],
+      "summary": "EdDSA-signed device JWTs with per-device credentials",
+      "source_files": [
+        "content/security/encryption.md",
+        "content/security/authorization.md",
+        "content/security/index.md",
+        "content/security/architecture.md",
+        "content/security/agent-security.md",
+        "content/compliance/soc2.md",
+        "content/legal/dpa.md",
+        "content/compliance/ccpa.md"
+      ],
       "evidence": [
-        "fseven-controller: server/src/auth/device.rs — Ed25519 key pair enrollment",
-        "fseven-schemas: schema.sql — devices.public_key column"
+        "fseven-controller: server/src/auth/jwt.rs — EdDSA-signed agent access tokens",
+        "fseven-controller: server/src/auth/tokens.rs — per-device credentials are generated and Argon2id-verified",
+        "fseven-agent: agent-core/src/auth.rs — agent stores device credential and refresh/access-token lifecycle"
       ],
       "audit_refs": ["TH2", "TH3"],
       "release_status": "active",
@@ -36,7 +46,7 @@
       "summary": "Argon2id admin password hashing",
       "source_files": ["content/security/authorization.md"],
       "evidence": [
-        "fseven-controller: server/src/auth/password.rs — argon2 crate, Argon2id variant"
+        "fseven-controller: server/src/auth/tokens.rs — argon2 crate, Argon2 credential hashing and verification"
       ],
       "audit_refs": ["TH3"],
       "release_status": "active",
@@ -48,8 +58,8 @@
       "summary": "TLS 1.3 with HSTS and certificate pinning for agent connections",
       "source_files": ["content/security/encryption.md", "content/security/architecture.md"],
       "evidence": [
-        "fseven-controller: server/src/middleware/security_headers.rs — HSTS header",
-        "fseven-agent: agent-core/src/network/ — TLS configuration"
+        "fseven-controller: server/src/middleware/security.rs — HSTS header",
+        "fseven-agent: agent-core/src/config_poller/security.rs — pinned HTTP client and TLS configuration"
       ],
       "audit_refs": ["TH5"],
       "release_status": "active",
@@ -62,7 +72,7 @@
       "source_files": ["content/security/authorization.md"],
       "evidence": [
         "fseven-controller: openfga/ — authorization model",
-        "fseven-controller: server/src/authz/ — policy enforcement"
+        "fseven-controller: server/src/auth/authorization.rs — policy enforcement and obligations"
       ],
       "audit_refs": ["AO2"],
       "release_status": "active",
@@ -74,7 +84,7 @@
       "summary": "k-anonymity for behavioral data queries",
       "source_files": ["content/security/authorization.md", "content/overview/behavioral-intelligence.md"],
       "evidence": [
-        "fseven-controller: server/src/query/anonymity.rs — k-anonymity threshold enforcement"
+        "fseven-controller: server/src/middleware/obligations.rs — k-anonymity threshold enforcement"
       ],
       "audit_refs": ["AO3"],
       "release_status": "active",
@@ -139,7 +149,7 @@
     },
     {
       "id": "CLM-011",
-      "summary": "Mode 3 frames stay local and current macOS capture may use temporary OS-local PNG files",
+      "summary": "Mode 3 frames stay local and current macOS capture streams PNG bytes through stdout",
       "source_files": [
         "content/overview/data-we-collect.md",
         "content/privacy/index.md",
@@ -151,13 +161,14 @@
         "content/faq.md"
       ],
       "evidence": [
-        "fseven-agent: agent-core/src/lifecycle/vision_capture.rs — current macOS path uses a temporary PNG before read/remove cleanup",
-        "public-docs: privacy and legal pages disclose local-only processing plus temporary OS-local PNG behavior"
+        "fseven-agent: agent-core/src/lifecycle/vision_capture.rs — macOS screencapture uses stdout and startup scrub removes stale legacy temp files",
+        "public-docs: content/privacy/data-collection.md — discloses local-only processing plus stdout capture behavior",
+        "public-docs: content/legal/privacy-policy.md — discloses startup scrub for stale legacy vision temp files"
       ],
       "audit_refs": ["PUBDOC-2", "AGT-LOCAL-2"],
       "release_status": "active",
       "soc2_criteria": ["P3.1"],
-      "notes": "Do not claim frames are never written to disk until the macOS implementation removes the temporary PNG path."
+      "notes": "Current source uses screencapture stdout on macOS and retains stale legacy temp-file scrub for crash leftovers from older builds."
     },
     {
       "id": "CLM-012",

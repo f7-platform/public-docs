@@ -7,6 +7,7 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "check:claims": "bash scripts/check-public-claims.sh",
+    "test:claims": "bash scripts/test-public-claims-checker.sh",
     "preview": "vitepress preview"
   },
   "repository": {

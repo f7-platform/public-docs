@@ -52,7 +52,7 @@ These integrations retrieve event metadata only — never document contents, mes
 - Full URLs, query parameters, or page content
 - Personal app activity (for user-excluded apps)
 
-**Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are never transmitted off the device. Current macOS builds may use a temporary OS-local PNG during capture; the agent reads and deletes that file after inference, and organizations should treat crash-left temp files as local endpoint data covered by device controls.
+**Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are never transmitted off the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy `fseven-vision-*.png` temp files on startup, so organizations should still treat endpoint-local screen data as covered by device controls.
 
 For the complete data inventory, see [Data Collection Details](/privacy/data-collection).
 

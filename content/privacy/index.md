@@ -8,7 +8,7 @@ The F7 agent captures work-pattern metadata — application names, activity coun
 
 This isn't a policy choice. The agent's code physically does not have the capability to read prompt text, file contents, or clipboard data.
 
-**Vision (Mode 3 — Interpret) caveat.** When an organization explicitly enables Mode 3, the agent processes screen frames locally for an on-device vision-language model. Frames are never uploaded and never leave the device. Current macOS builds may use a temporary OS-local PNG during capture; the agent reads and deletes that file after inference. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
+**Vision (Mode 3 — Interpret) caveat.** When an organization explicitly enables Mode 3, the agent processes screen frames locally for an on-device vision-language model. Frames are never uploaded and never leave the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
 
 ## 2. Local-First Processing
 

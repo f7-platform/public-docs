@@ -7,7 +7,7 @@ F7 uses modern, industry-standard cryptographic algorithms throughout the platfo
 | Purpose | Algorithm | Standard |
 |---------|-----------|----------|
 | Data in transit | TLS 1.3 | IETF RFC 8446 |
-| Digital signatures (agent auth) | Ed25519 | IETF RFC 8032 |
+| Agent access-token signatures | EdDSA | IETF RFC 8032 |
 | Encryption at rest (server) | AES-256-GCM | NIST SP 800-38D |
 | Encryption at rest (agent) | AES-256-CBC + HMAC (SQLCipher) | NIST SP 800-38A |
 | Password hashing | Argon2id | IETF RFC 9106 |

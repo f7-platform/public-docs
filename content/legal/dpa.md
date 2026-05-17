@@ -23,7 +23,7 @@ F7 processes the following categories of Personal Data:
 - Work-pattern metadata (application usage, session timing, AI tool interaction metadata)
 - Aggregated scoring data
 
-F7 does **not** transmit: content data, communications, screenshots, file contents, or browsing history off the device. Mode 3 — Interpret (opt-in) processes screen frames locally on the employee's device; frames are never uploaded to the controller and never leave the device. Current macOS builds may use a temporary OS-local PNG during capture, which the agent reads and deletes after inference.
+F7 does **not** transmit: content data, communications, screenshots, file contents, or browsing history off the device. Mode 3 — Interpret (opt-in) processes screen frames locally on the employee's device; frames are never uploaded to the controller and never leave the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy `fseven-vision-*.png` temp files on startup.
 
 ## 3. Processing Instructions
 
@@ -41,7 +41,7 @@ F7 implements the following technical and organizational measures:
 | **Encryption in transit** | TLS 1.3 for all communications |
 | **Encryption at rest** | AES-256-GCM (server); AES-256 (agent local storage) |
 | **Access control** | Role-based access (four roles); row-level database tenant isolation |
-| **Authentication** | Ed25519 cryptographic device auth; Argon2id admin password hashing |
+| **Authentication** | EdDSA-signed agent JWTs with per-device credentials; Argon2id admin password hashing |
 | **Audit logging** | Append-only log with 24-month retention |
 | **Local processing** | On-device AI model processes data before transmission |
 | **Memory safety** | Rust-based implementation eliminates common vulnerability classes |

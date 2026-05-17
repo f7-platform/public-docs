@@ -62,7 +62,7 @@ Third-party integrations are **not enabled by default**. Each integration must b
 | **Prompt and response text** | Never captured — not even with advanced features enabled |
 | **File contents** | Never read — only metadata like file count and type |
 | **Email and chat content** | Never captured — only time-in-app and domain |
-| **Screenshots** | Never transmitted off the device — if the optional vision model is enabled, frames are processed locally; current macOS capture may create a temporary OS-local PNG that is read and deleted after inference |
+| **Screenshots** | Never transmitted off the device — if the optional vision model is enabled, frames are processed locally; current macOS capture streams PNG bytes through stdout and the agent scrubs stale legacy temp files on startup |
 | **Clipboard contents** | Never captured under any circumstances |
 | **Passwords or credentials** | Never accessed or stored |
 | **Browsing history** | Only the active destination domain is captured, with AI-provider API endpoint paths used for classification — never full URLs, query parameters, request bodies, response content, or page content |

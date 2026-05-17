@@ -15,7 +15,7 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 | Layer | What It Does |
 |-------|-------------|
 | **1. Transport Security** | TLS 1.3 for all communications. HSTS enforced. Certificate pinning for agent connections. |
-| **2. Authentication** | Per-device Ed25519 credentials for agents. Argon2id passwords or OAuth 2.0/OIDC SSO for admins. IdP directory sync with auto-provisioning. |
+| **2. Authentication** | EdDSA-signed agent JWTs with per-device credentials. Argon2id passwords or OAuth 2.0/OIDC SSO for admins. IdP directory sync with auto-provisioning. |
 | **3. Authorization** | Hybrid ReBAC+ABAC policy decision point. Four roles with manager-chain scoping, purpose-specific enforcement, app-category delegation, and k-anonymity. |
 | **4. Database Isolation** | Row-Level Security on every org-scoped table with read and write enforcement. |
 | **5. Audit & Monitoring** | Immutable, trigger-protected audit log. Cannot be modified or deleted even by the application. |

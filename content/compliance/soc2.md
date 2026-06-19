@@ -63,7 +63,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 
 F7 maintains an ongoing security program:
 
-- **Run 30 security audit baseline** with documented findings, remediation, and delta tracking
+- **Run 36 security audit baseline** with documented findings, remediation, and delta tracking
 - **Automated Trust Center dependency auditing** (`npm audit --audit-level=moderate`) before GitHub Pages publication
 - **Memory-safe codebase** (Rust) eliminating buffer overflows, use-after-free, and data races at compile time
 - **Third-party penetration testing** planned

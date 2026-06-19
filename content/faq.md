@@ -48,7 +48,7 @@ Prompt text, file contents, emails, chat messages, screenshots, clipboard conten
 See [Encryption](/security/encryption) for details.
 
 ### Is F7 built with security in mind?
-F7 is written in **Rust**, a memory-safe language that eliminates entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time. The platform uses modern cryptography throughout and is tracked through an ongoing security audit program (most recently Run 30).
+F7 is written in **Rust**, a memory-safe language that eliminates entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time. The platform uses modern cryptography throughout and is tracked through an ongoing security audit program (most recently Run 36).
 
 ### Where is my data stored?
 For cloud deployments, data is stored in the United States on Railway infrastructure with PostgreSQL. For on-premise deployments, data stays entirely in your infrastructure. See [Sub-processors](/legal/subprocessors).

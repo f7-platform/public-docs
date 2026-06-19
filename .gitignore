@@ -2,3 +2,8 @@ node_modules/
 .vitepress/cache/
 .vitepress/dist/
 .DS_Store
+
+# CI is npm-authoritative (deploy.yml uses `npm ci` against package-lock.json).
+# Keep a single lockfile to avoid divergent dependency resolution (PB10).
+pnpm-lock.yaml
+yarn.lock

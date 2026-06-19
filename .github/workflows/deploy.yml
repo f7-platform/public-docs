@@ -30,12 +30,13 @@ jobs:
       # Gate on advisories in dependencies we actually ship. This is a static
       # VitePress site with zero production dependencies, so --omit=dev scopes
       # the runtime-security gate to what reaches users (currently nothing).
-      # The remaining build-time advisories (esbuild GHSA-gv7w-rqvm-qjhr/
-      # GHSA-67mh-4wv8-2f99, vite GHSA-4w7w-66w2-5vf9, vitepress transitive)
-      # have fixAvailable=false upstream and are tracked as audit findings
-      # DEP6 / PB1 (run-35). postcss GHSA-qx2v-qp2m-jg93 is remediated via the
-      # package.json `overrides` pin to ^8.5.10. Run `npm audit` (all deps) to
-      # review the build-time tail.
+      # The full build-time tail is now also clean: the prior advisories
+      # (esbuild GHSA-67mh-4wv8-2f99, vite GHSA-4w7w-66w2-5vf9 /
+      # GHSA-v6wh-96g9-6wx3 / GHSA-fx2h-pf6j-xcff, vitepress transitive) are
+      # remediated via the package.json `overrides` pin to vite ^6.4.3 (which
+      # pulls esbuild >=0.25), and postcss GHSA-qx2v-qp2m-jg93 via the
+      # postcss ^8.5.10 pin — addressing audit findings DEP6 / PB1 (run-36).
+      # `npm audit` (all deps) currently reports 0 vulnerabilities.
       - run: npm audit --omit=dev --audit-level=moderate
 
       - run: npm run test:claims

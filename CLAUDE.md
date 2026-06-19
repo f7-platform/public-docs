@@ -17,7 +17,7 @@
    - Internal architecture decisions or ADR references
 3. **No unimplemented integrations.** Only list integrations that exist in code (e.g., HRIS providers are NOT implemented — do not list Workday, BambooHR, etc.).
 4. **Compensation data ingestion is not implemented.** Do not reference salary, stock value, or benefits value fields.
-5. **Audit count:** Current latest security audit is Run 30. Update this reference when new runs are added.
+5. **Audit count:** Current latest security audit is Run 36. Update this reference (and the registry `audit_run`, `EXPECTED_AUDIT_RUN`, and public "most recently Run N" wording) when new runs are added.
 6. **Cross-check with internal docs:** The authoritative security documentation lives in `fseven-docs/docs/security/`. Public docs should be a simplified, non-proprietary subset.
 
 ## Verification Sources
@@ -33,10 +33,13 @@
 
 ## Pre-Push CI Gate
 
-**Before pushing any changes**, verify the VitePress site builds without errors:
+**Before pushing any changes**, verify the VitePress site builds without errors.
+CI (`.github/workflows/deploy.yml`) is **npm-authoritative** (`npm ci` against
+`package-lock.json`), so use npm locally too — do not commit a `pnpm-lock.yaml`
+(it is git-ignored to keep a single authoritative lockfile):
 
 ```bash
-pnpm install && pnpm check:claims && pnpm build
+npm ci && npm run test:claims && npm run check:claims && npm run build
 ```
 
 Never push content that breaks the docs build. Fix locally first — do not iterate on CI remotely.

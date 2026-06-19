@@ -13,7 +13,7 @@ ROOT_DIR="${PUBLIC_DOCS_ROOT:-$DEFAULT_ROOT_DIR}"
 PLATFORM_ROOT="${PUBLIC_DOCS_PLATFORM_ROOT:-$(cd "$ROOT_DIR/.." && pwd)}"
 CONTENT_DIR="$ROOT_DIR/content"
 REGISTRY="$CONTENT_DIR/compliance/claims-registry.json"
-EXPECTED_AUDIT_RUN="${PUBLIC_DOCS_EXPECTED_AUDIT_RUN:-30}"
+EXPECTED_AUDIT_RUN="${PUBLIC_DOCS_EXPECTED_AUDIT_RUN:-36}"
 
 failures=0
 
@@ -152,15 +152,15 @@ check_absent \
   "open-source license overclaim" \
   'fully open.source|100% open.source|open source forever'
 
-# Stale audit run reference — must not cite Run 27b as the current baseline.
-# Update to the most recent completed run before publishing.
+# Stale audit run reference — must not cite a superseded run as the current
+# baseline. Update to the most recent completed run before publishing.
 check_absent \
   "stale audit run reference (Run 27b)" \
   'Run 27b security audit baseline'
 
 check_repo_absent \
   "stale latest-audit reference" \
-  'Run 27b security audit baseline|Current latest security audit is Run 27b|most recently Run 29|Run 29 security audit baseline|Public audit references now use Run 27b' \
+  'Run 27b security audit baseline|Current latest security audit is Run 27b|most recently Run 29|Run 29 security audit baseline|Public audit references now use Run 27b|Run 30 security audit baseline|Current latest security audit is Run 30|most recently Run 30|Public audit references now use Run 30' \
   "$CONTENT_DIR" "$ROOT_DIR/CLAUDE.md" "$ROOT_DIR/.github/copilot-instructions.md" "$ROOT_DIR/CHANGELOG.md"
 
 # Blanket URL-path not-captured wording — the AI-provider path IS captured for

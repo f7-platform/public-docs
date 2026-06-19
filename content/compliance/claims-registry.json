@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle.",
   "version": "1",
-  "updated": "2026-05-14",
-  "audit_run": 30,
+  "updated": "2026-06-19",
+  "audit_run": 36,
   "claims": [
     {
       "id": "CLM-001",

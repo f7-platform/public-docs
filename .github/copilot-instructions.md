@@ -6,8 +6,8 @@ See [`CLAUDE.md`](../CLAUDE.md) for the authoritative repo-level contributor gui
 
 1. **No proprietary details.** Do not expose model names, rate-limit numbers, crate names, endpoint paths, or internal error codes.
 2. **No unimplemented integrations.** If a feature is not implemented in `fseven-controller` / `fseven-agent`, do not document it as a capability.
-3. **Latest security audit = Run 30**. Update both this file and CLAUDE.md when a new run completes.
-4. **CI gate:** `pnpm install && pnpm check:claims && pnpm build` must succeed before any PR merges.
+3. **Latest security audit = Run 36**. Update this file, CLAUDE.md, `content/compliance/claims-registry.json` (`audit_run`), `scripts/check-public-claims.sh` (`EXPECTED_AUDIT_RUN`), and any public "most recently Run N" wording when a new run completes.
+4. **CI gate:** `npm ci && npm run test:claims && npm run check:claims && npm run build` must succeed before any PR merges. CI is npm-authoritative (`package-lock.json`); do not commit a `pnpm-lock.yaml` (it is git-ignored).
 5. **Cross-check:** Authoritative technical docs live in `fseven-docs/docs/security/`. Public docs are a simplified subset.
 
 ## File Layout

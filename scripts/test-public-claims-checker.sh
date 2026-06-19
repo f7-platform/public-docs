@@ -39,7 +39,7 @@ build_fixture() {
 
   cat >"$docs_root/content/compliance/claims-registry.json" <<'JSON'
 {
-  "audit_run": 30,
+  "audit_run": 36,
   "claims": [
     {
       "id": "CLM-010",

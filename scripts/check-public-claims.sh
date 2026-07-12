@@ -13,7 +13,24 @@ ROOT_DIR="${PUBLIC_DOCS_ROOT:-$DEFAULT_ROOT_DIR}"
 PLATFORM_ROOT="${PUBLIC_DOCS_PLATFORM_ROOT:-$(cd "$ROOT_DIR/.." && pwd)}"
 CONTENT_DIR="$ROOT_DIR/content"
 REGISTRY="$CONTENT_DIR/compliance/claims-registry.json"
-EXPECTED_AUDIT_RUN="${PUBLIC_DOCS_EXPECTED_AUDIT_RUN:-36}"
+
+# ── audit-run baseline: SINGLE SOURCE OF TRUTH ────────────────────────────────
+# The current audit-run baseline is declared in exactly one place:
+#
+#     content/compliance/claims-registry.json  →  .audit_run
+#
+# Nothing else in this repo may hardcode it. Every other "Run N" on the live
+# public surface is a *derived* mention and is enforced against this value by
+# check_audit_run_baseline() below, so the three-places-in-lockstep bump that
+# produced a stale public baseline (PB2) cannot recur (PB12).
+#
+# To bump the baseline: scripts/bump-audit-run.sh <N>  (npm run bump:audit-run)
+AUDIT_RUN=""
+if command -v jq &>/dev/null && [[ -f "$REGISTRY" ]]; then
+  AUDIT_RUN="$(jq -r '.audit_run // empty' "$REGISTRY")"
+fi
+# Escape hatch for tests/CI only — never a default.
+AUDIT_RUN="${PUBLIC_DOCS_EXPECTED_AUDIT_RUN:-$AUDIT_RUN}"
 
 failures=0
 
@@ -25,16 +42,6 @@ check_absent() {
   # Exclude the registry file itself (it intentionally documents forbidden claims)
   if grep -RInE --exclude="claims-registry.json" -- "$pattern" "$CONTENT_DIR"; then
     printf '\nERROR: forbidden public-docs claim found: %s\n' "$label" >&2
-    failures=$((failures + 1))
-  fi
-}
-
-check_repo_absent() {
-  local label="$1"
-  local pattern="$2"
-  shift 2
-  if grep -RInE -- "$pattern" "$@"; then
-    printf '\nERROR: forbidden public-docs repo claim found: %s\n' "$label" >&2
     failures=$((failures + 1))
   fi
 }
@@ -79,12 +86,102 @@ validate_repo_relative_path() {
   if [[ "$repo" == "public-docs" ]]; then
     target="$ROOT_DIR/$rel_path"
   else
-    target="$PLATFORM_ROOT/$repo/$rel_path"
+    local repo_root="$PLATFORM_ROOT/$repo"
+    if [[ ! -d "$repo_root" ]]; then
+      # This repo is public and stands alone; its sibling product repos are
+      # private and are NOT checked out in its own CI. Asserting their file
+      # paths there is unsatisfiable by construction — it made this gate fail
+      # 100% of the time in CI (and so blocked every Trust Center deploy),
+      # which carries no signal about whether the evidence anchor is correct.
+      # The shape checks above (safe relative path, no boundary crossing, known
+      # repo) still hard-fail everywhere. Path existence is asserted wherever
+      # the sibling repo IS available: the meta-repo workspace and local dev.
+      printf 'NOTICE: %s for %s not verified — %s is not checked out here (%s)\n' \
+        "$label" "$claim_id" "$repo" "$repo_root"
+      return
+    fi
+    target="$repo_root/$rel_path"
   fi
 
   if [[ ! -e "$target" ]]; then
     record_failure "claims registry $label for $claim_id points to missing path: ${repo}:${rel_path} ($target)"
   fi
+}
+
+# ── audit-run baseline enforcement (PB12) ─────────────────────────────────────
+# Every file on the *live* public surface that names a run must name the
+# baseline run. This replaces the previous hand-maintained deny-list of
+# superseded spellings ("Run 27b|Run 29|Run 30 ..."), which had to be extended
+# in lockstep on every bump and only caught runs someone remembered to add.
+# The check below catches ANY divergent run, including future ones.
+#
+# CHANGELOG.md is scanned only inside its live "[Unreleased]" section: released
+# sections are a historical record of what was true at the time, and rewriting
+# them to satisfy a current-baseline check would falsify that record (the Run 36
+# bump had to do exactly that).
+
+audit_run_surface_files() {
+  local f
+  find "$CONTENT_DIR" -type f -name '*.md' 2>/dev/null || true
+  for f in \
+    "$ROOT_DIR/CLAUDE.md" \
+    "$ROOT_DIR/.github/copilot-instructions.md" \
+    "$ROOT_DIR/README.md" \
+    "$ROOT_DIR/SECURITY.md" \
+    "$ROOT_DIR/CONTRIBUTING.md"; do
+    [[ -f "$f" ]] && printf '%s\n' "$f"
+  done
+  return 0
+}
+
+audit_run_surface_lines() {
+  # emits: <label>\t<lineno>\t<line>
+  local f label
+  while IFS= read -r f; do
+    label="${f#"$ROOT_DIR"/}"
+    awk -v label="$label" '{ printf "%s\t%d\t%s\n", label, FNR, $0 }' "$f"
+  done < <(audit_run_surface_files)
+
+  if [[ -f "$ROOT_DIR/CHANGELOG.md" ]]; then
+    awk '
+      /^## \[Unreleased\]/ { unreleased = 1; next }
+      /^## / { unreleased = 0 }
+      unreleased { printf "CHANGELOG.md [Unreleased]\t%d\t%s\n", FNR, $0 }
+    ' "$ROOT_DIR/CHANGELOG.md"
+  fi
+}
+
+check_audit_run_baseline() {
+  if [[ -z "$AUDIT_RUN" ]]; then
+    record_failure "audit-run baseline is missing: ${REGISTRY#"$ROOT_DIR"/} has no .audit_run (it is the single source of truth)"
+    return
+  fi
+
+  if [[ ! "$AUDIT_RUN" =~ ^[0-9]+[a-z]?$ ]]; then
+    record_failure "audit-run baseline is malformed: '$AUDIT_RUN' (expected a run like 36 or 27b)"
+    return
+  fi
+
+  local label lineno line cited drift=0
+  while IFS=$'\t' read -r label lineno line; do
+    while IFS= read -r cited; do
+      [[ -z "$cited" || "$cited" == "$AUDIT_RUN" ]] && continue
+      printf '  %s:%s cites Run %s, but the baseline is Run %s\n' \
+        "$label" "$lineno" "$cited" "$AUDIT_RUN" >&2
+      drift=$((drift + 1))
+    done < <(grep -oE '\bRun [0-9]+[a-z]?\b' <<<"$line" | sed 's/^Run //' || true)
+  done < <(audit_run_surface_lines)
+
+  if (( drift > 0 )); then
+    printf '\nERROR: %d public audit-run reference(s) disagree with the baseline (Run %s) declared in %s\n' \
+      "$drift" "$AUDIT_RUN" "${REGISTRY#"$ROOT_DIR"/}" >&2
+    printf '       Bump every reference in one step: npm run bump:audit-run -- <N>\n' >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  printf 'audit-run baseline: OK (Run %s, single-sourced from %s)\n' \
+    "$AUDIT_RUN" "${REGISTRY#"$ROOT_DIR"/}"
 }
 
 validate_evidence_path() {
@@ -152,16 +249,9 @@ check_absent \
   "open-source license overclaim" \
   'fully open.source|100% open.source|open source forever'
 
-# Stale audit run reference — must not cite a superseded run as the current
-# baseline. Update to the most recent completed run before publishing.
-check_absent \
-  "stale audit run reference (Run 27b)" \
-  'Run 27b security audit baseline'
-
-check_repo_absent \
-  "stale latest-audit reference" \
-  'Run 27b security audit baseline|Current latest security audit is Run 27b|most recently Run 29|Run 29 security audit baseline|Public audit references now use Run 27b|Run 30 security audit baseline|Current latest security audit is Run 30|most recently Run 30|Public audit references now use Run 30' \
-  "$CONTENT_DIR" "$ROOT_DIR/CLAUDE.md" "$ROOT_DIR/.github/copilot-instructions.md" "$ROOT_DIR/CHANGELOG.md"
+# Stale audit-run references (any superseded run cited as the current baseline,
+# anywhere on the live public surface) are caught by check_audit_run_baseline().
+check_audit_run_baseline
 
 # Blanket URL-path not-captured wording — the AI-provider path IS captured for
 # classification; any document that says "URL path" is in the "Not captured" list
@@ -203,9 +293,11 @@ check_present "root SECURITY" "$ROOT_DIR/SECURITY.md"
 # skip deep claim validation.
 if command -v jq &>/dev/null; then
   registry_audit_run=$(jq -r '.audit_run // empty' "$REGISTRY")
-  if [[ "$registry_audit_run" != "$EXPECTED_AUDIT_RUN" ]]; then
-    printf '\nERROR: claims registry audit_run must be %s, got %s\n' "$EXPECTED_AUDIT_RUN" "${registry_audit_run:-<missing>}" >&2
-    failures=$((failures + 1))
+  if [[ -z "$registry_audit_run" ]]; then
+    record_failure "claims registry is missing .audit_run — it is the single source of truth for the public audit baseline"
+  elif [[ "$registry_audit_run" != "$AUDIT_RUN" ]]; then
+    # Only reachable when PUBLIC_DOCS_EXPECTED_AUDIT_RUN overrides the registry.
+    record_failure "claims registry audit_run ($registry_audit_run) disagrees with the enforced baseline ($AUDIT_RUN)"
   fi
 
   require_claim_registration() {

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle.",
+  "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle. `audit_run` below is the SINGLE SOURCE OF TRUTH for the public audit-run baseline: no other file in this repo may hardcode it, every other public 'Run N' mention is enforced against it by scripts/check-public-claims.sh, and it is bumped with `npm run bump:audit-run -- <N>`.",
   "version": "1",
-  "updated": "2026-06-19",
+  "updated": "2026-07-12",
   "audit_run": 36,
   "claims": [
     {

@@ -3,6 +3,10 @@ name: Deploy Trust Center to GitHub Pages
 on:
   push:
     branches: [main]
+  # Run the claim gate on PRs too. Without this, a broken claim check was only
+  # discovered after merge, on main, where it silently blocked every deploy.
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +15,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -50,6 +54,8 @@ jobs:
           path: .vitepress/dist
 
   deploy:
+    # PRs validate the site and the claim gate; only main publishes.
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

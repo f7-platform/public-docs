@@ -17,7 +17,13 @@
    - Internal architecture decisions or ADR references
 3. **No unimplemented integrations.** Only list integrations that exist in code (e.g., HRIS providers are NOT implemented — do not list Workday, BambooHR, etc.).
 4. **Compensation data ingestion is not implemented.** Do not reference salary, stock value, or benefits value fields.
-5. **Audit count:** Current latest security audit is Run 36. Update this reference (and the registry `audit_run`, `EXPECTED_AUDIT_RUN`, and public "most recently Run N" wording) when new runs are added.
+5. **Audit baseline — single source of truth:** the current security-audit run is the `audit_run` value in `content/compliance/claims-registry.json`. Nothing else in this repo may hardcode it (this file deliberately does not name a run). Bump it with one command:
+
+   ```bash
+   npm run bump:audit-run -- <N>   # updates the registry + every public "Run N" mention
+   ```
+
+   `npm run check:claims` then fails if any published page, contributor doc, or the live `CHANGELOG.md [Unreleased]` section cites a run other than the baseline — including superseded ones. Released `CHANGELOG.md` sections are historical record and are exempt (they must not be rewritten to match a newer baseline).
 6. **Cross-check with internal docs:** The authoritative security documentation lives in `fseven-docs/docs/security/`. Public docs should be a simplified, non-proprietary subset.
 
 ## Verification Sources

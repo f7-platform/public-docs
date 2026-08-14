@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- Cleared the regressed build-toolchain advisory pair (run-38 DEP6): `npm audit fix` re-resolved transitive nanoid and postcss past their vulnerable ranges (GHSA-28wg-ghj8-5hjv / GHSA-2v37-7h3g-55p8; GHSA-r28c-9q8g-f849 / GHSA-fxqj-rqcc-2cmp); `npm audit` reports 0 vulnerabilities and the VitePress build is clean. Dev-toolchain exposure only — the published site is static.
 - Corrected public third-party integration claims to the implemented controller event/webhook sources: GitHub, GitLab, Bitbucket, Jira, Linear, Asana, Jenkins, GitHub Actions, GitLab CI, CircleCI, Google Calendar, Microsoft Outlook, LaunchDarkly, Zendesk, and Generic webhooks.
 - Clarified Mode 3 privacy wording: screen frames are never uploaded or transmitted off-device, but current macOS capture may use a temporary OS-local PNG that is read and deleted after inference.
 - Security architecture: qualified SPKI certificate pinning claims (infrastructure present, operational pins per-deployment)

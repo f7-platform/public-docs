@@ -186,6 +186,31 @@
       "release_status": "active",
       "soc2_criteria": ["CC8.1", "CC9.1"],
       "notes": "This claim is scoped to the public-docs Trust Center deploy workflow; product dependency evidence is release-scoped in owning repos."
+    },
+    {
+      "id": "CLM-013",
+      "summary": "Atlas Rewind captures picture-only screen frames with consent; hosted submission to F7 is planned and not built",
+      "source_files": [
+        "content/legal/privacy-policy.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/employee-controls.md",
+        "content/index.md"
+      ],
+      "evidence": [
+        "public-docs: content/legal/privacy-policy.md — the Atlas Rewind subsection: picture-only capture, no audio, the per-capture model read, and submission labelled planned and not built",
+        "public-docs: content/privacy/data-collection.md — the 'Data Never Captured' guarantees are scoped to the F7 agent and point at the Rewind subsection",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/rewind-config.ts — capture is picture-only at a fixed frame rate",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/build-profile.ts — the recorder is reachable only on a development server or an internal reference build, so no customer deployment shows it",
+        "fseven-atlas-mvp: apps/atlas-app/src/components/RewindFirstRun.tsx — the in-product explainer states picture-only capture, no audio, and that asking for a read sends that capture's stills and words to the configured model provider",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — the in-app policy's Rewind section, which this page must agree with",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/terms-of-use.md — the consent clause: recorded against the deployment, revocable, never implied by a plan or licence tier",
+        "NOTE: the hosted submission path is designed and NOT built — no submit path exists in any shipped build and no customer deployment has been granted the recorder, so every sentence about submitting is labelled planned both on the page and here"
+      ],
+      "audit_refs": ["PUBDOC-4"],
+      "release_status": "in-progress",
+      "soc2_criteria": [],
+      "notes": "Registered ahead of the feature by deliberate rule: the privacy policy and every public surface describing Rewind must be updated before any customer sees the recorder, so this claim exists while the control is still partly planned. TRUE TODAY: capture is picture-only with no audio; a capture stays on the customer's own Atlas instance; the one egress that exists is the reviewer asking a model to read the frames they selected, consented per capture; and the recorder is absent from every customer deployment. PLANNED, and must not be answered as a current control on a vendor questionnaire: submitting a capture to F7, and everything a submission carries. Retention of a submitted capture and who at F7 may open one are not yet decided and are stated as not-yet-set on the page rather than given a number. soc2_criteria is deliberately empty until submission is built and counsel has reviewed the clause; mapping a partly planned control to a trust service criterion would overstate it. PUBDOC-4 is the public-docs claim review that introduced this entry and should be renamed to the audit finding that supersedes it. This is also the first mention of Atlas anywhere on the public site."
     }
   ]
 }

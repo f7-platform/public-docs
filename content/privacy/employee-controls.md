@@ -44,6 +44,7 @@ F7 offers an optional advanced feature (Mode 3 — Interpret) that uses an on-de
 - This feature is **disabled by default** and must be enabled by the organization.
 - When enabled, the vision model processes screen frames **entirely on the device**. Frames are never uploaded; current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup.
 - No frames are stored, transmitted, or accessible to anyone — only structured classification labels (e.g., "deep work", "code review") are produced.
+- These statements are about the agent's vision model on an employee's device. They are not about Atlas Rewind, which is a feedback recorder inside the separate Atlas product, is turned on by a reviewer for their own screen, and does send frames onward when that reviewer asks for a model to read them. See [Atlas Rewind](/legal/privacy-policy#from-atlas-rewind-atlas-only-not-the-f7-agent).
 
 ## What Managers and Admins Can See
 

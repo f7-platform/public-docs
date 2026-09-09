@@ -4,11 +4,13 @@ Privacy is not an add-on feature in F7 — it's a design constraint that shapes 
 
 ## 1. Metadata, Never Content
 
-The F7 agent captures work-pattern metadata — application names, activity counts, timing, and session structure. It never uploads content: no prompts, no files, no emails, no clipboard data, and no screenshots.
+The F7 agent captures work-pattern metadata — application names, activity counts, timing, and session structure. It never uploads content: no prompts, no files, no emails, no clipboard data, and no screenshots. This principle, and everything else on this page, is about the F7 agent; the Atlas Rewind exception is stated below.
 
 This isn't a policy choice. The agent's code physically does not have the capability to read prompt text, file contents, or clipboard data.
 
 **Vision (Mode 3 — Interpret) caveat.** When an organization explicitly enables Mode 3, the agent processes screen frames locally for an on-device vision-language model. Frames are never uploaded and never leave the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
+
+**Atlas Rewind is a different product and a different promise.** Atlas is a separate F7 product from the agent, and it contains a feedback recorder called Rewind. When a reviewer working in Atlas turns Rewind on, it takes picture-only snapshots of the tab or screen that reviewer chooses, and those pictures are not covered by the agent promises above. Rewind records no audio. A capture stays on the customer's own Atlas instance unless the reviewer asks an AI model to describe the frames they selected, which sends those frames to the configured model provider with the reviewer's per-capture permission. Sending a capture to F7 is planned and not built, and Rewind is not shown on any customer deployment today; it is offered only where a customer has been asked for consent and has given it. See [Atlas Rewind](/legal/privacy-policy#from-atlas-rewind-atlas-only-not-the-f7-agent).
 
 ## 2. Local-First Processing
 

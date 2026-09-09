@@ -11,6 +11,7 @@ This policy covers:
 - **Customer organizations** that deploy F7 in their workplace
 - **End users** (employees) whose devices run the F7 agent
 - **Visitors** to our website and documentation
+- **Customer organizations and their users** on Atlas, a separate F7 product; where this policy says something specific to Atlas it says so, and everything else on this page describes the F7 agent and controller
 
 ## 2. Information We Collect
 
@@ -46,7 +47,7 @@ These integrations retrieve event metadata only — never document contents, mes
 - Prompt or response text
 - File contents
 - Email or chat messages
-- Screenshots or screen recordings (see Mode 3 note below)
+- Screenshots or screen recordings (see the Mode 3 note and the Atlas Rewind subsection below)
 - Clipboard contents
 - Passwords or credentials
 - Full URLs, query parameters, or page content
@@ -55,6 +56,19 @@ These integrations retrieve event metadata only — never document contents, mes
 **Mode 3 — Interpret (opt-in).** When an organization enables Mode 3, the agent captures screen frames locally for an on-device vision-language model. Frames are never transmitted off the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy `fseven-vision-*.png` temp files on startup, so organizations should still treat endpoint-local screen data as covered by device controls.
 
 For the complete data inventory, see [Data Collection Details](/privacy/data-collection).
+
+### From Atlas Rewind (Atlas Only, Not the F7 Agent)
+
+**Atlas is a separate F7 product from the F7 agent described above, and Rewind is a feedback recorder inside it.** Nothing in this subsection describes the agent, and nothing in the agent subsections above describes Atlas. In particular, the promises above about screen frames never leaving the device are promises about the agent's Mode 3, which runs on an employee's own machine. Rewind is a different mechanism with different promises, set out here so the two are read together rather than one being mistaken for the other.
+
+**What Rewind captures.** A reviewer working in Atlas can turn Rewind on. While it is on, it holds a short rolling window of picture-only snapshots of the browser tab or the screen that reviewer chooses in the browser's own share prompt, and nothing is kept unless the reviewer presses a button to keep it. **No audio is recorded and no voice is recorded.** The reviewer may add words describing what they saw, typed or dictated, and may draw marks on the frames. Dictated words are transcribed by the same third-party speech-to-text provider named in the Atlas privacy policy the customer accepts in the product.
+
+**Where a capture stays.** A capture is held by the customer's own Atlas instance. There is one exception: the reviewer may ask an AI model to describe the frames they selected, which sends those frames and the reviewer's words to the model provider that instance is configured with. The reviewer is asked for that permission separately for each capture, and it is off unless asked for.
+
+**Sending a capture to F7 is planned and is not built.** Rewind is designed so that a reviewer can submit a capture to F7 as a bug report. **No customer deployment can do this today, and no code for it exists.** When it is built, a submission will carry the frames the reviewer selected with their marks drawn into the image, the reviewer's words, the model's description where one was asked for, a note of where in the product the capture was taken, and an identifier for the capture and for the instance. It will leave behind the rest of the recorded window, every frame the reviewer did not select, every other capture, and everything the customer has authored in Atlas. Submitting will send that note and those identifiers whether or not frames go with it, so submission is never a purely local act. F7 has not yet set how long a submitted capture is kept or who at F7 may open one; both will be stated here before submission is offered to any customer.
+
+**Consent, and when Rewind appears at all.** Rewind is not shown on any customer deployment today. Before it is offered on a deployment F7 hosts, that deployment has to be granted it, and it is granted only where the customer has been asked for consent and has given it — never because of a plan or a licence tier. Consent is recorded against the deployment and can be withdrawn, which turns the recorder off. Rewind is never offered on an air-gapped deployment.
+
 
 ### From Our Website
 

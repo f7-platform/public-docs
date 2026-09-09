@@ -136,12 +136,12 @@ With the deploying organization's authorization, F7 can ingest event metadata fr
 
 ## Data Never Captured
 
-These are absolute guarantees about data F7 will never collect:
+These are absolute guarantees about data **the F7 agent** will never collect. They describe the agent that runs on an employee's device. Atlas, a separate F7 product, contains a feedback recorder called Rewind that does capture pictures of a reviewer's own screen when that reviewer turns it on; it is covered separately in [Atlas Rewind](/legal/privacy-policy#from-atlas-rewind-atlas-only-not-the-f7-agent) and is not in scope for the list below.
 
 - **Prompt and response text** from any AI tool
 - **File contents** of any kind
 - **Email or chat message content**
-- **Screenshots transmitted off-device** (even when the optional vision model is enabled — frames are processed locally; current macOS builds stream capture bytes through stdout and scrub stale legacy vision temp files on startup)
+- **Screenshots transmitted off-device by the agent** (even when the optional vision model is enabled — frames are processed locally; current macOS builds stream capture bytes through stdout and scrub stale legacy vision temp files on startup). This is a statement about the agent, not about Atlas Rewind.
 - **Clipboard contents**
 - **Passwords, tokens, or credentials**
 - **Full browsing URLs** — only the destination domain, optional API endpoint path (e.g. `/v1/chat/completions`) for AI-provider classification, and approximate byte counts. Never query strings, request bodies, or response content.

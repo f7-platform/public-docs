@@ -1,175 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle. `audit_run` below is the SINGLE SOURCE OF TRUTH for the public audit-run baseline: no other file in this repo may hardcode it, every other public 'Run N' mention is enforced against it by scripts/check-public-claims.sh, and it is bumped with `npm run bump:audit-run -- <N>`.",
-  "version": "1",
-  "updated": "2026-08-14",
-  "audit_run": 38,
+  "description": "Public claims registry for f7-platform/public-docs. Maps each public-facing claim to its source evidence, audit references, and current release status. Used by scripts/check-public-claims.sh and reviewed each release cycle. `audit_run` below is the SINGLE SOURCE OF TRUTH for the public audit-run baseline: no other file in this repo may hardcode it, every other public 'Run N' mention is enforced against it by scripts/check-public-claims.sh, and it is bumped with `npm run bump:audit-run -- <N>`. Version 2 of this registry (2026-09-13) describes Atlas only: the claims about the earlier device-agent and controller product (CLM-001 to CLM-011) were retired with that product, and the numbering continues from CLM-012.",
+  "version": "2",
+  "updated": "2026-09-13",
+  "audit_run": 41,
   "claims": [
-    {
-      "id": "CLM-001",
-      "summary": "Metadata-only capture — no content stored",
-      "source_files": ["content/overview/data-we-collect.md", "content/privacy/data-collection.md"],
-      "evidence": [
-        "fseven-agent: agent-core/src/event_log.rs — activity/event metadata structures",
-        "fseven-controller: server/src/services/ingestion.rs — telemetry ingestion uses structured activity fields"
-      ],
-      "audit_refs": ["AO1", "AO3"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.1"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-002",
-      "summary": "EdDSA-signed device JWTs with per-device credentials",
-      "source_files": [
-        "content/security/encryption.md",
-        "content/security/authorization.md",
-        "content/security/index.md",
-        "content/security/architecture.md",
-        "content/security/agent-security.md",
-        "content/compliance/soc2.md",
-        "content/legal/dpa.md",
-        "content/compliance/ccpa.md"
-      ],
-      "evidence": [
-        "fseven-controller: server/src/auth/jwt.rs — EdDSA-signed agent access tokens",
-        "fseven-controller: server/src/auth/tokens.rs — per-device credentials are generated and Argon2id-verified",
-        "fseven-agent: agent-core/src/auth.rs — agent stores device credential and refresh/access-token lifecycle"
-      ],
-      "audit_refs": ["TH2", "TH3"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.1", "CC6.2"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-003",
-      "summary": "Argon2id admin password hashing",
-      "source_files": ["content/security/authorization.md"],
-      "evidence": [
-        "fseven-controller: server/src/auth/tokens.rs — argon2 crate, Argon2 credential hashing and verification"
-      ],
-      "audit_refs": ["TH3"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.1"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-004",
-      "summary": "TLS 1.3 with HSTS and certificate pinning for agent connections",
-      "source_files": ["content/security/encryption.md", "content/security/architecture.md"],
-      "evidence": [
-        "fseven-controller: server/src/middleware/security.rs — HSTS header",
-        "fseven-agent: agent-core/src/config_poller/security.rs — pinned HTTP client and TLS configuration"
-      ],
-      "audit_refs": ["TH5"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.7"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-005",
-      "summary": "Hybrid ReBAC+ABAC authorization (four roles)",
-      "source_files": ["content/security/authorization.md"],
-      "evidence": [
-        "fseven-controller: openfga/ — authorization model",
-        "fseven-controller: server/src/auth/authorization.rs — policy enforcement and obligations"
-      ],
-      "audit_refs": ["AO2"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.3"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-006",
-      "summary": "k-anonymity for behavioral data queries",
-      "source_files": ["content/security/authorization.md", "content/overview/behavioral-intelligence.md"],
-      "evidence": [
-        "fseven-controller: server/src/middleware/obligations.rs — k-anonymity threshold enforcement"
-      ],
-      "audit_refs": ["AO3"],
-      "release_status": "active",
-      "soc2_criteria": ["CC6.3"],
-      "notes": ""
-    },
-    {
-      "id": "CLM-007",
-      "summary": "SOC 2 Type II controls implemented — independent audit planned",
-      "source_files": ["content/compliance/soc2.md"],
-      "evidence": [
-        "content/compliance/soc2.md — controls mapped to trust service criteria",
-        "NOTE: Independent audit has not yet been completed — page states 'planned'"
-      ],
-      "audit_refs": ["PDC4"],
-      "release_status": "in-progress",
-      "soc2_criteria": [],
-      "notes": "Page correctly scopes this as 'controls implemented; audit planned'. Do not promote to 'certified' until report is in hand."
-    },
-    {
-      "id": "CLM-008",
-      "summary": "MIT license for community components",
-      "source_files": ["content/legal/terms-of-service.md"],
-      "evidence": [
-        "public-agent-binaries/LICENSE — MIT",
-        "fseven-agent/LICENSE — see repo"
-      ],
-      "audit_refs": ["PDC6"],
-      "release_status": "active",
-      "soc2_criteria": [],
-      "notes": ""
-    },
-    {
-      "id": "CLM-009",
-      "summary": "Personal behavioral data visible to individual employee on personal dashboard",
-      "source_files": [],
-      "evidence": [],
-      "audit_refs": ["PDC5"],
-      "release_status": "not-available",
-      "soc2_criteria": [],
-      "notes": "FORBIDDEN CLAIM: personal-dashboard feature is not yet shipped. This claim must never appear in public-docs. Checked by scripts/check-public-claims.sh."
-    },
-    {
-      "id": "CLM-010",
-      "summary": "Implemented third-party event integration provider scope",
-      "source_files": [
-        "content/overview/data-we-collect.md",
-        "content/overview/how-it-works.md",
-        "content/privacy/data-collection.md",
-        "content/legal/privacy-policy.md",
-        "content/legal/subprocessors.md",
-        "content/compliance/gdpr.md"
-      ],
-      "evidence": [
-        "fseven-controller: server/src/integrations/models.rs — implemented event/webhook source enum",
-        "public-docs: content/privacy/data-collection.md — public provider list scoped to implemented event/webhook sources"
-      ],
-      "audit_refs": ["PUBDOC-1"],
-      "release_status": "active",
-      "soc2_criteria": [],
-      "notes": "Do not add AI/productivity/writing/dev-tool API provider examples unless the controller integration model implements them."
-    },
-    {
-      "id": "CLM-011",
-      "summary": "Mode 3 frames stay local and current macOS capture streams PNG bytes through stdout",
-      "source_files": [
-        "content/overview/data-we-collect.md",
-        "content/privacy/index.md",
-        "content/privacy/data-collection.md",
-        "content/legal/privacy-policy.md",
-        "content/legal/dpa.md",
-        "content/compliance/gdpr.md",
-        "content/compliance/ccpa.md",
-        "content/faq.md"
-      ],
-      "evidence": [
-        "fseven-agent: agent-core/src/lifecycle/vision_capture.rs — macOS screencapture uses stdout and startup scrub removes stale legacy temp files",
-        "public-docs: content/privacy/data-collection.md — discloses local-only processing plus stdout capture behavior",
-        "public-docs: content/legal/privacy-policy.md — discloses startup scrub for stale legacy vision temp files"
-      ],
-      "audit_refs": ["PUBDOC-2", "AGT-LOCAL-2"],
-      "release_status": "active",
-      "soc2_criteria": ["P3.1"],
-      "notes": "Current source uses screencapture stdout on macOS and retains stale legacy temp-file scrub for crash leftovers from older builds."
-    },
     {
       "id": "CLM-012",
       "summary": "Trust Center dependency audit runs before GitHub Pages publication",
@@ -185,7 +20,7 @@
       "audit_refs": ["PDC5", "PUBDOC-3"],
       "release_status": "active",
       "soc2_criteria": ["CC8.1", "CC9.1"],
-      "notes": "This claim is scoped to the public-docs Trust Center deploy workflow; product dependency evidence is release-scoped in owning repos."
+      "notes": "This claim is scoped to the public-docs Trust Center deploy workflow; product dependency evidence is release-scoped in the owning private repository."
     },
     {
       "id": "CLM-013",
@@ -194,23 +29,293 @@
         "content/legal/privacy-policy.md",
         "content/privacy/index.md",
         "content/privacy/data-collection.md",
-        "content/privacy/employee-controls.md",
-        "content/index.md"
+        "content/privacy/your-controls.md",
+        "content/privacy/data-retention.md",
+        "content/overview/what-is-atlas.md",
+        "content/overview/how-it-works.md",
+        "content/overview/data-we-collect.md",
+        "content/security/authorization.md",
+        "content/compliance/ccpa.md",
+        "content/faq.md"
       ],
       "evidence": [
         "public-docs: content/legal/privacy-policy.md — the Atlas Rewind subsection: picture-only capture, no audio, the per-capture model read, and submission labelled planned and not built",
-        "public-docs: content/privacy/data-collection.md — the 'Data Never Captured' guarantees are scoped to the F7 agent and point at the Rewind subsection",
+        "public-docs: content/privacy/data-collection.md — the Atlas Rewind section, which restates the legal subsection in the same terms",
         "fseven-atlas-mvp: apps/atlas-app/src/lib/rewind-config.ts — capture is picture-only at a fixed frame rate",
         "fseven-atlas-mvp: apps/atlas-app/src/lib/build-profile.ts — the recorder is reachable only on a development server or an internal reference build, so no customer deployment shows it",
         "fseven-atlas-mvp: apps/atlas-app/src/components/RewindFirstRun.tsx — the in-product explainer states picture-only capture, no audio, and that asking for a read sends that capture's stills and words to the configured model provider",
-        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — the in-app policy's Rewind section, which this page must agree with",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — the in-app policy's Rewind section, which these pages must agree with",
         "fseven-atlas-mvp: apps/atlas-app/src/legal/terms-of-use.md — the consent clause: recorded against the deployment, revocable, never implied by a plan or licence tier",
+        "fseven-atlas-mvp: apis/atlas-serve/src/air_gap.rs — a cell that declared itself air-gapped withholds the Rewind submit path, and a session it should not have been able to open is raised as a finding",
         "NOTE: the hosted submission path is designed and NOT built — no submit path exists in any shipped build and no customer deployment has been granted the recorder, so every sentence about submitting is labelled planned both on the page and here"
       ],
       "audit_refs": ["PUBDOC-4"],
       "release_status": "in-progress",
       "soc2_criteria": [],
-      "notes": "Registered ahead of the feature by deliberate rule: the privacy policy and every public surface describing Rewind must be updated before any customer sees the recorder, so this claim exists while the control is still partly planned. TRUE TODAY: capture is picture-only with no audio; a capture stays on the customer's own Atlas instance; the one egress that exists is the reviewer asking a model to read the frames they selected, consented per capture; and the recorder is absent from every customer deployment. PLANNED, and must not be answered as a current control on a vendor questionnaire: submitting a capture to F7, and everything a submission carries. Retention of a submitted capture is deliberately unsettled: it was left to legal review on 2026-09-09 rather than fixed internally, so the page states that it is not yet set and will be stated before submission is offered, rather than publishing a period no counsel has approved and no code enforces. Who at F7 may open a submitted capture was ruled on 2026-09-09: state today's answer as today's and leave the hosted answer to the work that builds the submission path. The page therefore states the narrow answer that is true now (only the reviewer who recorded it, because Rewind runs on F7 internal builds only) and does not present it as a promise that survives submission being built. soc2_criteria is deliberately empty until submission is built and counsel has reviewed the clause; mapping a partly planned control to a trust service criterion would overstate it. PUBDOC-4 is the public-docs claim review that introduced this entry and should be renamed to the audit finding that supersedes it. This is also the first mention of Atlas anywhere on the public site."
+      "notes": "Registered ahead of the feature by deliberate rule: the privacy policy and every public surface describing Rewind must be updated before any customer sees the recorder, so this claim exists while the control is still partly planned. TRUE TODAY: capture is picture-only with no audio; a capture stays on the customer's own Atlas instance; the one egress that exists is the reviewer asking a model to read the frames they selected, consented per capture; and the recorder is absent from every customer deployment. PLANNED, and must not be answered as a current control on a vendor questionnaire: submitting a capture to F7, and everything a submission carries. Retention of a submitted capture is deliberately unsettled (left to legal review on 2026-09-09), so the pages state that it is not yet set. Who at F7 may open a submitted capture was ruled on 2026-09-09: state today's answer as today's. soc2_criteria is deliberately empty until submission is built and counsel has reviewed the clause."
+    },
+    {
+      "id": "CLM-014",
+      "summary": "Atlas is a single-tenant instance — one deployment, one database, one signed ledger per customer — offered as a self-contained download or as an instance F7 operates",
+      "source_files": [
+        "content/index.md",
+        "content/overview/what-is-atlas.md",
+        "content/overview/how-it-works.md",
+        "content/overview/data-we-collect.md",
+        "content/security/index.md",
+        "content/security/architecture.md",
+        "content/privacy/index.md",
+        "content/compliance/index.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/ccpa.md",
+        "content/compliance/soc2.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 1: one deployment, one database, one signed ledger per customer; the two deployment models and who has access under each",
+        "fseven-atlas-mvp: apis/atlas-serve/src/bundled_pg.rs — the private PostgreSQL the download supervises, so nothing else has to be installed",
+        "fseven-atlas-mvp: apis/atlas-serve/src/export/mod.rs — the export refuses to run when the single-tenant premise cannot be verified (CannotVerifySingleTenantPremise)",
+        "fseven-atlas-mvp: apis/atlas-serve/src/license/mod.rs — licences verify offline against the F7 keyset compiled into packaged builds, and the packaged 14-day offline trial, so the download runs with no route to F7",
+        "public-atlas-binaries: README.md — one download is the whole product; the web app is compiled into the binary and it starts its own private PostgreSQL",
+        "NOTE: hosted instances run on Railway infrastructure in the United States; the in-app policy states that F7 does not currently operate instances outside the United States"
+      ],
+      "audit_refs": ["PUBDOC-5"],
+      "release_status": "active",
+      "soc2_criteria": ["CC6.1", "C1.1"],
+      "notes": "The isolation claim is the absence of a shared store, not a row filter. Do not describe hosted instances as multi-tenant or as isolated by row-level security."
+    },
+    {
+      "id": "CLM-015",
+      "summary": "The complete list of what leaves an Atlas instance: the configured AI provider (through F7's gateway on credit plans), optional voice, sources fetched on request with an operator-disableable rendering fallback, connected repositories, email, licensing, and the download's signed update check",
+      "source_files": [
+        "content/index.md",
+        "content/overview/how-it-works.md",
+        "content/overview/data-we-collect.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/your-controls.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/ccpa.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 4, the list of outside services and the purposes for each",
+        "fseven-atlas-mvp: crates/atlas-llm/src/config.rs — the provider kinds (Anthropic and Gemini with dedicated drivers; OpenAI-compatible endpoints including OpenRouter, Ollama, Groq and custom), per-feature routing, and credentials kept out of the configuration file",
+        "fseven-atlas-mvp: apis/atlas-serve/src/llm/metered_provider.rs — on credit plans the turn is relayed through F7's gateway to the provider and metered there",
+        "fseven-atlas-mvp: apis/atlas-serve/src/gateway_client/mod.rs — the credit-gateway session exists only in credit mode; a bring-your-own-key deployment mints no keypair and opens no session",
+        "fseven-atlas-mvp: apis/atlas-serve/src/config.rs — the voice provider (ElevenLabs), the GitHub connection credentials, and the update configuration",
+        "fseven-atlas-mvp: apis/atlas-serve/src/vault_ingest/fetch.rs — the default third-party rendering fallback (r.jina.ai) for pages that cannot be read directly",
+        "fseven-atlas-mvp: apis/atlas-serve/src/email/smtp.rs — the SMTP backend for verification, password-reset and invitation mail",
+        "fseven-atlas-mvp: apis/atlas-serve/src/update.rs — the signed update-manifest check, present only on the packaged download",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/diagnostics.ts — an error report is assembled in the browser and nothing transmits on its own"
+      ],
+      "audit_refs": ["PUBDOC-6"],
+      "release_status": "active",
+      "soc2_criteria": ["P3.1", "CC6.7"],
+      "notes": "This list is published as complete. Adding an outbound integration to the product requires adding it here and to every page that states the list."
+    },
+    {
+      "id": "CLM-016",
+      "summary": "Account security: Argon2id password hashing, time-based one-time codes with an encrypted secret, passkeys, hashed single-use recovery codes, durable lockout, revocable sessions, OAuth 2.0 / OpenID Connect sign-in, inbound SCIM 2.0 provisioning, and a structured auth event log",
+      "source_files": [
+        "content/security/index.md",
+        "content/security/authorization.md",
+        "content/security/encryption.md",
+        "content/privacy/data-collection.md",
+        "content/compliance/index.md",
+        "content/compliance/ccpa.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/soc2.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: apis/atlas-serve/src/auth/local.rs — Argon2id-hashed passwords, durable lockout, SHA-256 hashed recovery codes, WebAuthn credentials",
+        "fseven-atlas-mvp: apis/atlas-serve/src/routes/mfa.rs — the TOTP secret lives only in the encrypted secret store",
+        "fseven-atlas-mvp: apis/atlas-serve/src/auth/session_revocation.rs — session revocation, including on account deactivation",
+        "fseven-atlas-mvp: apis/atlas-serve/src/auth/oauth.rs — the OAuth 2.0 / OIDC client for configured identity providers, with client secrets in the encrypted store",
+        "fseven-atlas-mvp: apis/atlas-serve/src/routes/scim.rs — the inbound SCIM 2.0 provisioning endpoint",
+        "fseven-atlas-mvp: apis/atlas-serve/src/auth/events.rs — the structured auth event log: sign-in success and failure, lockout, MFA and passkey changes, admin account actions; fail-open but never silent",
+        "fseven-atlas-mvp: apis/atlas-serve/src/project_authz.rs — per-project reader, writer and administrator roles resolved on every request"
+      ],
+      "audit_refs": ["PUBDOC-7"],
+      "release_status": "active",
+      "soc2_criteria": ["CC6.1", "CC6.2", "CC6.3", "CC7.2"],
+      "notes": "Do not name supported identity providers on the public pages; the sign-on module is provider-configurable and the public statement is generic by design."
+    },
+    {
+      "id": "CLM-017",
+      "summary": "Every recorded artifact is a signed envelope; significant events go to an append-only, hash-chained ledger whose database privileges allow reading and appending only; the export archive carries the public keys to verify it independently and excludes secrets",
+      "source_files": [
+        "content/index.md",
+        "content/overview/what-is-atlas.md",
+        "content/overview/data-we-collect.md",
+        "content/security/index.md",
+        "content/security/architecture.md",
+        "content/security/encryption.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/your-controls.md",
+        "content/privacy/data-retention.md",
+        "content/compliance/index.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/soc2.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: crates/atlas-schemas/src/signed.rs — the Signed<T> envelope: payload hash, key fingerprint, per-producer sequence, Ed25519 signature; not constructible or deserializable outside the crate",
+        "fseven-atlas-mvp: crates/atlas-controller/migrations/0013_atlas_envelope.sql — SELECT and INSERT only on the envelope chain: append-only is a privilege",
+        "fseven-atlas-mvp: crates/atlas-controller/migrations/0015_atlas_event_chain.sql — SELECT and INSERT only on the event chain",
+        "fseven-atlas-mvp: apis/atlas-serve/src/pg_ledger.rs — the evidence ledger read out of PostgreSQL",
+        "fseven-atlas-mvp: apis/atlas-serve/src/export/mod.rs — the export archive: ledger, relational data, and trust/ carrying the public keys needed to verify the signatures; credentials and secrets excluded",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 8: the ledger is append-only and cannot be selectively edited; what is deliberately written into it"
+      ],
+      "audit_refs": ["PUBDOC-8"],
+      "release_status": "active",
+      "soc2_criteria": ["PI1.1", "CC6.8"],
+      "notes": "State the ledger limit wherever deletion is promised. A page that promises full erasure without naming the ledger is wrong."
+    },
+    {
+      "id": "CLM-018",
+      "summary": "Download and update integrity: notarized macOS images, Authenticode-signed Windows artifacts, SHA-256 checksums on every asset, and an Ed25519-signed update manifest verified against a key compiled into the download; no SBOM is published",
+      "source_files": [
+        "content/index.md",
+        "content/security/downloads.md",
+        "content/security/encryption.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "public-atlas-binaries: README.md — the platform table, the notarization and Authenticode verification commands, SHA256SUMS, latest.json with its detached signature and the pinned public key, and the statement that no SBOM is currently published",
+        "fseven-atlas-mvp: apis/atlas-serve/src/update.rs — the manifest is verified against the pinned key before it is parsed; the asset digest is verified before staging and again before apply; server and fleet builds refuse both; every failure resolves to no update",
+        "fseven-atlas-mvp: apis/atlas-serve/src/config.rs — PACKAGED_UPDATE_PUBKEY_PEM, the update-signing public key compiled into packaged builds",
+        "fseven-atlas-mvp: atlas-update.pub.pem — the published public half of the update-signing key"
+      ],
+      "audit_refs": ["PUBDOC-9"],
+      "release_status": "active",
+      "soc2_criteria": ["CC6.8", "CC8.1"],
+      "notes": "public-atlas-binaries is a public repository that is not checked out in this repository's own CI; its evidence paths are verified wherever it is available and reported as unverified elsewhere."
+    },
+    {
+      "id": "CLM-019",
+      "summary": "Atlas contains no analytics, no tracking, and no automatic crash or error reporting; an error report is built in the browser and sent only when the user chooses to send it",
+      "source_files": [
+        "content/index.md",
+        "content/overview/how-it-works.md",
+        "content/overview/data-we-collect.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/your-controls.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/ccpa.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 2, 'What we do not collect'",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/error-log.ts — why nothing transmits on its own",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/diagnostics.ts — the report is assembled field by field from an allowlist and the user chooses to send it",
+        "fseven-atlas-mvp: apps/atlas-app/package.json — no analytics or telemetry dependency in the application"
+      ],
+      "audit_refs": ["PUBDOC-10"],
+      "release_status": "active",
+      "soc2_criteria": ["P3.1"],
+      "notes": ""
+    },
+    {
+      "id": "CLM-020",
+      "summary": "Usage metering (per-request model, tokens, cost, outcome) is kept for 90 days and is not linked to an individual user",
+      "source_files": [
+        "content/overview/data-we-collect.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/data-retention.md",
+        "content/compliance/gdpr.md",
+        "content/compliance/index.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: crates/atlas-llm/src/usage.rs — RETENTION_DAYS = 90 and the purge that enforces it",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 2, usage metering identifies the feature, not the person"
+      ],
+      "audit_refs": ["PUBDOC-11"],
+      "release_status": "active",
+      "soc2_criteria": ["C1.2"],
+      "notes": ""
+    },
+    {
+      "id": "CLM-021",
+      "summary": "The AI provider and model are a configuration choice per feature; on bring-your-own-key plans requests go to the customer's own provider account; F7's promise not to read a key on a hosted instance is a commitment, not an architectural impossibility",
+      "source_files": [
+        "content/index.md",
+        "content/overview/what-is-atlas.md",
+        "content/overview/how-it-works.md",
+        "content/overview/data-we-collect.md",
+        "content/privacy/index.md",
+        "content/privacy/your-controls.md",
+        "content/compliance/gdpr.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: crates/atlas-llm/src/config.rs — provider profiles, per-feature routing, model overrides",
+        "fseven-atlas-mvp: apis/atlas-serve/src/secrets.rs — provider keys resolved from the encrypted secret store on every request; AES-256-GCM file store or macOS keychain; the master key kept apart from the encrypted files",
+        "fseven-atlas-mvp: apis/atlas-serve/src/gateway_client/mod.rs — a bring-your-own-key deployment mints no gateway keypair and opens no session",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 6: the key-access commitment, stated as a commitment rather than an impossibility, with the scoping advice"
+      ],
+      "audit_refs": ["PUBDOC-12"],
+      "release_status": "active",
+      "soc2_criteria": ["CC6.1"],
+      "notes": "Never restate the key-access commitment as an architectural guarantee. The in-app policy is deliberate about the difference."
+    },
+    {
+      "id": "CLM-022",
+      "summary": "Key custody boundary: F7 ships no hardware security module integration and operates no key-management service; keys live in the instance's encrypted store or an operator-provided module; browser signing uses a non-extractable key; hardware custody, ledger high availability and revocation service levels are not built",
+      "source_files": [
+        "content/index.md",
+        "content/security/index.md",
+        "content/security/architecture.md",
+        "content/security/encryption.md",
+        "content/compliance/index.md",
+        "content/compliance/soc2.md",
+        "content/faq.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: crates/atlas-cli/src/signer/mod.rs — 'F7 ships no HSM integration and operates no key-management service'; PKCS#11, ssh-agent and Google Cloud KMS clients speak to whatever module the operator points at, whose properties F7 neither provisions nor attests",
+        "fseven-atlas-mvp: apps/atlas-app/src/lib/browserSign.ts — the browser signer's key is a non-extractable WebCrypto key the page can use and never read",
+        "fseven-atlas-mvp: apis/atlas-serve/src/secrets.rs — the instance's encrypted secret store",
+        "NOTE: hardware custody, high availability and disaster recovery for the ledger, and revocation service-level commitments are NOT built, and the product's own decision records forbid representing them as shipped"
+      ],
+      "audit_refs": ["PUBDOC-13"],
+      "release_status": "active",
+      "soc2_criteria": [],
+      "notes": "A limitation claim. It is registered so that the public pages keep stating it and so that a future page cannot quietly promote custody to a shipped control."
+    },
+    {
+      "id": "CLM-023",
+      "summary": "Voice is off unless configured, requires explicit consent at the point of enabling, and uploads a recording to a third-party speech provider for transcription",
+      "source_files": [
+        "content/overview/how-it-works.md",
+        "content/privacy/index.md",
+        "content/privacy/data-collection.md",
+        "content/privacy/your-controls.md",
+        "content/security/authorization.md",
+        "content/compliance/ccpa.md",
+        "content/compliance/gdpr.md"
+      ],
+      "evidence": [
+        "fseven-atlas-mvp: apps/atlas-app/src/components/VoiceConsentAsk.tsx — the consent step that turning voice on opens first",
+        "fseven-atlas-mvp: apis/atlas-serve/src/config.rs — the speech provider configuration (ElevenLabs), inactive until configured",
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 4, 'Voice, if configured'"
+      ],
+      "audit_refs": ["PUBDOC-14"],
+      "release_status": "active",
+      "soc2_criteria": ["P2.1"],
+      "notes": "The pages say a recording is uploaded for transcription and say nothing about how long the speech provider keeps it; that is governed by the provider's terms."
+    },
+    {
+      "id": "CLM-024",
+      "summary": "SOC 2 report, ISO 27001 certification, or independent penetration test report for Atlas",
+      "source_files": [],
+      "evidence": [],
+      "audit_refs": ["PUBDOC-15"],
+      "release_status": "not-available",
+      "soc2_criteria": [],
+      "notes": "FORBIDDEN CLAIM: no SOC 2 report, no ISO 27001 certificate and no independent penetration test report exist for Atlas. The public pages state each as absent, not planned. Declarative certification claims are rejected by scripts/check-public-claims.sh."
     }
   ]
 }

@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- The Trust Center now describes Atlas. F7 shelved the workforce-analytics product (device agent, controller, dashboards) the site was written for, so every page under Overview, Security, Privacy and Compliance is rewritten around the Atlas instance: what it holds, the complete list of what leaves it, the two deployment models, accounts and second factors, the signed append-only ledger and its export, key custody as it is, and download and update integrity. Every claim is registered in `claims-registry.json` (version 2, CLM-012 onward) with evidence paths into the owning repository; the eleven agent-era claims were retired with the product.
+- The four documents under Legal were written for the earlier product and now open with a notice saying so. Their text is unchanged, including the Atlas Rewind subsection reviewed on 2026-09-09, until Atlas's own terms and privacy policy leave legal review.
+- Public audit-run baseline bumped 38 → 41 via `npm run bump:audit-run -- 41`; the Security Overview states Run 41's coverage boundary rather than implying full coverage.
+- `scripts/check-public-claims.sh` guards the Atlas claims: SOC 2, ISO 27001 and penetration-test certification wording, hardware key custody, Rewind submission as a current capability, a published SBOM, and internal gateway paths are forbidden; the material claims each page rests on must stay registered; `public-atlas-binaries` is a known evidence repository. The fixture tests follow.
+- `scripts/check-public-claims.sh` scans for audit-run citations with one awk pass per file instead of one subshell per content line. The per-line form segfaulted macOS's stock bash 3.2 on the real content tree (exit 139, no output), so the local gate the contributor docs prescribe had never run on a Mac; CI's newer bash never showed it. Same findings, same messages.
+- Contributor files (`README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CLAUDE.md`, `.github/copilot-instructions.md`) describe Atlas, name the in-app privacy policy and the modules it describes as the verification sources, and use npm throughout.
+
+### Removed
+- `content/overview/behavioral-intelligence.md`, `content/overview/what-is-f7.md`, `content/security/agent-security.md` and `content/privacy/employee-controls.md` — pages about the shelved product. `what-is-atlas.md`, `downloads.md` and `your-controls.md` take their places in the navigation.
+
+## [1.1.0] — 2026-08-14
+
+### Changed
 - Public audit-run baseline bumped 36 → 38 via `npm run bump:audit-run -- 38` (run-38 PB16): the run-38 baseline outputs merged upstream (fseven-docs PR #79), and the single-sourced registry/content/CHANGELOG references moved together; `scripts/check-public-claims.sh` reports `audit-run baseline: OK (Run 38)`.
 - Cleared the regressed build-toolchain advisory pair (run-38 DEP6): `npm audit fix` re-resolved transitive nanoid and postcss past their vulnerable ranges (GHSA-28wg-ghj8-5hjv / GHSA-2v37-7h3g-55p8; GHSA-r28c-9q8g-f849 / GHSA-fxqj-rqcc-2cmp); `npm audit` reports 0 vulnerabilities and the VitePress build is clean. Dev-toolchain exposure only — the published site is static.
 - Corrected public third-party integration claims to the implemented controller event/webhook sources: GitHub, GitLab, Bitbucket, Jira, Linear, Asana, Jenkins, GitHub Actions, GitLab CI, CircleCI, Google Calendar, Microsoft Outlook, LaunchDarkly, Zendesk, and Generic webhooks.

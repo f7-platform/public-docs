@@ -1,77 +1,49 @@
-# Encryption
+# Encryption and Signing
 
-F7 uses modern, industry-standard cryptographic algorithms throughout the platform. No legacy algorithms (MD5, SHA-1, 3DES, RSA-PKCS1v15) are used anywhere.
+Atlas uses current-generation cryptography for three jobs: protecting secrets at rest, protecting the connection to a hosted instance, and making the record tamper-evident. This page is the inventory, followed by the honest boundary on key custody.
 
-## Cryptographic Inventory
+## Cryptographic inventory
 
-| Purpose | Algorithm | Standard |
-|---------|-----------|----------|
-| Data in transit | TLS 1.3 | IETF RFC 8446 |
-| Agent access-token signatures | EdDSA | IETF RFC 8032 |
-| Encryption at rest (server) | AES-256-GCM | NIST SP 800-38D |
-| Encryption at rest (agent) | AES-256-CBC + HMAC (SQLCipher) | NIST SP 800-38A |
-| Password hashing | Argon2id | IETF RFC 9106 |
-| Integrity verification | HMAC-SHA256 | IETF RFC 2104 |
-| Key derivation | HKDF-SHA256 | IETF RFC 5869 |
+| Purpose | Algorithm |
+|---|---|
+| Signatures on every recorded artifact and ledger entry | Ed25519 |
+| Ledger integrity | A hash chain: each entry folds into a running head hash, so removing or rewriting an entry breaks the chain for every entry after it |
+| Password hashing | Argon2id, with a unique salt per password |
+| Secrets at rest (provider keys, sign-on client secrets, second-factor secrets, the instance's own keys) | AES-256-GCM file-backed store, or the operating system keychain on macOS |
+| Recovery codes | Stored as SHA-256 hashes, single-use |
+| Connection to a hosted instance | TLS (HTTPS) |
+| Release integrity | SHA-256 checksums on every asset; Apple notarization on macOS; Authenticode signing on Windows; an Ed25519-signed update manifest verified against a key compiled into the app |
 
-## Encryption in Transit
+## In transit
 
-All data moving between any F7 component is encrypted with **TLS 1.3** — the most current version of the Transport Layer Security protocol.
+An instance F7 operates is served over HTTPS. The download runs on your own machine and serves your browser locally, on that machine.
 
-- HSTS headers enforce HTTPS on all connections.
-- Certificate pinning infrastructure is compiled into the agent; operational pins are applied per-deployment to prevent man-in-the-middle attacks.
-- Data is serialized using Protocol Buffers and transmitted over HTTPS — never in plaintext.
+Requests to outside services — the AI provider, the speech provider, sources you fetch, your mail provider — go over HTTPS to those services under their terms.
 
-## Encryption at Rest
+## At rest
 
-### Server Side
+- **Secrets are encrypted.** Provider API keys, single sign-on client secrets and second-factor secrets are held in an AES-256-GCM encrypted store beside the ledger (or in the macOS keychain), and the master key that decrypts them is kept apart from the encrypted files. They are resolved from that store on every request and never live in the configuration file.
+- **Passwords are never stored** — only their Argon2id hashes.
+- **The database files are not encrypted by Atlas.** On the download, protect the machine with your operating system's disk encryption. On an instance F7 operates, ask F7 about the hosting platform's storage before relying on volume encryption; this page does not claim it.
 
-Integration credentials (API keys for connected services like identity providers and HR systems) are encrypted with **AES-256-GCM** before being stored in the database.
+## Signing and the ledger
 
-- Encryption uses a versioned ciphertext format to support algorithm migration without downtime.
-- Keys are managed through environment-scoped secrets, not hardcoded.
-- Key rotation is supported.
+Every artifact Atlas records is wrapped in a signed envelope carrying the payload, a hash of it, the signing key's fingerprint, a per-signer sequence number and an Ed25519 signature. Significant events go to an append-only, hash-chained ledger whose database privileges allow reading and appending only.
 
-### Agent Side
+You can verify all of it without F7: the export archive contains the ledger, your relational data and the public keys needed to check the signatures independently. Verifying a record against a trust store proves integrity, not authority — a signature proves what was signed and by which key, not that the content is true or that the signer was entitled to sign it.
 
-The agent stores observation data locally in an encrypted database using **SQLCipher** (AES-256-CBC with HMAC integrity verification).
+## Key custody
 
-- The database encryption key is derived from device-specific material.
-- Even if the agent's data files are copied, they cannot be read without the encryption key.
+Stated plainly, because a security questionnaire will ask:
 
-### Credential Storage
-
-Device credentials (enrollment keys, refresh tokens) are stored in the operating system's native secure storage:
-
-| Platform | Storage |
-|----------|---------|
-| macOS | Keychain |
-| Windows | Credential Manager |
-| Linux | Secret Service (libsecret) |
-
-Credentials are never stored in plaintext files, environment variables, or application configuration.
-
-::: info macOS Keychain & Code Signing
-On macOS, seamless Keychain access requires the agent binary to be code-signed with an Apple Developer ID certificate. The Keychain records the code signing identity when credentials are first stored, and silently grants access to the same signed binary on subsequent launches. In enterprise deployments, an MDM-deployed PPPC configuration profile pre-authorizes Keychain access so that even the initial enrollment is fully silent — no password prompts appear.
-:::
-
-## Password Security
-
-Admin passwords are hashed with **Argon2id** — the winner of the Password Hashing Competition and the current OWASP recommendation.
-
-- Each password has a unique, randomly generated salt.
-- The algorithm is resistant to GPU and ASIC-based brute-force attacks.
-- Passwords are never stored in a reversible format.
-
-## Key Management
-
-- Server encryption keys are deployed through environment-scoped secrets (not checked into source code).
-- Agent keys are stored in the OS-native credential store.
-- Key rotation is supported for both server-side encryption and agent JWT signing.
-- There is a versioned ciphertext format (`v1:`) that allows seamless migration to new algorithms in the future.
+- **F7 ships no hardware security module integration and operates no key-management service.**
+- The instance's signing key is held in the instance's own encrypted secret store.
+- An operator can hold keys in a module they provide — a PKCS#11 module, an ssh-agent, or Google Cloud KMS. Atlas speaks to whatever module it is pointed at; the security then rests on that module's policies, which F7 neither provisions nor attests. A PKCS#11 module can as easily be a software token with the key in a file.
+- Signing from the browser uses a non-extractable key held by the browser, which the page can use and never read.
+- Not built: hardware custody, high availability and disaster recovery for the ledger, and service-level commitments for revocation.
 
 ---
 
-::: info No Legacy Crypto
-F7 does not use MD5, SHA-1, 3DES, RC4, RSA-PKCS1v15, or any other deprecated algorithm. All cryptographic operations use current-generation NIST or IETF-recommended standards.
+::: info No legacy cryptography
+Atlas does not use MD5, SHA-1, 3DES, RC4 or RSA-PKCS1v15 for any of the purposes above.
 :::

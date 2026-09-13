@@ -1,84 +1,47 @@
-# Authorization Model
+# Accounts and Access
 
-F7 implements a **hybrid ReBAC + ABAC** (Relationship-Based + Attribute-Based Access Control) authorization model. Every API request that accesses organization data passes through a Policy Decision Point (PDP) that evaluates relationships, roles, and context to produce an authorization decision.
+How people sign in to Atlas, what protects the account, and how access to project data is decided.
 
-## Why Not Just RBAC?
+## Signing in
 
-Simple role-based access (owner/admin/manager/viewer) doesn't express real-world data visibility rules:
+| Method | How it works |
+|---|---|
+| **Email and password** | The password is hashed with Argon2id and never stored in readable form. Repeated failed attempts lock the account, and the lockout is durable. |
+| **Single sign-on** | OAuth 2.0 / OpenID Connect sign-in with an identity provider the operator configures. The provider's client secret lives in the same encrypted store as provider API keys. |
+| **Second factor** | Time-based one-time codes, with the secret stored encrypted, and passkeys (WebAuthn). Single-use recovery codes are stored as hashes. |
+| **Invitations** | Membership on an instance and its projects is granted by invitation, and the invitation is recorded against the account. |
+| **Provisioning** | An identity provider can push user lifecycle into the instance over inbound SCIM 2.0: create on hire, profile updates, and deactivation on offboarding. |
 
-- A **manager** should see data only for their **direct and indirect reports**, not all managers in the organization
-- **Aggregate views** must enforce **k-anonymity** — if a department has fewer than 5 people, their data shouldn't appear in aggregate charts
-- Some admins need access to **specific app categories** (e.g., "AI tools") without seeing all data
+Password-reset and verification links expire. Sessions expire and can be revoked, and deactivating an account revokes its sessions.
 
-F7's PDP evaluates these rules on every request.
+## Who can do what
 
-## Authorization Model
+Access to project data is checked on every request and denied by default.
 
-The authorization model defines six entity types and their relationships:
+| Level | What it can do |
+|---|---|
+| **Project reader** | See the project. |
+| **Project writer** | Add and change content, and stop an autonomous run. |
+| **Project administrator** | Manage membership and arm autonomous runs. |
+| **Instance owner or administrator** | Everything on the instance, including its audit records. On the download that is your organisation; on an instance F7 operates it is F7 for support, maintenance and security only. |
 
-| Entity | Relationships |
-|--------|--------------|
-| **Organization** | `owner`, `admin`, `member` |
-| **Team** | `org` (parent organization), `manager`, `member` |
-| **User data** | `can_view`, `can_view_aggregate` |
-| **App category** | `admin`, `can_view_app_data` |
-| **Department** | Scopes visibility by organizational unit |
-| **User** | Identity — the subject of authorization decisions |
+Roles are membership rows resolved against a policy decision point with a fail-closed fallback, and a membership ceiling can lower a role but never raise one.
 
-Relationships are synchronized from your organization's structure: when an admin updates team membership or reporting chains, the authorization model updates automatically.
+## What is recorded
 
-## How a Request Is Authorized
+Every authentication lifecycle transition is written to a structured auth event log: sign-in success and failure, lockout, sign-out, second-factor enrolment, verification and removal, passkey registration and use, password and email changes, single sign-on admissions and denials, and administrative account actions. The log never blocks authentication: a failure to write it is logged as a warning and never becomes a sign-in outage.
 
-1. **Identity extraction** — The middleware identifies the requesting user from their session cookie, JWT, or API key
-2. **PDP check** — The PDP evaluates whether the user has the required relationship to the requested resource (e.g., "Is this user a manager of the team that contains the requested employee?")
-3. **Decision** — The PDP returns `allow` or `deny`, along with any **obligations** (see below)
-4. **Response transformation** — If the decision includes obligations, the response is modified before being sent to the client
+Separately, significant product events — who authorised, reviewed, approved or voted on something — go to the append-only signed ledger described in [Deployment and Trust Architecture](/security/architecture#the-signed-record).
 
-## Purpose-Specific Enforcement
+## Acceptances and consent
 
-Authorization is evaluated independently for each **data purpose**:
-
-| Purpose | What It Controls |
-|---------|-----------------|
-| `user_data` | Access to individual employee telemetry, scores, and profiles |
-| `app_categories` | Access to application-level usage data filtered by category |
-| `team_data` | Access to team-level aggregates and comparisons |
-
-Each purpose can be independently **enabled or disabled** per organization, allowing gradual rollout of fine-grained access controls.
-
-## Manager-Chain Scoping
-
-When a user with the `manager` role requests employee data, the PDP evaluates the **full reporting chain** — not just direct reports:
-
-- A manager sees data for all employees who report to them directly or indirectly
-- The reporting chain is computed via a **recursive query with cycle detection** to handle complex organizational structures
-- If an employee's manager changes, their data visibility updates automatically
-
-## Post-Response Obligations
-
-The PDP can attach **obligations** to an authorization decision that transform the API response:
-
-### k-Anonymity Enforcement
-Aggregate views (team analytics, department summaries) suppress groups smaller than a configurable threshold (default: 5 members). This prevents re-identification of individuals through small-group aggregation.
-
-## Fail-Closed Design
-
-- If the PDP sidecar is unreachable, **all admin-facing routes deny access**
-- Agent telemetry ingestion and health checks are **exempt** — they use device authentication, not the PDP
-- Authorization decisions are **cached for 30 seconds** to minimize latency impact
-
-## IdP Group Mapping
-
-When using SSO, F7 can automatically provision roles from your identity provider's group claims:
-
-- Map IdP groups to F7 roles (e.g., "Engineering Managers" → `manager`, "HR Leadership" → `admin`)
-- Group mappings are evaluated at login — role changes in your IdP take effect on the user's next authentication
-- Supports Microsoft Entra ID, Okta, Google Workspace, JumpCloud, and generic OIDC group claims
+- Your acceptance of the terms is recorded against a specific version, so a material change asks you again.
+- Consent to voice input is asked for at the point you turn it on, not implied by your plan.
+- Consent to the Rewind feedback recorder is recorded against a deployment and can be withdrawn; it is never implied by a plan, a licence tier or general acceptance of the terms. See [Data Atlas Holds (Details)](/privacy/data-collection#atlas-rewind).
 
 ---
 
 ::: info Related
-- [Security Architecture](/security/architecture) — The six-layer security model
-- [Employee Controls](/privacy/employee-controls) — What managers and admins can see
-- [SOC 2](/compliance/soc2) — How authorization maps to SOC 2 criteria
+- [Deployment and Trust Architecture](/security/architecture) — the instance boundary and the signed record
+- [Your Controls](/privacy/your-controls) — what you can change, revoke and export
 :::

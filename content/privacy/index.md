@@ -1,57 +1,47 @@
 # Privacy Principles
 
-Privacy is not an add-on feature in F7 — it's a design constraint that shapes every technical decision. Here are the principles that govern how F7 handles data.
+Atlas holds the record of how your business runs. These are the principles that govern what happens to it, each stated with what is built behind it.
 
-## 1. Metadata, Never Content
+## 1. One instance, your data
 
-The F7 agent captures work-pattern metadata — application names, activity counts, timing, and session structure. It never uploads content: no prompts, no files, no emails, no clipboard data, and no screenshots. This principle, and everything else on this page, is about the F7 agent; the Atlas Rewind exception is stated below.
+Every Atlas deployment is one instance with one database and one signed ledger, for one customer. On the download, no one at F7 can read, export or delete anything in it. On an instance F7 operates, F7 staff can access the systems holding your data for support, maintenance and security, and F7 commits to accessing it only for those purposes.
 
-This isn't a policy choice. The agent's code physically does not have the capability to read prompt text, file contents, or clipboard data.
+## 2. Nothing leaves without a published reason
 
-**Vision (Mode 3 — Interpret) caveat.** When an organization explicitly enables Mode 3, the agent processes screen frames locally for an on-device vision-language model. Frames are never uploaded and never leave the device. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
+Atlas contacts outside services only for the purposes listed in [How Atlas Runs](/overview/how-it-works#what-leaves-the-instance): the AI provider you configure, optional voice, sources you ask it to fetch, connected repositories, email, licensing and updates. That list is complete. Several of those services are inactive until you configure them.
 
-**Atlas Rewind is a different product and a different promise.** Atlas is a separate F7 product from the agent, and it contains a feedback recorder called Rewind. When a reviewer working in Atlas turns Rewind on, it takes picture-only snapshots of the tab or screen that reviewer chooses, and those pictures are not covered by the agent promises above. Rewind records no audio. A capture stays on the customer's own Atlas instance unless the reviewer asks an AI model to describe the frames they selected, which sends those frames to the configured model provider with the reviewer's per-capture permission. Sending a capture to F7 is planned and not built, and Rewind is not shown on any customer deployment today; it is offered only where a customer has been asked for consent and has given it. See [Atlas Rewind](/legal/privacy-policy#from-atlas-rewind-atlas-only-not-the-f7-agent).
+## 3. No analytics, no tracking, no background reporting
 
-## 2. Local-First Processing
+Atlas contains no analytics, no tracking, and no automatic crash or error reporting. When something goes wrong, the report is built and stored in your browser and is sent to F7 only if you choose to send it.
 
-The on-device AI model performs classification and scoring **before any data leaves the device**. Only structured, PII-scrubbed metadata is transmitted to the server. Raw observations stay on the device temporarily and are pruned after syncing.
+## 4. The AI provider is your choice
 
-## 3. Data Minimization
+The model provider is a configuration value. On plans where you supply your own key, requests go to your own account with that provider under your agreement with them, not F7's. Atlas uses your key to make the requests you ask for and for nothing else.
 
-Every captured field has a documented purpose. If a data point isn't needed for scoring or analytics, it isn't captured. This follows the principle of data minimization required by GDPR (Article 5(1)(c)) and CCPA's reasonable collection standard.
+## 5. Voice is off until you turn it on
 
-## 4. Aggregation Over Identification
+Voice input is off unless configured, and enabling it requires your explicit consent at the point you turn it on. When it is on, a recording of your speech is uploaded to a third-party speech provider to be transcribed.
 
-Management dashboards show **team and department aggregates**. Individual-level data is visible only to:
-- The person themselves (through a planned personal dashboard)
-- Authorized roles with explicit audit logging of every access
+## 6. The one screen recorder is consent-gated, and absent today
 
-Scores and insights are designed to inform workforce strategy, not to surveil individuals.
+Atlas contains a feedback recorder called Rewind. It captures pictures of a reviewer's own screen, only after that reviewer turns it on, and records no audio. It is not present on any customer deployment today, and before it is offered on a deployment F7 hosts, that deployment has to be granted it, which happens only where consent has been asked for and given. Sending a capture to F7 is planned and not built. The full description, including what is and is not built, is in [Data Atlas Holds (Details)](/privacy/data-collection#atlas-rewind).
 
-## 5. Consent, Not Coercion
+## 7. Everything is exportable, and one thing cannot be selectively deleted
 
-- A **personal dashboard** is planned — employees will be able to view their own data.
-- The **vision model** (Mode 3 — Interpret) must be explicitly enabled by the organization.
-- Organizations can **pause observation** for employees at any time.
-- Exercising privacy controls has no impact on work status — by design.
+You can export everything at any time: a single archive with the signed ledger, your relational data, and the public keys needed to verify the signatures independently. Ordinary records can be corrected or deleted. The ledger is append-only by design: it can be destroyed in its entirety, never edited entry by entry. [Data Retention and Deletion](/privacy/data-retention) states the limit in full.
 
-## 6. Right to Erasure
+## 8. No sale, no advertising, disclosure only when compelled
 
-Any employee's data can be fully deleted on request:
-- All server-side records are permanently removed.
-- All device-side data is wiped via a remote command.
-- An audit trail of the erasure event is retained for compliance — without the original data content.
+F7 does not sell your data and does not share it for advertising. F7 discloses data to others only where legally compelled, and will tell you unless prohibited from doing so.
 
-## 7. Transparency
+## 9. Atlas does not limit what you type
 
-We publish exactly what we collect, what we never collect, and how every piece of data is used. See our [Data Collection Details](/privacy/data-collection) for the complete breakdown.
-
-Once the personal dashboard is available, employees will be able to see every data point captured from their device.
+Everything you author or upload is held by the instance, and that content contains whatever you put in it, including personal information about other people if you enter it. Atlas treats it as yours; the responsibility for having the right to put it there is yours too.
 
 ---
 
-::: tip Learn More
-- [Data Collection Details](/privacy/data-collection) — What we capture and why
-- [Employee Controls](/privacy/employee-controls) — How employees control their data
-- [Data Retention & Deletion](/privacy/data-retention) — How long data is kept and how to delete it
+::: info Related pages
+- [Data Atlas Holds (Details)](/privacy/data-collection) — the field-level inventory, and Rewind in full
+- [Your Controls](/privacy/your-controls) — export, delete, keys, voice and consent
+- [Data Retention and Deletion](/privacy/data-retention) — how long each thing is kept
 :::

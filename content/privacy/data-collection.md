@@ -1,155 +1,76 @@
-# Data Collection Details
+# Data Atlas Holds (Details)
 
-This page provides a detailed breakdown of every category of data the F7 agent collects, along with explicit guarantees about what is **never** collected.
+The field-level inventory of what an Atlas instance holds, what it does not collect, and the one feature that captures a screen. For what leaves the instance and when, see [How Atlas Runs](/overview/how-it-works#what-leaves-the-instance).
 
-## Captured Data
+## Account and sign-in
 
-### Application Focus
+| Field | Notes |
+|---|---|
+| Email address | How account recovery works; must be kept current |
+| Display name | Optional |
+| Password hash | Argon2id. The password itself is not stored |
+| Role | Your role on the instance |
+| Email verification state | Whether the address has been verified |
+| Second-factor enrolment | Whether a second factor is enrolled. The one-time-code secret is stored encrypted |
+| Recovery codes | Stored as hashes of the unused codes only |
+| Passkeys | Any passkeys you register |
+| Sign-in attempts | Recorded, with lockouts, second-factor and passkey changes, and administrative account actions |
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| App name | "VS Code", "Slack" | Identify tools used throughout the workday |
-| App category | "IDE", "Communication" | Classify work activities for scoring |
-| Foreground/background transitions | App moved to foreground at 10:32 | Measure focus time and context-switching patterns |
+## Acceptances and permissions
 
-**Not captured:** Window title content (for non-work apps), text on screen, content of documents.
+- A record that you accepted a given version of the terms, with a timestamp.
+- Your membership and role on each project.
+- Invitations issued to you.
 
-### Input Activity
+## What you create
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| Click count | 47 clicks in 5 minutes | Measure engagement levels |
-| Keystroke count | 230 keystrokes in 5 minutes | Measure typing activity |
-| Scroll events | 12 scroll actions | Distinguish reading from active work |
-| Idle periods | 5 minutes idle | Identify breaks and context boundaries |
+Everything you author or upload in Atlas: interviews and their transcripts, process maps, decisions, narrative text, schemas, and any source documents you add or ask Atlas to fetch. Each item's conversation thread is kept server-side, so a judgment call is durable rather than scrolling away.
 
-**Not captured:** Which keys were pressed, what was typed, mouse coordinates, click targets.
+Atlas does not limit what you type, so this content contains whatever you put in it, including personal information about other people if you enter it.
 
-### Network Metadata
+## The signed ledger
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| Destination domain | `api.openai.com` | Identify AI tool usage |
-| Port | 443 | Classify connection type |
-| Process name | "chrome" | Associate network activity with apps |
-| Detected AI provider | "OpenAI" | Track AI adoption metrics |
+Atlas's purpose is to make its record provable, so significant events are written to an append-only, hash-chained ledger: who authorised, reviewed, approved or voted on something, and the content being recorded when that content is the point of the entry.
 
-**Not captured:** Full URL, query parameters, request body, response body, cookies, headers.
+Some personal data is written into the ledger deliberately. A record of who authored, reviewed, approved or voted on something is the substance of the proof, not incidental metadata attached to it. A ledger entry can therefore contain a pseudonymous identifier for the person who took an action — derived from their account and resolvable to a name only by an authorised reader of that instance — together with the fingerprint of the signing key they used. It does not contain their name or email address. It can also contain content you authored where that content is the thing being recorded. The consequence for deletion is stated in [Data Retention and Deletion](/privacy/data-retention#the-ledger-limit).
 
-**Limited capture:** For traffic identified as AI-provider API calls (for example `api.openai.com`, `api.anthropic.com`), the path component of the URL alone (e.g. `/v1/chat/completions`) is recorded for provider classification. No query strings, fragments, headers, or request/response bodies are captured for any traffic.
+## Usage metering
 
-### Session Structure
+Per-request model, token counts, cost and outcome, retained for 90 days and then deleted automatically. These records are not linked to an individual user: they identify the feature, not the person.
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| Session boundaries | Session started 9:00, ended 11:30 | Define work sessions |
-| Duration | 2 hours 30 minutes | Measure productive time |
-| Focus time | 1 hour 45 minutes uninterrupted | Identify deep work periods |
-| Context switches | 8 app switches in 30 minutes | Measure focus vs. fragmentation |
-| Depth classification | "Deep work" | Categorize session quality (computed locally by on-device AI) |
+## Error reports
 
-### AI Interaction Metadata
+When something goes wrong, the report is built and stored in your browser. It is sent to F7 only if you choose to send it. Nothing is transmitted in the background.
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| AI provider | "Claude", "ChatGPT", "GitHub Copilot" | Track which AI tools are used |
-| Turn count | 12 turns in a session | Measure conversation depth |
-| Request/response sizes | 500 bytes sent, 2KB received | Measure interaction complexity |
-| Time-to-first-response | 1.2 seconds | Track AI tool performance |
+## What Atlas does not collect
 
-**Not captured:** Prompt text, response text, conversation content, model parameters.
+- No analytics and no tracking, in the product or in this Trust Center.
+- No automatic crash or error reporting.
+- No screen capture, except Rewind, below, which a reviewer turns on for their own screen.
+- No audio, except a voice recording sent for transcription when voice input is configured and consented to. Rewind records no audio.
+- No data from anyone's device other than the machine that runs the instance. Atlas installs no agent and observes no one.
 
-### Git Metadata (via webhook, not agent)
+## Atlas Rewind
 
-| Field | Example | Purpose |
-|-------|---------|---------|
-| Commit count | 3 commits today | Correlate AI usage with development output |
-| Files changed count | 7 files modified | Measure scope of work |
-| Insertions/deletions | +120 / -45 lines | Measure development velocity |
-| Branch name | "feature/auth-refactor" | Associate work with project context |
+Atlas contains a feedback recorder called Rewind. A reviewer turns it on, it holds the last few seconds of the screen as it goes, and when something looks wrong the reviewer presses a button *after* it happened to keep the seconds that have just passed. It is off until a reviewer turns it on, and it is not present at all on a deployment that has not been granted it.
 
-**Not captured:** Diff content, file contents, commit messages.
+**What is captured.** Picture-only snapshots, eight a second, of the browser tab or the screen the reviewer chooses in the browser's own share prompt, together with the words the reviewer writes to describe what they saw and the marks they draw on top of the frames. Whatever is on the screen they share is in those pictures, including personal information about other people if it is on the screen at the time.
 
-## Employer-Provided Data
+**No audio is recorded.** Rewind captures pictures and nothing else. The description field accepts dictation, and dictation behaves as voice input does everywhere in Atlas: if voice is configured and consented to, the recording of that spoken sentence goes to the speech provider to be turned into text. That is the reviewer dictating a description, not Rewind recording the capture's sound.
 
-The deploying organization can provide workforce directory data to F7 through configured identity, directory, or file-based syncs.
+**A capture stays on the instance until the reviewer submits it, with one exception.** The frames, the marks and the words are held by the instance that recorded them; capturing sends nothing anywhere. The exception is the first read: if the reviewer asks for one, the selected frames and the reviewer's words are sent to the AI provider the instance is configured with so it can describe what the pictures show, and the reviewer is asked for that permission separately for each capture.
 
-F7 does **not** independently collect this data — it is supplied entirely by the employer.
+**Sending a capture to F7 is planned and is not built.** Today Rewind has no way to send a capture to F7 by itself; a capture that becomes a report becomes one because a person at F7 converted it by hand. When submission is built, a submission will carry the keyframes the reviewer selected with their marks drawn into the image, the reviewer's words, the model's first read where one was asked for, a stamp of where in the product the capture was taken, the capture's own identifier, and the fingerprint of the instance's key — whether or not it carries frames. It will leave behind every frame the reviewer did not select, every other capture, everything from the work you have authored in Atlas, and any identifier for your account beyond the licence binding. This is written down before it exists because it must be agreed before it is offered, and it must not be answered as a current control on a vendor questionnaire.
 
-### Job Metadata
+**Who can read a capture today.** The person who recorded it. Rewind appears only on F7's own development servers and internal reference builds, and a capture becomes readable by anyone else only when a person at F7 converts it by hand into an entry in F7's own issue tracker. Who at F7 may open a submitted capture is settled as part of building the submission path, and this site will say so before submission is offered to any customer.
 
-| Field | Example | Purpose |
-|-------|---------|---------||
-| Job title | "Senior Backend Engineer" | Role-level segmentation and benchmarking |
-| Employment type | Full-time, part-time, contractor | Workforce composition analytics |
-| Cost center | "Engineering - Platform" | Financial attribution |
-| Location | "San Francisco" | Geographic analysis |
+**How long a capture is kept.** A capture the reviewer has not submitted stays on the instance until it is deleted there. The retention of a submitted capture is deliberately not yet set: it was left to legal review rather than fixed internally, and it will be stated before submission is offered.
 
-### Org Hierarchy
-
-| Field | Example | Purpose |
-|-------|---------|---------||
-| Department / team | "Engineering" → "Platform Team" | Reporting structure (up to 16 levels) |
-| Manager | Manager email or UPN | Manager-level dashboards |
-| Headcount | 12 people on team | Team sizing (includes non-enrolled employees) |
-
-### Employment Lifecycle
-
-| Field | Example | Purpose |
-|-------|---------|---------||
-| Hire date | 2024-03-15 | Tenure analysis |
-| Termination date | (when applicable) | Automatic deactivation |
-| Active status | Active / Inactive | Accurate headcount |
-
-### Identity (for account linkage)
-
-| Field | Example | Purpose |
-|-------|---------|---------||
-| Email | user@company.com | Primary join key for HR sync |
-| Display name | "Jane Smith" | Dashboard display |
-| User principal name | user@company.onmicrosoft.com | IdP sync key |
-| External ID | IdP object ID | Deduplication across syncs |
-
-**Not provided by employer:** Anything about work behavior, AI usage, or application activity — that data comes only from the agent.
-
-## Third-Party Event Integrations
-
-With the deploying organization's authorization, F7 can ingest event metadata from configured controller integrations. These integrations are **opt-in** — each must be explicitly configured by an organization administrator. The currently implemented integration sources are event/webhook providers: GitHub, GitLab, Bitbucket, Jira, Linear, Asana, Jenkins, GitHub Actions, GitLab CI, CircleCI, Google Calendar, Microsoft Outlook, LaunchDarkly, Zendesk, and Generic webhooks.
-
-| Integration area | Example sources | Data Retrieved |
-|------------------|-----------------|----------------|
-| Source control | GitHub, GitLab, Bitbucket | Commit, pull request, branch, and review event metadata |
-| Issue/project management | Jira, Linear, Asana | Ticket and sprint event metadata |
-| CI/CD | Jenkins, GitHub Actions, GitLab CI, CircleCI | Build, test, and deployment event metadata |
-| Calendar/support/feature flags | Google Calendar, Microsoft Outlook, Zendesk, LaunchDarkly | Meeting, support-ticket, and flag-change event metadata |
-| Custom workflows | Generic webhooks | Customer-defined event metadata |
-
-**Not retrieved:** Document contents, message text, prompt/response text, code diffs, file contents, repository contents, calendar descriptions, or support conversation bodies.
-
-### Integration Controls
-
-- **Opt-in only:** No integrations are enabled by default
-- **Admin-authorized:** Each integration requires explicit administrator configuration with API credentials
-- **Minimum scopes:** F7 requests only the API permissions needed for usage analytics — never broad read access
-- **Disconnectable:** Any integration can be revoked at any time; historical data from that integration follows standard retention policies
-- **Audited:** All integration connections and data retrievals are recorded in the audit log
-
-## Data Never Captured
-
-These are absolute guarantees about data **the F7 agent** will never collect. They describe the agent that runs on an employee's device. Atlas, a separate F7 product, contains a feedback recorder called Rewind that does capture pictures of a reviewer's own screen when that reviewer turns it on; it is covered separately in [Atlas Rewind](/legal/privacy-policy#from-atlas-rewind-atlas-only-not-the-f7-agent) and is not in scope for the list below.
-
-- **Prompt and response text** from any AI tool
-- **File contents** of any kind
-- **Email or chat message content**
-- **Screenshots transmitted off-device by the agent** (even when the optional vision model is enabled — frames are processed locally; current macOS builds stream capture bytes through stdout and scrub stale legacy vision temp files on startup). This is a statement about the agent, not about Atlas Rewind.
-- **Clipboard contents**
-- **Passwords, tokens, or credentials**
-- **Full browsing URLs** — only the destination domain, optional API endpoint path (e.g. `/v1/chat/completions`) for AI-provider classification, and approximate byte counts. Never query strings, request bodies, or response content.
-- **Activity from excluded apps** (zero telemetry)
-- **Individual keystrokes** (only aggregate counts)
+**Consent, and when you will see it.** Consent to Rewind is recorded for your deployment and can be withdrawn, which turns the recorder off. Rewind is not shown to a customer today. Before it is offered on a deployment F7 hosts, that deployment has to be granted it, and it is granted only where consent has been asked for and given. It is never offered on an air-gapped deployment.
 
 ---
 
-::: info Design Principle
-These aren't just policies — the agent's code is architecturally incapable of capturing content. There are no code paths for reading prompt text, file contents, or clipboard data. The guarantees are enforced by the codebase, not just by configuration.
+::: info Related
+- [What Atlas Holds](/overview/data-we-collect) — the short version
+- [Your Controls](/privacy/your-controls) — export, deletion, keys, voice and consent
 :::

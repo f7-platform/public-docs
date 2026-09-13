@@ -1,22 +1,22 @@
 # Contributing
 
-This repository is the **public documentation site** for fseven. The product
-source (controller, agent, dashboard) is maintained in private repositories;
+This repository is the **public documentation site** for Atlas by F7 — the
+F7 Trust Center. Atlas's source is maintained in a private repository;
 contributions to the public docs are welcome here.
 
 ## What belongs here
 
-- `content/` — published pages (overview, install, privacy, security,
-  compliance, FAQ).
-- `docs/releases/` — release notes by version.
+- `content/` — published pages (overview, privacy, security, compliance,
+  legal, FAQ).
+- `docs/releases/` — release evidence templates.
 - `scripts/` — site build/check helpers (e.g. `check-public-claims.sh`).
 - `package.json` / VitePress configuration.
 
 ## What does NOT belong here
 
-- Product source code or installer scripts. Open issues against
-  `public-agent-binaries` (installer) or the relevant private repository for
-  product changes.
+- Product source code or installers. Open issues against
+  `public-atlas-binaries` (the download) for install problems, or contact
+  F7 for product changes.
 - Private roadmap content, internal audit notes, or customer-specific data.
 
 ## How to contribute
@@ -29,11 +29,12 @@ contributions to the public docs are welcome here.
    released. The `Public Repository Protocol` (see
    `fseven-docs/docs/PUBLIC-REPO-PROTOCOL.md` in the platform repo) governs
    what may appear here.
-4. **Run local checks**:
+4. **Run local checks** (CI is npm-authoritative):
    ```bash
-   pnpm install
-   pnpm build           # site builds without errors
-   pnpm check:claims    # public-claims script passes
+   npm ci
+   npm run test:claims    # fixture tests of the claim checker pass
+   npm run check:claims   # public-claims script passes
+   npm run build          # site builds without errors
    ```
 5. **Open a pull request** — link the related issue and describe what changed
    on the published site.

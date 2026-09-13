@@ -1,6 +1,6 @@
 # Public Claims Registry
 
-The public claims registry (`claims-registry.json` in this directory) is a machine-readable index of every material claim made across these public-docs pages. It maps each claim to its source evidence, audit references, SOC 2 criteria, and current release status.
+The public claims registry (`claims-registry.json` in this directory) is a machine-readable index of every material claim made across these public-docs pages. It maps each claim to its source evidence, audit references, SOC 2 criteria, and current release status. Version 2 of the registry describes Atlas only: the claims about F7's earlier workforce-analytics product were retired with that product in September 2026, and the numbering continues from where it stopped.
 
 ## Purpose
 
@@ -13,7 +13,7 @@ The public claims registry (`claims-registry.json` in this directory) is a machi
 | Status | Meaning |
 |---|---|
 | `active` | Feature ships and the claim is accurate |
-| `in-progress` | Feature is in development; claim is scoped/qualified on the page |
+| `in-progress` | Part of the claim is built and part is planned; the page says which is which |
 | `not-available` | Feature not yet shipped; claim is **forbidden** from appearing in content |
 
 ## Maintenance

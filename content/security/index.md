@@ -1,53 +1,48 @@
 # Security Overview
 
-Security and privacy are foundational design constraints in F7 — not afterthoughts. This page summarizes our security posture for CISOs, procurement teams, and security evaluators.
+This page summarises Atlas's security posture for security evaluators, procurement teams and compliance reviewers. Every statement below describes implemented behaviour; where a control is not built, the page says so.
 
-## Core Security Posture
+## Core security posture
 
-- **Defense in depth.** Six distinct security layers protect data from endpoint to storage.
-- **Privacy by design.** The agent processes data locally before transmitting only structured, PII-scrubbed metadata. Content is never captured.
-- **Zero-trust enrollment.** Agents authenticate via a cryptographic enrollment flow that produces per-device credentials stored in the operating system's secure credential store.
-- **Modern cryptography.** All algorithms are current-generation with no legacy primitives.
-- **Memory-safe codebase.** The platform is built in Rust, eliminating entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time.
+- **Single tenant by construction.** One deployment, one database, one signed ledger per customer. There is no shared multi-tenant store, so there is no cross-tenant query to get wrong.
+- **A signed, append-only record.** Every artifact Atlas records is wrapped in a signed envelope, and significant events go to a hash-chained ledger. The database privileges on the ledger tables allow reading and appending and nothing else, so even full administrative access to the instance cannot rewrite history. You can export the whole record with the public keys needed to verify it independently.
+- **Account security.** Passwords are hashed with Argon2id and never stored in readable form. Time-based one-time codes and passkeys are supported as second factors, recovery codes are stored hashed and single-use, repeated failed sign-ins lock the account, and sessions can be revoked.
+- **Secrets encrypted at rest.** Provider keys and other secrets are kept in an AES-256-GCM encrypted store, or in the operating system keychain on macOS. They are resolved from that store on every request and never live in the configuration file.
+- **Access checked on every request.** Project permissions are resolved per request and denied by default.
+- **Memory-safe implementation.** The Atlas server is written in Rust.
+- **No hardware key custody.** F7 ships no hardware security module integration and operates no key-management service. Keys are held in the instance's secret store, or in a key module an operator points Atlas at. See [Encryption and Signing](/security/encryption#key-custody).
 
-## Six Layers of Defense
-
-| Layer | What It Does |
-|-------|-------------|
-| **1. Transport Security** | TLS 1.3 for all communications. HSTS enforced. Certificate pinning for agent connections. |
-| **2. Authentication** | EdDSA-signed agent JWTs with per-device credentials. Argon2id passwords or OAuth 2.0/OIDC SSO for admins. IdP directory sync with auto-provisioning. |
-| **3. Authorization** | Hybrid ReBAC+ABAC policy decision point. Four roles with manager-chain scoping, purpose-specific enforcement, app-category delegation, and k-anonymity. |
-| **4. Database Isolation** | Row-Level Security on every org-scoped table with read and write enforcement. |
-| **5. Audit & Monitoring** | Immutable, trigger-protected audit log. Cannot be modified or deleted even by the application. |
-| **6. Encryption at Rest** | AES-256-GCM for server-side secrets. AES-256 encrypted local database on each device. |
-
-## Compliance Quick Reference
+## Compliance quick reference
 
 | Question | Answer |
-|----------|--------|
-| Data encrypted in transit? | **Yes** — TLS 1.3 |
-| Data encrypted at rest? | **Yes** — AES-256-GCM (server), AES-256 (agent) |
-| Role-based access control? | **Yes** — Hybrid ReBAC+ABAC with PDP, four roles, manager-chain scoping, app-category delegation |
-| SSO / OIDC? | **Yes** — Entra ID, Okta, Google Workspace, JumpCloud, generic OIDC |
-| Tenant isolation? | **Yes** — PostgreSQL Row-Level Security on all org-scoped tables |
-| Audit logging? | **Yes** — Immutable (trigger-protected), 24-month retention |
-| Modern password hashing? | **Yes** — Argon2id |
-| Memory-safe language? | **Yes** — Rust |
-| Dependency auditing? | **Yes** — Automated in CI pipeline |
-| Right to erasure? | **Yes** — Full data deletion on request |
-| Can employees pause collection? | **Yes** — Tray icon, per-app exclusion, work-hours mode |
+|---|---|
+| Data encrypted in transit? | **Yes** on an instance F7 operates: it is served over HTTPS. The download runs on your own machine and serves your browser locally. |
+| Data encrypted at rest? | **Secrets, yes** — provider keys, sign-on client secrets and second-factor secrets are encrypted. **Database files, not by Atlas** — protect the machine that runs it with disk encryption. |
+| Tenant isolation? | **Yes** — one instance and one database per customer; no shared store. |
+| Audit logging? | **Yes** — sign-in attempts, lockouts, second-factor and passkey changes and administrative account actions are recorded; significant product events are written to the append-only signed ledger. |
+| Modern password hashing? | **Yes** — Argon2id. |
+| Multi-factor authentication? | **Yes** — time-based one-time codes and passkeys, with single-use recovery codes. |
+| Single sign-on? | **Yes** — OAuth 2.0 / OpenID Connect sign-in with a configured identity provider. |
+| User provisioning? | **Yes** — inbound SCIM 2.0 for users and groups. |
+| Right to erasure? | **Yes for ordinary records.** The ledger is append-only: it can be destroyed in its entirety, never edited entry by entry. |
+| On-premise deployment? | **Yes** — the download runs on your own machine or server, and can run with no connection to F7. |
+| Dependency auditing? | **Yes** for this Trust Center — its deploy workflow runs `npm audit --audit-level=moderate` before publishing. Product dependency evidence is release-scoped in the owning private repository. |
+| Independent penetration test? | **No report is available.** |
+| SOC 2 report? | **No.** See [SOC 2](/compliance/soc2). |
 
-## Audit & Testing
+## Audit and testing
 
-F7 undergoes regular internal security audits following a structured three-pass methodology. This Trust Center's deploy workflow runs `npm audit --audit-level=moderate` before publishing to catch known vulnerabilities in its documentation dependencies; product dependency evidence is tracked in release evidence for the owning private repositories.
+F7 runs an internal security audit program with a structured three-pass methodology. The current baseline is **Run 41**, completed 2026-09-03: a full baseline over every in-scope repository, with zero critical findings open at close and every open finding recorded for remediation. Its coverage boundary is stated here rather than implied: the earlier device-agent and server products were excluded from this run and the one before it by operator directive, and they are the shelved product this Trust Center no longer describes.
 
-Independent third-party penetration testing and SOC 2 Type II certification are on our roadmap.
+This Trust Center's deploy workflow runs `npm audit --audit-level=moderate` before publishing to GitHub Pages, so a known vulnerability in the site's own toolchain blocks the publish.
+
+No independent penetration test report is available for Atlas, and F7 does not hold a SOC 2 report. Neither is presented here as planned; both are stated as absent.
 
 ---
 
-::: info Deeper Dives
-- [Architecture](/security/architecture) — The six-layer model in detail
-- [Authorization](/security/authorization) — PDP authorization model, obligations, and IdP integration
-- [Encryption](/security/encryption) — Complete cryptographic inventory
-- [Agent Security](/security/agent-security) — How data is protected on the device
+::: info Deeper dives
+- [Deployment and Trust Architecture](/security/architecture) — where the instance runs and what talks to what
+- [Accounts and Access](/security/authorization) — sign-in, second factors, roles and the auth event log
+- [Encryption and Signing](/security/encryption) — the cryptographic inventory and the custody boundary
+- [Downloads and Updates](/security/downloads) — how to verify what you installed
 :::

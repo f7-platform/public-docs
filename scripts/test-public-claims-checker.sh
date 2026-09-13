@@ -17,8 +17,9 @@ build_fixture() {
     "$docs_root/content/legal" \
     "$docs_root/content/security" \
     "$docs_root/scripts" \
-    "$platform_root/fseven-agent/agent-core/src/lifecycle" \
-    "$platform_root/fseven-controller/server/src/integrations"
+    "$docs_root/content/overview" \
+    "$platform_root/fseven-atlas-mvp/apis/atlas-serve/src" \
+    "$platform_root/fseven-atlas-mvp/apps/atlas-app/src/legal"
 
   touch \
     "$docs_root/README.md" \
@@ -32,10 +33,13 @@ build_fixture() {
     "$docs_root/content/legal/privacy-policy.md" \
     "$docs_root/content/legal/terms-of-service.md" \
     "$docs_root/content/security/index.md" \
+    "$docs_root/content/security/downloads.md" \
+    "$docs_root/content/security/encryption.md" \
+    "$docs_root/content/overview/how-it-works.md" \
     "$docs_root/.github/workflows/deploy.yml" \
     "$docs_root/scripts/check-public-claims.sh" \
-    "$platform_root/fseven-agent/agent-core/src/lifecycle/vision_capture.rs" \
-    "$platform_root/fseven-controller/server/src/integrations/models.rs"
+    "$platform_root/fseven-atlas-mvp/apis/atlas-serve/src/update.rs" \
+    "$platform_root/fseven-atlas-mvp/apps/atlas-app/src/legal/privacy-policy.md"
 
   # The public surface names the baseline run in prose; the registry is the only
   # place it is declared. 41 is deliberately NOT the repo's real baseline — if
@@ -79,26 +83,26 @@ MD
   "audit_run": 41,
   "claims": [
     {
-      "id": "CLM-010",
-      "summary": "Implemented third-party event integration provider scope",
-      "source_files": ["content/privacy/data-collection.md"],
+      "id": "CLM-015",
+      "summary": "The complete list of what leaves an Atlas instance",
+      "source_files": ["content/overview/how-it-works.md"],
       "evidence": [
-        "fseven-controller: server/src/integrations/models.rs — implemented event/webhook source enum",
-        "public-docs: content/privacy/data-collection.md — public provider list"
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 4, the list of outside services",
+        "public-docs: content/overview/how-it-works.md — the published table"
       ],
-      "audit_refs": ["PUBDOC-1"],
+      "audit_refs": ["PUBDOC-6"],
       "release_status": "active"
     },
     {
-      "id": "CLM-011",
-      "summary": "Mode 3 frames stay local and current macOS capture may use temporary OS-local PNG files",
-      "source_files": ["content/privacy/index.md", "content/legal/privacy-policy.md"],
+      "id": "CLM-013",
+      "summary": "Atlas Rewind captures picture-only screen frames with consent; hosted submission to F7 is planned and not built",
+      "source_files": ["content/privacy/data-collection.md", "content/legal/privacy-policy.md"],
       "evidence": [
-        "fseven-agent: agent-core/src/lifecycle/vision_capture.rs — current macOS path uses a temporary PNG before read/remove cleanup",
-        "public-docs: content/legal/privacy-policy.md — discloses temporary OS-local PNG behavior"
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — the in-app policy's Rewind section",
+        "public-docs: content/legal/privacy-policy.md — the Atlas Rewind subsection"
       ],
-      "audit_refs": ["PUBDOC-2", "AGT-LOCAL-2"],
-      "release_status": "active"
+      "audit_refs": ["PUBDOC-4"],
+      "release_status": "in-progress"
     },
     {
       "id": "CLM-012",
@@ -109,6 +113,37 @@ MD
         "public-docs: scripts/check-public-claims.sh — rejects overbroad dependency-audit claims"
       ],
       "audit_refs": ["PDC5", "PUBDOC-3"],
+      "release_status": "active"
+    },
+    {
+      "id": "CLM-017",
+      "summary": "Signed envelopes and an append-only ledger with read-and-append privileges only",
+      "source_files": ["content/privacy/data-retention.md"],
+      "evidence": [
+        "fseven-atlas-mvp: apps/atlas-app/src/legal/privacy-policy.md — section 8, the ledger limit"
+      ],
+      "audit_refs": ["PUBDOC-8"],
+      "release_status": "active"
+    },
+    {
+      "id": "CLM-018",
+      "summary": "Download and update integrity",
+      "source_files": ["content/security/downloads.md"],
+      "evidence": [
+        "fseven-atlas-mvp: apis/atlas-serve/src/update.rs — the signed update-manifest check",
+        "public-atlas-binaries: README.md — signing, checksums and the pinned key"
+      ],
+      "audit_refs": ["PUBDOC-9"],
+      "release_status": "active"
+    },
+    {
+      "id": "CLM-022",
+      "summary": "Key custody boundary: no hardware security module integration",
+      "source_files": ["content/security/encryption.md"],
+      "evidence": [
+        "fseven-atlas-mvp: apis/atlas-serve/src/update.rs — stands in for the signer module in this fixture"
+      ],
+      "audit_refs": ["PUBDOC-13"],
       "release_status": "active"
     }
   ]
@@ -165,7 +200,7 @@ node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'N
 const fs = require('node:fs');
 const file = process.argv[2];
 const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
-registry.claims[0].evidence[0] = 'public-docs: fseven-agent/agent-core/src/lifecycle/vision_capture.rs — wrong repo boundary';
+registry.claims[0].evidence[0] = 'public-docs: fseven-atlas-mvp/apis/atlas-serve/src/update.rs — wrong repo boundary';
 fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
 NODE
 expect_fail "wrong-repo evidence path" "$platform_root"
@@ -238,7 +273,7 @@ expect_fail "registry missing audit_run (no source of truth)" "$platform_root"
 # and are not checked out in its own CI. Path existence is asserted wherever the
 # repo IS available (meta-repo, local dev) and reported as unverified otherwise.
 platform_root="$(build_fixture)"
-rm -rf "$platform_root/fseven-agent" "$platform_root/fseven-controller"
+rm -rf "$platform_root/fseven-atlas-mvp"
 expect_pass "sibling repos absent (standalone CI) — evidence paths unverified, not failed" "$platform_root"
 
 platform_root="$(build_fixture)"
@@ -246,7 +281,7 @@ node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'N
 const fs = require('node:fs');
 const file = process.argv[2];
 const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
-registry.claims[1].evidence[0] = 'fseven-agent: agent-core/src/gone.rs — stale cross-repo pointer';
+registry.claims[1].evidence[0] = 'fseven-atlas-mvp: apps/atlas-app/src/legal/gone.md — stale cross-repo pointer';
 fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
 NODE
 expect_fail "sibling repo present but evidence path missing" "$platform_root"

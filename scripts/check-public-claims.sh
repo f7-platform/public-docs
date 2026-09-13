@@ -134,21 +134,45 @@ audit_run_surface_files() {
   return 0
 }
 
-audit_run_surface_lines() {
-  # emits: <label>\t<lineno>\t<line>
+audit_run_citations() {
+  # emits: <label>\t<lineno>\t<run> — every "Run N" cited on the live surface.
+  # One awk pass per file, not one subshell per line: the per-line form
+  # (a process substitution inside a read loop, once per content line) crashes
+  # macOS's stock bash 3.2 on a real content tree, which left the local gate
+  # this repo's contributor docs prescribe unrunnable on a Mac. CI's newer bash
+  # never showed it.
   local f label
   while IFS= read -r f; do
     label="${f#"$ROOT_DIR"/}"
-    awk -v label="$label" '{ printf "%s\t%d\t%s\n", label, FNR, $0 }' "$f"
+    awk -v label="$label" '
+      {
+        line = $0
+        while (match(line, /(^|[^A-Za-z0-9_])Run [0-9]+[a-z]?([^A-Za-z0-9_]|$)/)) {
+          m = substr(line, RSTART, RLENGTH)
+          sub(/^[^R]*Run /, "", m)
+          sub(/[^0-9a-z]+$/, "", m)
+          printf "%s\t%d\t%s\n", label, FNR, m
+          line = substr(line, RSTART + RLENGTH - 1)
+        }
+      }' "$f"
   done < <(audit_run_surface_files)
 
   if [[ -f "$ROOT_DIR/CHANGELOG.md" ]]; then
     awk '
       /^## \[Unreleased\]/ { unreleased = 1; next }
       /^## / { unreleased = 0 }
-      unreleased { printf "CHANGELOG.md [Unreleased]\t%d\t%s\n", FNR, $0 }
-    ' "$ROOT_DIR/CHANGELOG.md"
+      unreleased {
+        line = $0
+        while (match(line, /(^|[^A-Za-z0-9_])Run [0-9]+[a-z]?([^A-Za-z0-9_]|$)/)) {
+          m = substr(line, RSTART, RLENGTH)
+          sub(/^[^R]*Run /, "", m)
+          sub(/[^0-9a-z]+$/, "", m)
+          printf "CHANGELOG.md [Unreleased]\t%d\t%s\n", FNR, m
+          line = substr(line, RSTART + RLENGTH - 1)
+        }
+      }' "$ROOT_DIR/CHANGELOG.md"
   fi
+  return 0
 }
 
 check_audit_run_baseline() {
@@ -162,15 +186,13 @@ check_audit_run_baseline() {
     return
   fi
 
-  local label lineno line cited drift=0
-  while IFS=$'\t' read -r label lineno line; do
-    while IFS= read -r cited; do
-      [[ -z "$cited" || "$cited" == "$AUDIT_RUN" ]] && continue
-      printf '  %s:%s cites Run %s, but the baseline is Run %s\n' \
-        "$label" "$lineno" "$cited" "$AUDIT_RUN" >&2
-      drift=$((drift + 1))
-    done < <(grep -oE '\bRun [0-9]+[a-z]?\b' <<<"$line" | sed 's/^Run //' || true)
-  done < <(audit_run_surface_lines)
+  local label lineno cited drift=0
+  while IFS=$'\t' read -r label lineno cited; do
+    [[ -z "$cited" || "$cited" == "$AUDIT_RUN" ]] && continue
+    printf '  %s:%s cites Run %s, but the baseline is Run %s\n' \
+      "$label" "$lineno" "$cited" "$AUDIT_RUN" >&2
+    drift=$((drift + 1))
+  done < <(audit_run_citations)
 
   if (( drift > 0 )); then
     printf '\nERROR: %d public audit-run reference(s) disagree with the baseline (Run %s) declared in %s\n' \
@@ -208,7 +230,7 @@ validate_evidence_path() {
   fi
 
   case "$repo" in
-    fseven-agent|fseven-controller|fseven-schemas|fseven-docs|fseven-atlas|fseven-atlas-mvp|public-agent-binaries|public-docs) ;;
+    fseven-agent|fseven-controller|fseven-schemas|fseven-docs|fseven-atlas|fseven-atlas-mvp|public-agent-binaries|public-atlas-binaries|public-docs) ;;
     *)
       record_failure "claims registry evidence for $claim_id uses unknown repo boundary: $repo"
       return
@@ -219,54 +241,56 @@ validate_evidence_path() {
 }
 
 # ── forbidden claims ──────────────────────────────────────────────────────────
+# Version 2 of the registry (2026-09-13) describes Atlas only. The patterns
+# tied to the earlier device-agent product (compensation ingestion, HRIS
+# connectors, the personal dashboard, Mode 3 wording, integration examples)
+# were retired with that product; the patterns below guard the Atlas claims.
 
-check_absent \
-  "unimplemented compensation ingestion or masking" \
-  'compensation data|compensation masking|salary fields|salary data|stock value|benefits value|can_view_compensation|sync_compensation'
-
-check_absent \
-  "specific HRIS connector names" \
-  '\b(Workday|BambooHR|SAP SuccessFactors|Rippling|HiBob)\b'
-
-check_absent \
-  "current personal-dashboard capability" \
-  'Employees see their own data on a personal dashboard|Every employee sees their own behavioral data|gives every employee visibility into their own behavioral data|personal-data endpoints'
-
-# Endpoint paths that are not yet public API — never document internal routes
+# Endpoint paths that are not public API — never document internal routes
 check_absent \
   "internal API endpoint paths" \
-  '/api/v[0-9]+/internal/|/admin/api/|/_internal/'
+  '/api/v[0-9]+/internal/|/admin/api/|/_internal/|/v1/session|/v1/turn'
 
-# SOC 2 certified — must not assert certified status until audit report is in hand.
-# FAQ headings that are questions ("Is F7 SOC 2 certified?") are allowed; positive
-# declarative claims ("F7 is SOC 2 certified", "F7 has obtained SOC 2") are not.
+# SOC 2 certified — no report exists for Atlas. FAQ headings that are questions
+# ("Is it SOC 2 certified?") are allowed; positive declarative claims are not.
 check_absent \
   "premature SOC 2 certified declarative claim" \
-  'F7 is SOC 2 (Type II )?certified|F7 has obtained SOC 2|F7 received SOC 2|completed a SOC 2 audit|F7 completed SOC 2'
+  'F7 is SOC 2 (Type II )?certified|Atlas is SOC 2 (Type II )?certified|F7 has obtained SOC 2|F7 received SOC 2|completed a SOC 2 audit|F7 completed SOC 2|SOC 2 (Type II )?certified\.'
+
+# ISO 27001 — not certified.
+check_absent \
+  "premature ISO 27001 certification claim" \
+  'ISO 27001 certified|ISO 27001 certification (has been|was) (obtained|achieved)'
+
+# Penetration testing — no independent report exists.
+check_absent \
+  "penetration test overclaim" \
+  'independently penetration.tested|has been penetration.tested|completed (a|an) (independent |third-party )?penetration test|penetration test (was )?(passed|completed)'
+
+# Key custody — F7 ships no HSM integration; keys are never described as
+# hardware-held.
+check_absent \
+  "hardware key custody overclaim" \
+  'keys are held in (an |a )?(HSM|hardware security module)|HSM-backed|hardware-backed (key )?custody|stored in a hardware security module'
+
+# Rewind — submitting a capture to F7 is designed and not built.
+check_absent \
+  "Rewind submission described as current" \
+  'Rewind (submits|uploads|sends) (captures|a capture|pictures|frames) to F7'
+
+# Software bill of materials — the release process does not publish one.
+check_absent \
+  "SBOM published overclaim" \
+  'SBOM is (published|attached|included)|publishes an SBOM|SBOM (is )?available for'
 
 # License overclaims — must not claim open-source where proprietary
 check_absent \
   "open-source license overclaim" \
-  'fully open.source|100% open.source|open source forever'
+  'fully open.source|100% open.source|open source forever|Atlas is open.source'
 
 # Stale audit-run references (any superseded run cited as the current baseline,
 # anywhere on the live public surface) are caught by check_audit_run_baseline().
 check_audit_run_baseline
-
-# Blanket URL-path not-captured wording — the AI-provider path IS captured for
-# classification; any document that says "URL path" is in the "Not captured" list
-# contradicts this and must be removed.
-check_absent \
-  "blanket URL-path not-captured (contradicts AI-provider path capture)" \
-  'URL path, query parameters, request body|Never the full URL, path|Only the active domain is captured — never full URLs, paths|Destination domain only; never URL paths'
-
-check_absent \
-  "unimplemented third-party app API integration examples" \
-  'OpenAI / ChatGPT|Anthropic / Claude|Google Gemini|Microsoft 365 / SharePoint|Grammarly, Notion, Confluence|GitHub Copilot, GitLab Duo|third-party applications via their APIs'
-
-check_absent \
-  "absolute Mode 3 no-disk/immediate-discard claim" \
-  'never persisted to disk|persisted to disk|discarded immediately|immediately discarded'
 
 check_absent \
   "overbroad dependency-audit cadence claim" \
@@ -280,6 +304,7 @@ check_present "privacy data collection page" "$CONTENT_DIR/privacy/data-collecti
 check_present "privacy data retention page" "$CONTENT_DIR/privacy/data-retention.md"
 check_present "legal privacy policy" "$CONTENT_DIR/legal/privacy-policy.md"
 check_present "legal terms of service" "$CONTENT_DIR/legal/terms-of-service.md"
+check_present "downloads and updates page" "$CONTENT_DIR/security/downloads.md"
 
 # Root protocol files — all public repos must carry these; they must not be absent.
 check_present "root README" "$ROOT_DIR/README.md"
@@ -307,7 +332,7 @@ if command -v jq &>/dev/null; then
     if ! jq -e --arg id "$claim_id" --arg ref "$audit_ref" --arg src "$source_file" '
       .claims[]
       | select(.id == $id)
-      | select(.release_status == "active")
+      | select(.release_status == "active" or .release_status == "in-progress")
       | select((.audit_refs // []) | index($ref))
       | select((.source_files // []) | index($src))
       | select((.evidence // []) | length > 0)
@@ -317,11 +342,16 @@ if command -v jq &>/dev/null; then
     fi
   }
 
-  require_claim_registration "CLM-010" "PUBDOC-1" "content/privacy/data-collection.md"
-  require_claim_registration "CLM-011" "PUBDOC-2" "content/privacy/index.md"
-  require_claim_registration "CLM-011" "AGT-LOCAL-2" "content/legal/privacy-policy.md"
+  # The material Atlas claims every published page rests on. Each must stay
+  # registered with evidence and an audit reference on the page that carries it.
   require_claim_registration "CLM-012" "PUBDOC-3" "content/compliance/soc2.md"
   require_claim_registration "CLM-012" "PDC5" "content/security/index.md"
+  require_claim_registration "CLM-013" "PUBDOC-4" "content/privacy/data-collection.md"
+  require_claim_registration "CLM-013" "PUBDOC-4" "content/legal/privacy-policy.md"
+  require_claim_registration "CLM-015" "PUBDOC-6" "content/overview/how-it-works.md"
+  require_claim_registration "CLM-017" "PUBDOC-8" "content/privacy/data-retention.md"
+  require_claim_registration "CLM-018" "PUBDOC-9" "content/security/downloads.md"
+  require_claim_registration "CLM-022" "PUBDOC-13" "content/security/encryption.md"
 
   while IFS=$'\t' read -r claim_id source_file; do
     validate_repo_relative_path "$claim_id" "public-docs" "$source_file" "source_file"

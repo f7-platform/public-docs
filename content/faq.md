@@ -2,99 +2,90 @@
 
 ## General
 
-### What does F7 actually do?
-F7 is a workforce intelligence platform that observes how employees use AI tools and work applications. It captures behavioral metadata — not content — to help organizations measure AI adoption, identify skill gaps, and optimize workforce strategy.
+### What does Atlas actually do?
+Atlas captures how work actually gets done — through interviews, process maps, decisions, and the standards a business has to satisfy — and records the result so it can be verified later. It signs what it records and keeps an append-only ledger of significant events. See [What Is Atlas?](/overview/what-is-atlas).
 
-### Is F7 a keylogger or surveillance tool?
-**No.** F7 never captures individual keystrokes, file contents, emails, chat messages, or any content sent off the device. It captures metadata only — things like "which application was in the foreground" and "how many clicks occurred," not "what was typed."
+### Is Atlas a monitoring tool?
+**No.** Atlas installs nothing on anyone's device other than the machine that runs the instance, and it observes no one. The only screen capture in the product, the feedback recorder called Rewind, records the screen of the reviewer who turns it on, and it is absent from customer deployments today. See [Atlas Rewind](/privacy/data-collection#atlas-rewind).
 
-The optional Mode 3 — Interpret vision feature processes screen frames **locally on the device** for an on-device vision-language model; frames never leave the device and are never uploaded. Current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup. Mode 3 is opt-in and must be explicitly enabled by the organization. See [Vision Model controls](/privacy/employee-controls#vision-model-mode-3-interpret).
+### What happened to the F7 agent product this site used to describe?
+F7 previously offered a workforce-analytics product — a device agent, a server and management dashboards. That product has been shelved and is not offered. This Trust Center describes Atlas only; the documents under Legal were written for the earlier product and carry a notice saying so.
 
 ### Who can see my data?
-- **You** will be able to see your own data through a personal dashboard (planned)
-- **Your manager** can see analytics for their direct and indirect reports only — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
-- **Admins** see organization-level analytics and configuration pages, with audit logging for individual-data access
-- **Aggregate views** enforce k-anonymity — groups smaller than 5 people are suppressed to prevent re-identification
-- **F7 staff** cannot see your data — it's encrypted and tenant-isolated
+- **On the download:** your organisation, according to the project permissions you set. No one at F7 has access to it.
+- **On an instance F7 operates:** your organisation, and F7 staff for support, maintenance and security only.
+- **Within a project:** what your role allows — reader, writer or administrator — checked on every request.
 
 ---
 
 ## Privacy
 
-### What exactly does F7 collect?
-Work-pattern metadata: application names, click/keystroke counts (not content), time-in-app, AI tool interaction timing, session structure. See [Data We Collect](/overview/data-we-collect) for the full list.
+### What leaves the instance?
+Only what is on the published list: requests to the AI provider you configure, a voice recording when voice is on, the sources you ask Atlas to fetch, connected repositories, email, and the licence and update checks that keep the download running. The list is complete and is in [How Atlas Runs](/overview/how-it-works#what-leaves-the-instance).
 
-### What does F7 never collect?
-Prompt text, file contents, emails, chat messages, screenshots, clipboard contents, passwords, full URLs, or personal app activity for excluded apps. See [What We Never Capture](/privacy/data-collection#what-f7-never-captures).
+### Does Atlas send analytics or crash reports?
+**No.** Atlas contains no analytics, no tracking, and no automatic crash or error reporting. An error report is built and stored in your browser and is sent only if you choose to send it.
 
-### Can I pause F7?
-**Yes.** You can pause observation at any time using the agent's tray icon. You can also exclude specific apps and restrict observation to work hours. See [Employee Controls](/privacy/employee-controls).
+### Does F7 train AI models on my content?
+F7 trains no AI models on your content. What a model provider does with a request is governed by that provider's terms; on plans where you supply your own key, that is your agreement with them, not F7's.
 
-### Can I see what F7 has collected about me?
-**Yes.** A personal dashboard is planned that will show all data associated with your account. In the meantime, you can request your data through your organization's F7 administrator.
+### Can F7 read my provider key?
+Where you supply your own key, Atlas uses it to make the requests you ask for and for nothing else. On an instance F7 operates, that is a commitment rather than an impossibility, because the key is encrypted under an instance master key that F7 holds. If you would rather not rely on a promise, issue Atlas a key that is scoped and spend-limited on your provider account.
+
+### Can I export my data?
+**Yes.** Atlas produces a single archive containing the signed ledger, your relational data, and the public keys needed to verify the signatures independently, at any time.
 
 ### Can I delete my data?
-**Yes.** Data deletion can be requested through your organization's F7 administrator. Deletion removes data from both the agent (your device) and the server.
+Ordinary records — account details, project content, memberships — can be corrected or deleted. The ledger is append-only: it can be destroyed in its entirety, never edited entry by entry. See [the ledger limit](/privacy/data-retention#the-ledger-limit).
 
 ---
 
 ## Security
 
-### How is my data encrypted?
-- **In transit:** TLS 1.3 for all agent-to-server communication
-- **At rest on device:** AES-256 encrypted local database
-- **At rest on server:** AES-256-GCM for sensitive data; database-level encryption
+### How is my data protected?
+Passwords are hashed with Argon2id; secrets are encrypted at rest; second factors and passkeys are supported; sessions can be revoked; access to project data is checked on every request and denied by default; sign-in attempts and administrative actions are recorded. Hosted instances are served over HTTPS. See [Security Overview](/security/).
 
-See [Encryption](/security/encryption) for details.
+### Is the database encrypted at rest?
+Secrets are. The database files are not encrypted by Atlas itself: on the download, use your operating system's disk encryption on the machine that runs it.
 
-### Is F7 built with security in mind?
-F7 is written in **Rust**, a memory-safe language that eliminates entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time. The platform uses modern cryptography throughout and is tracked through an ongoing security audit program (most recently Run 38).
+### What does a signature prove?
+That specific content was signed by a specific key and has not changed since. It does not prove that the content is true, that the signer had authority, or that the key belongs to who you think it does. See [Encryption and Signing](/security/encryption).
 
-### Where is my data stored?
-For cloud deployments, data is stored in the United States on Railway infrastructure with PostgreSQL. For on-premise deployments, data stays entirely in your infrastructure. See [Sub-processors](/legal/subprocessors).
+### Are signing keys held in hardware?
+**No.** F7 ships no hardware security module integration and operates no key-management service. An operator can hold keys in a module they provide.
 
-### Can F7 be deployed on-premise?
-**Yes.** F7 supports single-binary on-premise deployment with identical security controls. No data leaves your environment.
+### Has Atlas been penetration tested? Is it SOC 2 certified?
+No independent penetration test report is available, and F7 does not hold a SOC 2 report. Both are stated as absent rather than as planned. See [SOC 2](/compliance/soc2).
 
----
-
-## Compliance
-
-### Is F7 GDPR compliant?
-**Yes.** F7 implements privacy by design (Art. 25), data minimization (Art. 5(1)(c)), right to erasure (Art. 17), right of access (Art. 15), and more. See [GDPR Compliance](/compliance/gdpr).
-
-### Is F7 SOC 2 certified?
-F7 has implemented controls aligned with all five SOC 2 trust service criteria. Independent certification is planned. Contact **security@fseven.ai** for the current status. See [SOC 2](/compliance/soc2).
-
-### Do you have a DPA?
-**Yes.** See our [Data Processing Agreement](/legal/dpa).
-
-### How do I fill out a security questionnaire for F7?
-Our [Compliance Overview](/compliance/) includes a quick-reference table addressing the 15 most common vendor security questionnaire items. For detailed support, contact **security@fseven.ai**.
+### How do I verify a download?
+Every release attaches checksums, and the macOS and Windows artifacts are notarized and Authenticode signed respectively. Updates arrive through a manifest signed with a key whose public half is published and compiled into the app. See [Downloads and Updates](/security/downloads).
 
 ---
 
 ## Deployment
 
-### How is the agent installed?
-The F7 agent is a lightweight binary deployed to employee devices. Enrollment uses a one-time token that binds the device to your organization — no shared secrets or manual configuration required.
+### How is Atlas installed?
+Download the signed installer for macOS or Windows. One download is the whole product: the web application is compiled into the binary and it starts its own private PostgreSQL. Open it and your browser opens with Atlas running locally.
+
+### Can it run on-premise or air-gapped?
+**Yes.** The download runs on your own machine or server. Licences verify offline against keys compiled into the app, and the download includes a 14-day trial, so it does not need to reach F7 to run.
 
 ### What operating systems are supported?
-The F7 agent supports macOS and Windows, with Linux support planned.
+macOS 13 or later (Apple Silicon and Intel) and Windows x64.
 
-### Does the agent affect device performance?
-The agent is designed to be lightweight. The on-device AI model runs during idle periods and does not interfere with foreground work.
+### How do updates work?
+Only the download updates itself, through a signed manifest verified before it is parsed and a release asset whose checksum is verified before it is applied. Server builds never self-update.
 
-### What happens if the agent loses connection to the server?
-The agent stores data locally in an encrypted database and syncs when connectivity is restored. No data is lost.
+### Where are hosted instances run?
+On Railway infrastructure in the United States. F7 does not currently operate instances outside the United States.
 
 ---
 
 ## Contact
 
 | Topic | Contact |
-|-------|---------|
-| Security inquiries | security@fseven.ai |
-| Privacy questions | privacy@fseven.ai |
+|---|---|
+| Security inquiries and questionnaires | security@fseven.ai |
+| Privacy questions and requests | privacy@fseven.ai |
 | Legal and compliance | legal@fseven.ai |
 | General questions | hello@fseven.ai |

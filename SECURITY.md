@@ -3,14 +3,12 @@
 ## Supported Versions
 
 Documentation in this repository tracks the **current** released version of
-fseven. Older release notes remain published for historical reference but
-security errata are written for the current release only.
+Atlas by F7. Security errata are written for the current release only.
 
 ## Reporting a Vulnerability
 
 **Do not open a public GitHub issue for security vulnerabilities** in
-documented behavior, in the published site, or in the underlying products
-(controller, agent, dashboard).
+documented behavior, in the published site, or in Atlas itself.
 
 Email **security@f7-platform.io** with:
 
@@ -43,5 +41,5 @@ This policy covers:
 - The content published from this repository (`content/`, `docs/releases/`).
 - The build/deploy scripts (`scripts/`).
 
-Vulnerabilities in the controller, agent, or dashboard runtime should follow
-the same email path; they will be triaged by the appropriate product team.
+Vulnerabilities in Atlas itself should follow the same email path; they will
+be triaged by the product team.

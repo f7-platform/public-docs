@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'F7 Trust Center',
-  description: 'Security, privacy, and compliance documentation for the F7 AI Workforce Intelligence Platform.',
+  description: 'Security, privacy, and compliance documentation for Atlas by F7.',
   srcDir: 'content',
   base: '/public-docs/',
   cleanUrls: true,
@@ -12,7 +12,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#1a56db' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'F7 Trust Center' }],
-    ['meta', { property: 'og:description', content: 'Security, privacy, and compliance documentation for the F7 platform.' }],
+    ['meta', { property: 'og:description', content: 'Security, privacy, and compliance documentation for Atlas by F7.' }],
     ['meta', { property: 'og:url', content: 'https://f7-platform.github.io/public-docs/' }],
   ],
 
@@ -20,7 +20,7 @@ export default defineConfig({
     siteTitle: 'F7 Trust Center',
 
     nav: [
-      { text: 'Overview', link: '/overview/what-is-f7' },
+      { text: 'Overview', link: '/overview/what-is-atlas' },
       { text: 'Security', link: '/security/' },
       { text: 'Privacy', link: '/privacy/' },
       { text: 'Compliance', link: '/compliance/' },
@@ -33,9 +33,9 @@ export default defineConfig({
         {
           text: 'Overview',
           items: [
-            { text: 'What Is F7?', link: '/overview/what-is-f7' },
-            { text: 'How It Works', link: '/overview/how-it-works' },
-            { text: 'Data We Collect', link: '/overview/data-we-collect' },
+            { text: 'What Is Atlas?', link: '/overview/what-is-atlas' },
+            { text: 'How Atlas Runs', link: '/overview/how-it-works' },
+            { text: 'What Atlas Holds', link: '/overview/data-we-collect' },
           ],
         },
       ],
@@ -44,10 +44,10 @@ export default defineConfig({
           text: 'Security',
           items: [
             { text: 'Security Overview', link: '/security/' },
-            { text: 'Architecture', link: '/security/architecture' },
-            { text: 'Authorization', link: '/security/authorization' },
-            { text: 'Encryption', link: '/security/encryption' },
-            { text: 'Agent Security', link: '/security/agent-security' },
+            { text: 'Deployment and Trust Architecture', link: '/security/architecture' },
+            { text: 'Accounts and Access', link: '/security/authorization' },
+            { text: 'Encryption and Signing', link: '/security/encryption' },
+            { text: 'Downloads and Updates', link: '/security/downloads' },
           ],
         },
       ],
@@ -56,9 +56,9 @@ export default defineConfig({
           text: 'Privacy',
           items: [
             { text: 'Privacy Principles', link: '/privacy/' },
-            { text: 'Data Collection Details', link: '/privacy/data-collection' },
-            { text: 'Employee Controls', link: '/privacy/employee-controls' },
-            { text: 'Data Retention & Deletion', link: '/privacy/data-retention' },
+            { text: 'Data Atlas Holds (Details)', link: '/privacy/data-collection' },
+            { text: 'Your Controls', link: '/privacy/your-controls' },
+            { text: 'Data Retention and Deletion', link: '/privacy/data-retention' },
           ],
         },
       ],
@@ -70,6 +70,7 @@ export default defineConfig({
             { text: 'GDPR', link: '/compliance/gdpr' },
             { text: 'CCPA / CPRA', link: '/compliance/ccpa' },
             { text: 'SOC 2', link: '/compliance/soc2' },
+            { text: 'Claims Registry', link: '/compliance/claims-registry' },
           ],
         },
       ],
@@ -95,8 +96,8 @@ export default defineConfig({
         {
           text: 'Quick Links',
           items: [
-            { text: 'What Is F7?', link: '/overview/what-is-f7' },
-            { text: 'Data We Collect', link: '/overview/data-we-collect' },
+            { text: 'What Is Atlas?', link: '/overview/what-is-atlas' },
+            { text: 'What Atlas Holds', link: '/overview/data-we-collect' },
             { text: 'Security Overview', link: '/security/' },
             { text: 'Privacy Principles', link: '/privacy/' },
             { text: 'Compliance', link: '/compliance/' },

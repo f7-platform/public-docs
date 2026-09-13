@@ -1,69 +1,42 @@
-# GDPR Compliance
+# GDPR
 
-The F7 platform is designed with the EU General Data Protection Regulation (GDPR) as a foundational constraint — not an afterthought. Privacy by design (Art. 25) is embedded in every architectural decision.
+How Atlas relates to the EU General Data Protection Regulation. The answers depend on which deployment model you use, so the page says which model each statement is about.
 
-## Lawful Basis
+## Roles
 
-F7 processes workforce metadata under **legitimate interest** (Art. 6(1)(f)) of the deploying organization. The processing is proportionate: only work-pattern metadata is captured, never content.
+| Deployment | Your organisation | F7 |
+|---|---|---|
+| **The download** | Controller. You run the instance; F7 has no access to it, no copy of its data, and no ability to read, export or delete anything in it | Not a processor of the instance's data. F7 processes only what the instance sends outward for licensing and updates, and, on credit plans, the AI requests that pass through F7's gateway |
+| **An instance F7 operates** | Controller | Processor. F7 hosts and administers the instance and processes data only to provide the service |
 
-## Data Controller vs. Processor
+Regardless of model, the outside services listed in [How Atlas Runs](/overview/how-it-works#what-leaves-the-instance) process data in their own locations under their own terms, and on bring-your-own-key plans the AI provider is engaged under your agreement with them, not F7's.
 
-| Role | Entity |
-|------|--------|
-| **Data Controller** | Your organization (the F7 customer) |
-| **Data Processor** | F7 Platform, Inc. |
+## Lawful basis
 
-F7 processes data only as directed by the deploying organization. A [Data Processing Agreement](/legal/dpa) governs this relationship.
+Where a legal basis is required, F7 relies on performance of its agreement with you for providing the service, and on legitimate interests for security and metering. For the content you author, you are responsible for having the rights to whatever you put in.
 
-## Article-by-Article Compliance
+## Rights and how they are met
 
-| Article | Requirement | How F7 Complies |
-|---------|-------------|-----------------|
-| **Art. 5(1)(a)** | Lawfulness, fairness, transparency | Organizational deployment with employee notification; published Trust Center details what's captured |
-| **Art. 5(1)(b)** | Purpose limitation | Each captured field has a documented purpose (scoring inputs only) |
-| **Art. 5(1)(c)** | Data minimization | Metadata only — never content, clipboard, or passwords transmitted. Mode 3 vision frames (opt-in) are processed locally and discarded after inference. |
-| **Art. 5(1)(d)** | Accuracy | Real-time capture with session boundaries; daily rollups reconciled |
-| **Art. 5(1)(e)** | Storage limitation | Configurable retention: 90 days raw, 12 months rollups |
-| **Art. 5(1)(f)** | Integrity and confidentiality | TLS 1.3 in transit; AES-256-GCM at rest; role-based access control |
-| **Art. 12** | Transparent information | Published Trust Center details all captured data; personal dashboard planned |
-| **Art. 13** | Information at collection | Agent tray icon indicates active observation; Trust Center published publicly |
-| **Art. 15** | Right of access | Data access available via administrator; personal dashboard planned |
-| **Art. 17** | Right to erasure | Full data deletion on request — agent wipes local data, server deletes all records |
-| **Art. 20** | Right to data portability | Data export available via administrator; personal dashboard with self-service export planned |
-| **Art. 22** | Automated decision-making | Scores are advisory only — they inform managers but are never used for automated employment decisions |
-| **Art. 25** | Data protection by design | Local-first processing; PII filtering before transmission; encryption at rest and in transit |
-| **Art. 28** | Processor obligations | Data Processing Agreement available; F7 acts as processor under customer's controllership |
-| **Art. 30** | Records of processing | Comprehensive audit log captures all data processing actions |
-| **Art. 32** | Security of processing | Modern cryptography, role-based access, row-level tenant isolation, audit logging |
-| **Art. 33** | Breach notification | Audit logging supports breach detection; incident response per customer DPA |
-| **Art. 35** | Data Protection Impact Assessment | This documentation provides the required analysis inputs for enterprise DPIA |
+| Article | Requirement | How Atlas meets it |
+|---|---|---|
+| **Art. 5(1)(c)** | Data minimisation | Atlas holds what you enter and the records the product needs. Usage metering is not linked to a person, and there is no analytics or tracking |
+| **Art. 5(1)(e)** | Storage limitation | Usage metering is deleted after 90 days; links and sessions expire; the ledger is retained for the life of the instance by design |
+| **Art. 12–13** | Transparency and information at collection | This Trust Center; the in-product explainers for voice and Rewind, which ask for consent at the point of enabling |
+| **Art. 15** | Right of access | A product feature: you can see and export everything on the instance |
+| **Art. 16** | Right to rectification | Account details, project content and memberships can be corrected |
+| **Art. 17** | Right to erasure | Ordinary records can be deleted. The ledger is append-only: it can be destroyed in its entirety, never edited entry by entry, and this limit is stated in [Data Retention and Deletion](/privacy/data-retention#the-ledger-limit) |
+| **Art. 20** | Right to data portability | The export archive: the signed ledger, your relational data, and the public keys needed to verify it, in a single file |
+| **Art. 22** | Automated decision-making | Atlas makes no decision with legal effect on a person. The model never signs anything and never changes the record on its own; a person puts its output into the record |
+| **Art. 25** | Data protection by design | Single-tenant instances; a complete, published list of what leaves; no background reporting; the AI provider under your control |
+| **Art. 28** | Processor obligations | Apply to instances F7 operates. The data processing agreement published under [Legal](/legal/dpa) was written for F7's earlier product; an Atlas agreement is in legal review |
+| **Art. 30** | Records of processing | The auth event log and the signed ledger record who did what on the instance |
+| **Art. 32** | Security of processing | Argon2id password hashing, encrypted secrets, second factors and passkeys, per-request authorisation, a tamper-evident ledger. See [Security Overview](/security/) |
+| **Art. 44–49** | International transfers | Hosted instances are operated in the United States only. If F7 begins serving customers where a transfer mechanism such as Standard Contractual Clauses is required, this page will be updated before that expansion |
 
-## Key Privacy Safeguards
+## Requests
 
-### Local-First Processing
-The on-device AI model classifies behavior locally before any data is transmitted. Only structured, PII-scrubbed metadata reaches the server.
+You already hold the access and export rights technically. For correction, deletion or objection, contact **privacy@fseven.ai**, and F7 will respond within 45 days. On the download, direct requests to whoever operates your instance, because F7 has no access to it.
 
-### Employer-Provided HR Data
-In addition to agent-captured metadata, F7 processes workforce directory data provided by the deploying organization, such as job title, department, hire date, and identity fields. This data is provided under the controller's authority — F7 does not independently collect it. Lawful basis and employee notification for this data is the responsibility of the deploying organization as data controller. See [Data Collection Details](/privacy/data-collection#employer-provided-data) for the full inventory.
+## Data protection impact assessment
 
-### Third-Party App Integrations
-With the controller's authorization, F7 can ingest event metadata from configured integrations such as GitHub, GitLab, Bitbucket, Jira, Linear, Asana, Jenkins, GitHub Actions, GitLab CI, CircleCI, Google Calendar, Microsoft Outlook, LaunchDarkly, Zendesk, and Generic webhooks. These integrations are opt-in, admin-authorized, and retrieve **event metadata only** — never document contents, prompts, messages, code diffs, repository contents, support conversation bodies, or file data. Under GDPR, the deploying organization (as data controller) is responsible for ensuring appropriate legal basis and notice before enabling each integration. See [Data Collection Details](/privacy/data-collection#third-party-event-integrations) for the full inventory.
-
-### Content Is Never Captured
-F7 never transmits prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. Mode 3 — Interpret (opt-in) processes screen frames locally on-device; frames never leave the device, and current macOS builds stream capture bytes through stdout for local inference while scrubbing stale legacy vision temp files on startup. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
-
-### Employee Controls
-Employees can pause observation, exclude specific apps, restrict to work hours, and access their own data. See [Employee Controls](/privacy/employee-controls).
-
-### Data Retention
-Retention periods are configurable by the deploying organization. Defaults: 90 days for raw telemetry, 12 months for aggregated rollups. See [Data Retention](/privacy/data-retention).
-
-## Data Protection Impact Assessment
-
-Organizations deploying workforce analytics tools are recommended to conduct a DPIA under Art. 35. F7's documentation — including this Trust Center, the DPA, and the sub-processor list — provides the required analysis inputs.
-
----
-
-::: info Need a DPA?
-See our [Data Processing Agreement](/legal/dpa) for the contractual framework governing F7's role as data processor.
-:::
+Organisations that need to conduct a DPIA can draw on this Trust Center: the deployment models, the complete list of what leaves the instance, the field-level inventory in [Data Atlas Holds (Details)](/privacy/data-collection), and the ledger limit. Atlas installs nothing on employees' devices and observes no one, so the assessment concerns the content your people choose to enter, not surveillance of them.

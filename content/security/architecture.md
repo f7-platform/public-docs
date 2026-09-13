@@ -1,130 +1,57 @@
-# Security Architecture
+# Deployment and Trust Architecture
 
-F7 enforces security at six independent layers. Each layer operates independently — a failure in one does not compromise the others.
+Atlas has one trust boundary that matters: the instance. This page says where the instance runs, who administers it, what it talks to, and how its record is made tamper-evident.
 
-## Layer 1: Transport Security
+## Single tenant
 
-All communication between F7 components is encrypted in transit.
+Every Atlas deployment is one instance with one database and one signed ledger, for one customer. Your data is not pooled with another customer's, and no shared multi-tenant store exists to pool it in. The isolation between customers is the absence of a shared system, not a row filter inside one.
 
-- **TLS 1.3** for all agent-to-controller communication
-- **HSTS** with a one-year max-age, enforced on all responses
-- **Certificate pinning** (SPKI) for agent connections — the agent validates the controller's public key hash on every connection when operational pins are configured. Pin infrastructure is compiled into the agent binary; pins are rotated via agent updates.
-- **Mutual TLS** for controller-to-controller federation (multi-site deployments)
+## The download
 
-No data is ever transmitted in plaintext.
+- The web application is compiled into a single binary that starts and supervises its own private PostgreSQL. Nothing else is installed.
+- It runs on the machine you put it on and serves your browser there. No one at F7 has access to it, a copy of its data, or the ability to read, export or delete anything in it.
+- Licences verify offline against keys compiled into the app, and the download includes a 14-day trial, so the instance can run on a machine with no route to F7.
+- On plans where F7 supplies AI capacity, the instance opens a session with F7's credit gateway using a key it mints for itself and keeps in its secret store, and metered AI requests pass through that gateway to the provider. A bring-your-own-key instance mints no such key and opens no such session.
 
-## Layer 2: Authentication
+## An instance F7 operates
 
-F7 uses distinct authentication mechanisms for different trust levels:
+- F7 hosts and administers the deployment on Railway infrastructure in the United States, and you sign in over HTTPS.
+- F7 staff can access the systems holding your data for support, maintenance and security, and F7 commits to accessing it only for those purposes.
+- Hosted instances upgrade by image pin; they never reach for a release asset and never self-update.
 
-| Actor | Method |
-|-------|--------|
-| **Device agent** | EdDSA-signed JWT with per-device credentials |
-| **Admin user (password)** | Argon2id password hash + session tokens (HttpOnly, Secure, SameSite cookies) |
-| **Admin user (SSO)** | OAuth 2.0 / OIDC authorization code flow with PKCE |
-| **Personal dashboard (planned)** | Agent-issued JWT scoped to individual's own data |
-| **API integrations** | Org-scoped API keys for programmatic access |
-| **Webhooks** | HMAC-SHA256 per-organization tokens for integrity verification |
+## Who administers what
 
-There are no shared secrets. Every device has its own unique cryptographic identity, established during a one-time enrollment process.
+| | The download | An instance F7 operates |
+|---|---|---|
+| Runs the machine | You | F7 |
+| Holds the database | You | F7 |
+| Holds the instance master key | You | F7 |
+| Can read your data for support | No one at F7 | F7 staff, for support, maintenance and security only |
+| Chooses the AI provider | You | You, within your plan |
+| Where the data is | Wherever you run it | The region in your order or deployment agreement; United States today |
 
-### Single Sign-On (SSO)
+## The signed record
 
-F7 supports enterprise SSO via the **OAuth 2.0 / OIDC** authorization code flow with PKCE:
+- **Signed envelopes.** Every artifact Atlas records is wrapped in an envelope carrying the payload, a hash of it, the signer's key fingerprint, a per-signer sequence number, and an Ed25519 signature. The verification path is enforced at the type level in the code: an envelope from untrusted bytes yields its payload only by verifying.
+- **Two ledgers.** An append-only per-tenant event ledger and a governance chain each fold a running head hash, so tampering is detectable. The signed ledger append lands before the database write, so a crash leaves the ledger ahead of the database, never the reverse.
+- **Privilege, not policy.** The database role the application runs as may read and append to the ledger tables and nothing else. There is no deletion to perform on those tables, even with full administrative access to the instance.
+- **Portable verification.** The export archive contains the ledger, your relational data, and the public keys needed to verify the signatures independently. It deliberately excludes the instance's credentials and secrets.
+- **Revocation as history.** Revoking a signing key appends a signed event to the ledger; from that position onward the key no longer verifies content, while everything it signed earlier stays valid.
 
-- **Supported identity providers:** Microsoft Entra ID (Azure AD), Okta, Google Workspace, JumpCloud, and any generic OIDC-compliant provider
-- **IdP directory sync:** F7 can sync user identities and group memberships from your IdP, enabling automatic role provisioning based on IdP group claims
-- **Auto-provisioning:** New users authenticated via SSO are automatically created with the role mapped from their IdP group membership
-- **CSRF protection:** OAuth state is stored server-side in the database (not in-memory), surviving restarts and working across replicas
+What this does and does not prove: a signature proves that specific content was signed by a specific key and has not changed since. It does not prove the content is true, that the signer had authority, or that the key belongs to who you think it does — those depend on how your organisation manages its keys and approvals.
 
-### API Keys
+## Key custody
 
-Organizations can generate **org-scoped API keys** for programmatic access to the F7 API. API keys are hashed before storage and carry the same role-based permissions as the admin user who created them.
+F7 ships no hardware security module integration and operates no key-management service. What exists:
 
-## Layer 3: Authorization
+- The instance's own signing key is held in the instance's secret store (AES-256-GCM file store, or the operating system keychain on macOS).
+- An operator can point Atlas at a key module they provide — a PKCS#11 module, an ssh-agent, or Google Cloud KMS. The security then rests on that module and its policies, which F7 neither provisions nor attests.
+- Signing from the browser uses a non-extractable key held by the browser, which the page can use and never read.
 
-F7 implements a **hybrid Relationship-Based Access Control (ReBAC) + Attribute-Based Access Control (ABAC)** authorization model powered by an [OpenFGA](https://openfga.dev)-compatible Policy Decision Point (PDP).
-
-### Roles
-
-| Role | Can See |
-|------|---------|
-| **Owner** | Full organization administration + all data |
-| **Admin** | Organization configuration + all analytics |
-| **Manager** | Their direct reports' analytics and scores |
-| **Viewer** | Read-only access to permitted dashboards |
-
-### Beyond Static Roles: Policy Decision Point
-
-Unlike simple RBAC, F7's PDP evaluates **relationships and context** on every request:
-
-- **Manager-chain scoping:** Managers see only data for their direct and indirect reports, determined by a recursive subordinate query with cycle detection
-- **Purpose-specific enforcement:** Authorization is evaluated per data purpose — `user_data`, `app_categories`, and `team_data` — each with independent enforcement toggles
-- **App-category delegation:** Admins can be granted access to specific app categories (e.g., "can view AI tool usage") without blanket access to all data
-- **Department scoping:** Access can be scoped by department for cross-functional visibility without full organizational access
-
-### Post-Response Obligations
-
-The PDP attaches **obligations** to authorization decisions that transform responses after they are generated:
-
-- **k-Anonymity enforcement:** Aggregate views suppress groups smaller than a configurable threshold (default: 5) to prevent re-identification
-
-### Implementation
-
-- **Fail-closed:** If the PDP is unreachable, admin-facing routes deny access. Agent telemetry and health-check paths are exempt because they use device authentication
-- **Decision caching:** Authorization decisions are cached for 30 seconds to minimize latency
-- **Exempt paths:** Agent telemetry ingestion and health checks bypass the PDP
-
-Agent access tokens carry explicit scopes (e.g., `telemetry:write`, `config:read`) that restrict what each device can do.
-
-See [Authorization](/security/authorization) for the full authorization model.
-
-## Layer 4: Database Isolation
-
-PostgreSQL **Row-Level Security (RLS)** ensures that every database query is automatically scoped to the requesting organization. There is no way for one organization to access another's data, even through application-level bugs.
-
-- **Read and write enforcement:** RLS policies include `WITH CHECK` clauses that prevent INSERT and UPDATE operations from targeting another organization's rows — not just reads
-- **Comprehensive coverage:** RLS is enforced on every organization-scoped table including users, teams, telemetry, scores, coaching, role profiles, enrollment tokens, and admin users
-- **No bypass path:** Even direct SQL access through the application's database role is scoped by RLS. Only the superuser role (used for migrations) bypasses RLS.
-
-## Layer 5: Audit & Monitoring
-
-Every significant action is recorded in an **append-only, immutable audit log**:
-
-- **What was done** (action type, target resource)
-- **Who did it** (actor identity)
-- **When** (timestamp)
-- **From where** (IP address)
-
-The audit log is protected by a **database trigger** that physically prevents UPDATE and DELETE operations — any attempt to modify or remove an audit entry raises a database exception. It is retained for a minimum of 24 months.
-
-Additional monitoring includes:
-- Rate limiting on all endpoint categories to prevent abuse
-- Security headers (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
-- CSP violation reporting and logging
-
-## Layer 6: Encryption at Rest
-
-| Data | Encryption |
-|------|-----------|
-| Server-side integration credentials | AES-256-GCM with versioned key format |
-| Agent local database | AES-256 encrypted (SQLCipher) |
-| Device credentials and tokens | OS-native secure storage (macOS Keychain, Windows Credential Manager, Linux Secret Service) |
-
-Encryption keys are managed through environment-scoped secrets with support for key rotation.
-
-## Input Validation & Rate Limiting
-
-All inputs are validated before processing:
-
-- Request payload size limits enforced (1 MB for telemetry, 256 KB general)
-- Content-type verification on all requests
-- Endpoint-specific rate limiting to prevent abuse
-
-Requests exceeding rate limits receive a standard `429 Too Many Requests` response.
+**Not built:** hardware custody, high availability and disaster recovery for the ledger, and service-level commitments for revocation. None of these should be answered as current controls on a vendor questionnaire.
 
 ---
 
-::: tip For Security Reviewers
-F7 is built in Rust — a memory-safe language that eliminates buffer overflows, use-after-free, null pointer dereference, and data race vulnerabilities at compile time. The security benefits are not just policy — they're enforced by the compiler.
+::: tip For security reviewers
+The property to test is not "is there a permission check" but "is there a second tenant to leak to". There is not: the boundary is the instance, and the instance is yours.
 :::

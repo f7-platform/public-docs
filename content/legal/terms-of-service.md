@@ -1,5 +1,9 @@
 # Terms of Service
 
+::: warning This document was written for an earlier F7 product
+These terms govern the F7 workforce-analytics product — a device agent, a controller and management dashboards — which F7 has shelved and no longer offers. They remain published as the terms of record for that product. Atlas's own terms of use are presented inside Atlas and are in legal review; they are not yet published here. Questions: legal@fseven.ai.
+:::
+
 **Effective Date:** March 13, 2026
 **Last Updated:** March 13, 2026
 

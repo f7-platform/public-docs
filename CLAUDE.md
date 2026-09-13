@@ -2,21 +2,21 @@
 
 ## Repo Identity
 
-- **Repo:** `public-docs` — customer-facing documentation site (VitePress)
+- **Repo:** `public-docs` — the F7 Trust Center, the customer-facing documentation site for Atlas (VitePress)
 - **Language:** Markdown + VitePress config (TypeScript)
-- **Key directories:** `content/security/`, `content/privacy/`, `content/compliance/`, `content/overview/`, `content/legal/`
+- **Key directories:** `content/overview/`, `content/security/`, `content/privacy/`, `content/compliance/`, `content/legal/`
 - **Role:** Public-facing documentation for customers, prospects, and compliance reviewers
+- **Product scope:** Atlas only. The earlier F7 workforce-analytics product (device agent, controller, dashboards) was shelved in September 2026; its pages were removed and its legal documents carry a notice. Do not reintroduce it as a current product.
 
 ## Content Accuracy Rules
 
-1. **Every technical claim must match implemented code.** Do not document planned or aspirational features as current capabilities.
+1. **Every technical claim must match implemented code.** Do not document planned or aspirational features as current capabilities. The four status words are shipped, built, designed, not built — and a page may only say "shipped" in the present tense.
 2. **No proprietary implementation details.** Do not expose:
-   - Specific model names or architectures (use "purpose-built on-device AI model")
-   - Specific rate-limit numbers (use "endpoint-specific rate limiting")
-   - Internal crate names, endpoint paths, or error codes
+   - Model names or prompt contents (name the provider company where data goes, because a privacy disclosure must; never the model)
+   - Rate-limit numbers, internal crate names, internal endpoint paths, or error codes
    - Internal architecture decisions or ADR references
-3. **No unimplemented integrations.** Only list integrations that exist in code (e.g., HRIS providers are NOT implemented — do not list Workday, BambooHR, etc.).
-4. **Compensation data ingestion is not implemented.** Do not reference salary, stock value, or benefits value fields.
+3. **State limits as limits.** No hardware security module custody, no SOC 2 report, no independent penetration test report, no published SBOM, no Rewind submission path — each is stated as absent, never as planned, and never omitted where a reader would assume it.
+4. **Legal pages are counsel's.** `content/legal/` carries documents written for the earlier product plus the Atlas Rewind subsection reviewed on 2026-09-09. Do not rewrite them; Atlas's own terms and privacy policy land there when they leave legal review.
 5. **Audit baseline — single source of truth:** the current security-audit run is the `audit_run` value in `content/compliance/claims-registry.json`. Nothing else in this repo may hardcode it (this file deliberately does not name a run). Bump it with one command:
 
    ```bash
@@ -24,18 +24,20 @@
    ```
 
    `npm run check:claims` then fails if any published page, contributor doc, or the live `CHANGELOG.md [Unreleased]` section cites a run other than the baseline — including superseded ones. Released `CHANGELOG.md` sections are historical record and are exempt (they must not be rewritten to match a newer baseline).
-6. **Cross-check with internal docs:** The authoritative security documentation lives in `fseven-docs/docs/security/`. Public docs should be a simplified, non-proprietary subset.
+6. **Register material claims.** A new public claim gets a `claims-registry.json` entry with evidence paths into the owning repository before the page ships; `check-public-claims.sh` verifies the paths wherever the sibling repository is checked out.
 
 ## Verification Sources
 
 | Claim Domain | Verify Against |
-|-------------|---------------|
-| Agent behavior | `fseven-agent/agent-core/src/` |
-| Cryptographic controls | `fseven-docs/docs/security/security-architecture.md` |
-| Privacy controls | `fseven-docs/docs/architecture/privacy-framework.md` |
-| Compliance mappings | `fseven-docs/docs/architecture/privacy-framework.md` §7-10 |
-| Data classification | `fseven-agent/agent-core/src/config.rs` (PrivacyConfig) |
-| Controller security | `fseven-controller/server/src/` |
+|-------------|----------------|
+| What the instance holds and what leaves it | `fseven-atlas-mvp/apps/atlas-app/src/legal/privacy-policy.md` (the in-app policy of record) and the outbound modules it describes under `fseven-atlas-mvp/apis/atlas-serve/src/` |
+| Deployment models, offline licensing, the bundled database | `fseven-atlas-mvp/apis/atlas-serve/src/bundled_pg.rs`, `license/`, `gateway_client/` |
+| Accounts, second factors, sessions, the auth event log | `fseven-atlas-mvp/apis/atlas-serve/src/auth/` |
+| Signing envelopes and the ledger | `fseven-atlas-mvp/crates/atlas-schemas/src/signed.rs`, `crates/atlas-controller/migrations/`, `apis/atlas-serve/src/export/` |
+| Key custody boundary | `fseven-atlas-mvp/crates/atlas-cli/src/signer/mod.rs` — its header states what F7 does not ship |
+| Download and update integrity | `public-atlas-binaries/README.md`, `fseven-atlas-mvp/apis/atlas-serve/src/update.rs` |
+| Rewind | `fseven-atlas-mvp/apps/atlas-app/src/legal/privacy-policy.md` section 5 and `terms-of-use.md` section 9 |
+| Positioning vocabulary | `fseven-docs/docs/marketing/messaging-house.md` §10 — retired terms never appear here |
 
 ## Pre-Push CI Gate
 

@@ -1,5 +1,9 @@
 # Data Processing Agreement
 
+::: warning This document was written for an earlier F7 product
+This data processing agreement was written for the F7 workforce-analytics product, which F7 has shelved and no longer offers. It remains published as the agreement of record for that product. An Atlas data processing agreement is in legal review and is not yet published; see [GDPR](/compliance/gdpr) for how the controller and processor roles fall under each Atlas deployment model, and contact legal@fseven.ai for the current draft.
+:::
+
 **Version:** 1.0
 **Effective Date:** March 13, 2026
 

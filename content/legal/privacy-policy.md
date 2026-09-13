@@ -1,5 +1,9 @@
 # Privacy Policy
 
+::: warning This document was written for an earlier F7 product
+This privacy policy describes the F7 workforce-analytics product — a device agent, a controller and management dashboards — which F7 has shelved and no longer offers. It remains published as the policy of record for that product. **The Atlas Rewind subsection below applies to Atlas.** Atlas's own privacy policy is in legal review and is not yet published; until it is, the Atlas-specific descriptions on this site are the pages under [Overview](/overview/what-is-atlas), [Privacy](/privacy/), [Security](/security/) and [Compliance](/compliance/). Questions: legal@fseven.ai.
+:::
+
 **Effective Date:** March 13, 2026
 **Last Updated:** March 13, 2026
 

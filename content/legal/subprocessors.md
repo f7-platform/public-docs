@@ -1,5 +1,9 @@
 # Sub-processors
 
+::: warning This document was written for an earlier F7 product
+This sub-processor list was written for the F7 workforce-analytics product, which F7 has shelved and no longer offers. It remains published as the list of record for that product. The outside services an Atlas instance contacts, and when, are published in [How Atlas Runs](/overview/how-it-works#what-leaves-the-instance); an Atlas sub-processor list is in legal review and is not yet published.
+:::
+
 **Last Updated:** March 13, 2026
 
 F7 Platform, Inc. uses the following sub-processors to provide the F7 AI Workforce Intelligence Platform. We notify customers before engaging new sub-processors.

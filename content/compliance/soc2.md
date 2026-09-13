@@ -1,80 +1,34 @@
-# SOC 2 Type II
+# SOC 2
 
-F7 implements controls aligned with all five SOC 2 trust service criteria. Our goal is to give your security and compliance teams confidence that F7 meets enterprise-grade standards.
-
-## Certification Status
-
-::: warning Current Status
-F7 has implemented controls across all five SOC 2 trust service criteria. An independent SOC 2 Type II audit is planned. Contact us at **security@fseven.ai** for the current status.
+::: warning Status
+**F7 does not hold a SOC 2 report for Atlas.** Atlas is not SOC 2 certified, and this page does not present certification as planned. Contact **security@fseven.ai** if your procurement process needs a statement to that effect.
 :::
 
-## Trust Service Criteria
+## What exists today
 
-### Security (Common Criteria)
+Rather than map self-assessed controls to trust service criteria without an auditor, this page lists what is implemented, grouped the way a reviewer will ask about it. Every item links to the page that describes it.
 
-| Criteria | Requirement | F7 Controls |
-|----------|------------|-------------|
-| **CC1.1** | Integrity and ethical values | Privacy-by-design principles; metadata-only capture; published guarantees on what is never collected |
-| **CC5.1** | Control activities over technology | Six authentication layers; role-based access control; input validation; rate limiting; security headers |
-| **CC6.1** | Logical access controls | EdDSA-signed agent JWTs with per-device credentials; Argon2id admin password hashing; OAuth 2.0/OIDC SSO with PKCE; constant-time secret comparison |
-| **CC6.2** | Credential issuance controls | Enrollment tokens with usage limits, expiry, and organization binding |
-| **CC6.3** | Access restricted to authorized users | Hybrid ReBAC+ABAC PDP authorization; four roles with manager-chain scoping; purpose-specific enforcement toggles; app-category delegation; k-anonymity; row-level database security |
-| **CC6.6** | Infrastructure credential management | Environment-based key management; key rotation procedures; OS keychain for device credentials |
-| **CC6.7** | Transmission restrictions | TLS 1.3; HSTS with 1-year max-age; certificate pinning for agent connections |
-| **CC6.8** | Prevention of unauthorized changes | Cryptographic integrity verification on configuration; digital signing on licensing data; trigger-protected immutable audit log |
-| **CC7.1** | Detection of unauthorized activity | Rate limiting; audit logging; CSP violation reporting; license tamper detection |
-| **CC7.2** | Anomaly monitoring | Clock-jump detection; token replay detection with full device revocation |
-| **CC8.1** | Change management | Changelog requirements; `npm audit --audit-level=moderate` in Trust Center deploy CI; proto-drift detection across services |
-| **CC9.1** | Vendor risk mitigation | Trust Center dependency audit before publication; release-scoped product dependency evidence; memory-safe language (Rust); vetted cryptographic libraries |
+| Area | What is implemented |
+|---|---|
+| **Security** | Argon2id password hashing; second factors and passkeys with single-use hashed recovery codes; account lockout; revocable sessions; secrets encrypted at rest; per-request authorisation denied by default; a structured auth event log. See [Accounts and Access](/security/authorization) |
+| **Confidentiality** | One instance, one database and one signed ledger per customer, with no shared store; provider keys encrypted under the instance master key; a published, complete list of what leaves the instance. See [Deployment and Trust Architecture](/security/architecture) |
+| **Processing integrity** | Every recorded artifact is wrapped in a signed envelope; significant events go to an append-only, hash-chained ledger whose database privileges allow reading and appending only; the export archive carries the public keys to verify it independently. See [Encryption and Signing](/security/encryption) |
+| **Availability** | The download runs on your own machine and does not need to reach F7 to run; hosted instances upgrade by image pin. High availability and disaster recovery for the ledger are **not built** |
+| **Privacy** | No analytics, tracking or background reporting; voice and Rewind are consent-gated; access and export are product features. See [Privacy Principles](/privacy/) |
 
-### Availability
+## Security testing
 
-| Criteria | Requirement | F7 Controls |
-|----------|------------|-------------|
-| **A1.1** | Environmental safeguards | Cloud or on-premise deployment; configurable connection pooling |
-| **A1.2** | Recovery mechanisms | License grace period (30 days); graceful degradation (read-only mode, not hard failure) |
+- **Run 41 security audit baseline** (completed 2026-09-03): F7's internal three-pass audit program, with every open finding recorded for remediation. The audit's coverage boundary is stated in [Security Overview](/security/#audit-and-testing).
+- **Trust Center dependency audit** — this site's deploy workflow runs `npm audit --audit-level=moderate` before GitHub Pages publication, so a known vulnerability in the documentation toolchain blocks the publish. Product dependency evidence is release-scoped in the owning private repository.
+- **Independent penetration testing** — no report is available.
 
-### Confidentiality
+## Requesting more
 
-| Criteria | Requirement | F7 Controls |
-|----------|------------|-------------|
-| **C1.1** | Confidential information identified | Published data classification; credentials identified for encryption |
-| **C1.2** | Confidential information disposed | Configurable retention periods per data type; full data erasure on request |
-
-### Processing Integrity
-
-| Criteria | Requirement | F7 Controls |
-|----------|------------|-------------|
-| **PI1.1** | System accuracy | Input validation (size limits, content-type enforcement, allowlists); data integrity verification |
-
-### Privacy
-
-| Criteria | Requirement | F7 Controls |
-|----------|------------|-------------|
-| **P1.1** | Privacy notice | Agent tray icon; this published Trust Center; personal dashboard planned |
-| **P2.1** | Consent | Organizational deployment consent; personal dashboard will be opt-in |
-| **P3.1** | Collection limited to purpose | Metadata-only capture; documented field purposes |
-| **P4.1** | Restricted use | Data used only for scoring and analytics |
-| **P5.1** | Access to personal data | Data access via administrator; personal dashboard planned for self-service |
-| **P6.1** | Disclosure restricted | Row-level tenant isolation; anonymized cross-organization analytics |
-| **P7.1** | Accuracy maintained | Real-time capture; daily rollup reconciliation |
-
-## Security Testing
-
-F7 maintains an ongoing security program:
-
-- **Run 38 security audit baseline** with documented findings, remediation, and delta tracking
-- **Automated Trust Center dependency auditing** (`npm audit --audit-level=moderate`) before GitHub Pages publication
-- **Memory-safe codebase** (Rust) eliminating buffer overflows, use-after-free, and data races at compile time
-- **Third-party penetration testing** planned
-
-## Requesting the SOC 2 Report
-
-Contact **security@fseven.ai** to request the current SOC 2 report or to schedule a security review call.
+Contact **security@fseven.ai** to schedule a security review call or to request the internal audit's current findings summary.
 
 ---
 
 ::: info Related
-- [Security Architecture](/security/architecture) — Technical details on the six-layer defense model
-- [Encryption](/security/encryption) — Cryptographic inventory and key management
+- [Security Overview](/security/) — the posture in one page, including what is not built
+- [Compliance Overview](/compliance/) — the questionnaire quick reference
 :::

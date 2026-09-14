@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed
+- Retired the release-evidence-pack process (public-docs#33, finding PB26): the three templates under `docs/releases/evidence/templates/`, their naming convention and their trigger table are gone, because the process never produced a completed pack. `docs/releases/evidence/README.md` now says that release evidence is kept in `fseven-docs/docs/audits/`.
+
 ### Changed
 - Public audit-run baseline bumped 36 → 38 via `npm run bump:audit-run -- 38` (run-38 PB16): the run-38 baseline outputs merged upstream (fseven-docs PR #79), and the single-sourced registry/content/CHANGELOG references moved together; `scripts/check-public-claims.sh` reports `audit-run baseline: OK (Run 38)`.
 - Cleared the regressed build-toolchain advisory pair (run-38 DEP6): `npm audit fix` re-resolved transitive nanoid and postcss past their vulnerable ranges (GHSA-28wg-ghj8-5hjv / GHSA-2v37-7h3g-55p8; GHSA-r28c-9q8g-f849 / GHSA-fxqj-rqcc-2cmp); `npm audit` reports 0 vulnerabilities and the VitePress build is clean. Dev-toolchain exposure only — the published site is static.

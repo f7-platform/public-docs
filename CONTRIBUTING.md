@@ -35,6 +35,8 @@ contributions to the public docs are welcome here.
    pnpm build           # site builds without errors
    pnpm check:claims    # public-claims script passes
    ```
+   The claims checker needs bash 3.2 or newer; macOS's stock `/bin/bash` is
+   enough, and the checker refuses with exit 2 under anything older.
 5. **Open a pull request** — link the related issue and describe what changed
    on the published site.
 

@@ -37,3 +37,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - This CHANGELOG file to track documentation changes
+
+### Fixed
+- `npm run check:claims` now completes under macOS's stock `/bin/bash` 3.2 (public-docs#30, run-40 finding PB23). Its audit-run scan ran a process substitution for every line of the public surface; bash 3.2 leaks a file descriptor for each one and overruns its heap at descriptor 256, so on a Mac the gate crashed or reported the baseline as OK without reading the surface. The scan now hands the whole surface to `grep`, and nothing runs once per line. The script refuses with exit 2, naming the remedy, under a shell older than bash 3.2, and `npm run test:claims` now uses a fixture the size of the real surface and treats any exit status other than exactly 1 on a negative case as a failure, so a crash can no longer pass as a detected claim.

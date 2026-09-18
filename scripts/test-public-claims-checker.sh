@@ -5,6 +5,25 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
+# write_surface_doc <file> <lines> — a root doc as long as the real one.
+# The checker's audit-run scan once leaked a file descriptor per surface line,
+# and bash 3.2 crashed once the surface passed about 250 lines (PB23). The
+# fixture's docs were a few lines each, so the suite passed on the same shell
+# on which the real gate crashed. The five root docs below match the real
+# ones' lengths (247 lines together) and the [Unreleased] block matches the
+# real one (32 lines), so the fixture surface is past that point.
+write_surface_doc() {
+  local file="$1" lines="$2" i=4
+  {
+    printf '# fixture %s\n\n' "${file##*/}"
+    printf 'Current latest security audit is Run 41.\n'
+    while (( i <= lines )); do
+      printf 'Fixture line %d of %s, sized like the real root doc.\n' "$i" "${file##*/}"
+      i=$((i + 1))
+    done
+  } >"$file"
+}
+
 build_fixture() {
   local platform_root="$TEMP_DIR/platform"
   local docs_root="$platform_root/public-docs"
@@ -21,10 +40,7 @@ build_fixture() {
     "$platform_root/fseven-controller/server/src/integrations"
 
   touch \
-    "$docs_root/README.md" \
     "$docs_root/LICENSE" \
-    "$docs_root/CONTRIBUTING.md" \
-    "$docs_root/SECURITY.md" \
     "$docs_root/content/compliance/soc2.md" \
     "$docs_root/content/privacy/data-collection.md" \
     "$docs_root/content/privacy/data-retention.md" \
@@ -38,13 +54,14 @@ build_fixture() {
     "$platform_root/fseven-controller/server/src/integrations/models.rs"
 
   # The public surface names the baseline run in prose; the registry is the only
-  # place it is declared. 41 is deliberately NOT the repo's real baseline — if
-  # the checker still hardcoded a run, these fixtures would fail (PB12).
-  cat >"$docs_root/CLAUDE.md" <<'MD'
-# fixture contributor doc
-
-Current latest security audit is Run 41.
-MD
+  # place it is declared, and the checker derives it from there with jq. The
+  # fixture's run (41) is independent of the repo's real baseline — if the
+  # checker hardcoded a run instead, these fixtures would fail (PB12).
+  write_surface_doc "$docs_root/CLAUDE.md" 57
+  write_surface_doc "$docs_root/.github/copilot-instructions.md" 26
+  write_surface_doc "$docs_root/README.md" 50
+  write_surface_doc "$docs_root/SECURITY.md" 47
+  write_surface_doc "$docs_root/CONTRIBUTING.md" 67
 
   cat >"$docs_root/content/faq.md" <<'MD'
 # FAQ
@@ -60,19 +77,28 @@ MD
 
   # Released CHANGELOG sections are a historical record: they may cite a
   # superseded run. Only the live [Unreleased] section makes a current claim.
-  cat >"$docs_root/CHANGELOG.md" <<'MD'
+  {
+    cat <<'MD'
 # Changelog
 
 ## [Unreleased]
 
 ### Changed
 - Public audit references now use Run 41 as the latest security audit baseline.
-
+MD
+    local i=7
+    while (( i <= 33 )); do
+      printf -- '- Fixture [Unreleased] entry on line %d.\n' "$i"
+      i=$((i + 1))
+    done
+    printf -- '- Last [Unreleased] entry, citing Run 41.\n\n'
+    cat <<'MD'
 ## [1.0.0] - 2026-01-01
 
 ### Changed
 - Public audit references now use Run 30 as the latest security audit baseline.
 MD
+  } >"$docs_root/CHANGELOG.md"
 
   cat >"$docs_root/content/compliance/claims-registry.json" <<'JSON'
 {
@@ -118,31 +144,68 @@ JSON
   printf '%s\n' "$platform_root"
 }
 
+# The checker runs under the interpreter running this suite ($BASH), so
+# `/bin/bash scripts/test-public-claims-checker.sh` tests it under bash 3.2 on
+# macOS. PUBLIC_DOCS_EXPECTED_AUDIT_RUN is cleared so the baseline is always
+# the one the checker derives from the fixture's registry.
+CHECKER_OUT="$TEMP_DIR/checker.out"
+CHECKER_ERR="$TEMP_DIR/checker.err"
+checker_status=0
+
 run_checker() {
   local platform_root="$1"
-  PUBLIC_DOCS_ROOT="$platform_root/public-docs" \
-  PUBLIC_DOCS_PLATFORM_ROOT="$platform_root" \
-  bash "$REPO_ROOT/scripts/check-public-claims.sh" >/tmp/public-claims-test.out 2>/tmp/public-claims-test.err
+  checker_status=0
+  env -u PUBLIC_DOCS_EXPECTED_AUDIT_RUN \
+    PUBLIC_DOCS_ROOT="$platform_root/public-docs" \
+    PUBLIC_DOCS_PLATFORM_ROOT="$platform_root" \
+    "$BASH" "$REPO_ROOT/scripts/check-public-claims.sh" >"$CHECKER_OUT" 2>"$CHECKER_ERR" ||
+    checker_status=$?
+}
+
+# A status above 128 is a signal death, not a verdict: the checker crashed.
+fail_on_crash() {
+  local label="$1"
+  if (( checker_status > 128 )); then
+    printf 'FAIL: %s: the checker was killed by SIG%s (exit %d) under bash %s — a crash is not a verdict\n' \
+      "$label" "$(kill -l $((checker_status - 128)) 2>/dev/null || echo '?')" \
+      "$checker_status" "$BASH_VERSION" >&2
+    cat "$CHECKER_ERR" >&2
+    exit 1
+  fi
 }
 
 expect_pass() {
   local label="$1"
   local platform_root="$2"
 
-  if ! run_checker "$platform_root"; then
-    printf 'FAIL: %s should pass\n' "$label" >&2
-    cat /tmp/public-claims-test.err >&2
+  run_checker "$platform_root"
+  fail_on_crash "$label"
+  if (( checker_status != 0 )); then
+    printf 'FAIL: %s should pass, but the checker exited %d\n' "$label" "$checker_status" >&2
+    cat "$CHECKER_ERR" >&2
     exit 1
   fi
 }
 
+# Exactly 1 is the checker's refusal. Any other non-zero status — a crash, or
+# the version floor's 2 — would otherwise read as a correct refusal (PB23).
+# The optional third argument is a line the refusal must report on stderr.
 expect_fail() {
   local label="$1"
   local platform_root="$2"
+  local reported="${3:-}"
 
-  if run_checker "$platform_root"; then
-    printf 'FAIL: %s should fail\n' "$label" >&2
-    cat /tmp/public-claims-test.out >&2
+  run_checker "$platform_root"
+  fail_on_crash "$label"
+  if (( checker_status != 1 )); then
+    printf 'FAIL: %s should fail with exit 1, but the checker exited %d\n' \
+      "$label" "$checker_status" >&2
+    cat "$CHECKER_OUT" "$CHECKER_ERR" >&2
+    exit 1
+  fi
+  if [[ -n "$reported" ]] && ! grep -qF -- "$reported" "$CHECKER_ERR"; then
+    printf 'FAIL: %s failed, but did not report: %s\n' "$label" "$reported" >&2
+    cat "$CHECKER_ERR" >&2
     exit 1
   fi
 }
@@ -221,7 +284,15 @@ expect_fail "contributor doc disagrees with the registry baseline" "$platform_ro
 # The live [Unreleased] changelog section IS a current claim.
 platform_root="$(build_fixture)"
 perl -pi -e 's/use Run 41 as/use Run 30 as/ if $. < 8' "$platform_root/public-docs/CHANGELOG.md"
-expect_fail "stale audit run in the live CHANGELOG [Unreleased] section" "$platform_root"
+expect_fail "stale audit run in the live CHANGELOG [Unreleased] section" "$platform_root" \
+  "CHANGELOG.md [Unreleased]:6 cites Run 30, but the baseline is Run 41"
+
+# The last line of the surface, well past the ~250 lines at which the per-line
+# scan crashed under bash 3.2 (PB23): drift there must still be found.
+platform_root="$(build_fixture)"
+perl -pi -e 's/entry, citing Run 41/entry, citing Run 39/' "$platform_root/public-docs/CHANGELOG.md"
+expect_fail "stale audit run on the last line of the surface" "$platform_root" \
+  "CHANGELOG.md [Unreleased]:34 cites Run 39, but the baseline is Run 41"
 
 platform_root="$(build_fixture)"
 node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'

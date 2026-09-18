@@ -6,6 +6,26 @@
 # Exit codes:
 #   0 — all checks passed
 #   1 — one or more forbidden claims found
+#   2 — this shell cannot run the checks (see the version floor below)
+
+# ── minimum shell: GNU bash 3.2 (PB23) ────────────────────────────────────────
+# bash 3.2 is macOS's stock /bin/bash, and a contributor runs this before each
+# release with whatever bash is first on their PATH, so the script is written
+# for 3.2 and must never need 4.x (no mapfile, readarray, declare -A, wait -n,
+# ${var,,} or ${var^^}). Below 3.2 it refuses rather than dying half-way.
+# Plain [ ] tests, so a non-bash shell gets this message rather than a crash.
+MIN_BASH_MAJOR=3
+MIN_BASH_MINOR=2
+if [ -z "${BASH_VERSION:-}" ] || [ "${BASH_VERSINFO[0]}" -lt "$MIN_BASH_MAJOR" ] ||
+  { [ "${BASH_VERSINFO[0]}" -eq "$MIN_BASH_MAJOR" ] && [ "${BASH_VERSINFO[1]}" -lt "$MIN_BASH_MINOR" ]; }; then
+  printf 'ERROR: %s needs GNU bash %s.%s or newer; this shell is %s.\n' \
+    "${0##*/}" "$MIN_BASH_MAJOR" "$MIN_BASH_MINOR" "${BASH_VERSION:-not bash}" >&2
+  printf '       Run it with bash %s.%s or newer: `/bin/bash %s` on macOS, or\n' \
+    "$MIN_BASH_MAJOR" "$MIN_BASH_MINOR" "$0" >&2
+  printf '       install a current bash and put it first on PATH for `npm run check:claims`.\n' >&2
+  exit 2
+fi
+
 set -euo pipefail
 
 DEFAULT_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -134,20 +154,40 @@ audit_run_surface_files() {
   return 0
 }
 
-audit_run_surface_lines() {
-  # emits: <label>\t<lineno>\t<line>
-  local f label
+# A run cited on the surface: "Run 38", "Run 27b".
+AUDIT_RUN_CITATION='\bRun [0-9]+[a-z]?\b'
+
+audit_run_citations() {
+  # emits: <path>:<lineno>:Run <N>, one row per run cited on the live surface.
+  #
+  # One grep reads every surface file and one reads the [Unreleased] block;
+  # grep numbers the lines itself, so nothing runs once per line. The previous
+  # shape ran a process substitution per surface line, nested inside another,
+  # and bash 3.2 leaks a file descriptor for each one: its process-substitution
+  # table overruns the heap at descriptor 256, so on any surface over about 250
+  # lines the stock macOS shell crashed or passed without reading it (PB23).
+  #
+  # grep exits 1 when nothing matches, which is a clean surface, and 2 when it
+  # cannot read, which must not pass as one.
+  local files=() f
   while IFS= read -r f; do
-    label="${f#"$ROOT_DIR"/}"
-    awk -v label="$label" '{ printf "%s\t%d\t%s\n", label, FNR, $0 }' "$f"
+    files+=("$f")
   done < <(audit_run_surface_files)
 
+  if (( ${#files[@]} > 0 )); then
+    grep -HnoE -- "$AUDIT_RUN_CITATION" "${files[@]}" || (( $? == 1 )) || return 2
+  fi
+
   if [[ -f "$ROOT_DIR/CHANGELOG.md" ]]; then
+    # Lines outside [Unreleased] are blanked, not dropped, so grep's line
+    # numbers are CHANGELOG.md's own.
     awk '
-      /^## \[Unreleased\]/ { unreleased = 1; next }
+      /^## \[Unreleased\]/ { unreleased = 1; print ""; next }
       /^## / { unreleased = 0 }
-      unreleased { printf "CHANGELOG.md [Unreleased]\t%d\t%s\n", FNR, $0 }
-    ' "$ROOT_DIR/CHANGELOG.md"
+      { print (unreleased ? $0 : "") }
+    ' "$ROOT_DIR/CHANGELOG.md" |
+      { grep -noE -- "$AUDIT_RUN_CITATION" || (( $? == 1 )); } |
+      sed 's/^/CHANGELOG.md [Unreleased]:/' || return 2
   fi
 }
 
@@ -162,15 +202,27 @@ check_audit_run_baseline() {
     return
   fi
 
-  local label lineno line cited drift=0
-  while IFS=$'\t' read -r label lineno line; do
-    while IFS= read -r cited; do
-      [[ -z "$cited" || "$cited" == "$AUDIT_RUN" ]] && continue
-      printf '  %s:%s cites Run %s, but the baseline is Run %s\n' \
-        "$label" "$lineno" "$cited" "$AUDIT_RUN" >&2
-      drift=$((drift + 1))
-    done < <(grep -oE '\bRun [0-9]+[a-z]?\b' <<<"$line" | sed 's/^Run //' || true)
-  done < <(audit_run_surface_lines)
+  local citations row label lineno cited drift=0
+  local row_re='^(.*):([0-9]+):Run ([0-9]+[a-z]?)$'
+  if ! citations="$(audit_run_citations)"; then
+    record_failure "audit-run baseline: grep could not read the live public surface"
+    return
+  fi
+
+  while IFS= read -r row; do
+    [[ -z "$row" ]] && continue
+    if [[ ! "$row" =~ $row_re ]]; then
+      record_failure "audit-run baseline: unreadable citation row: $row"
+      continue
+    fi
+    label="${BASH_REMATCH[1]#"$ROOT_DIR"/}"
+    lineno="${BASH_REMATCH[2]}"
+    cited="${BASH_REMATCH[3]}"
+    [[ "$cited" == "$AUDIT_RUN" ]] && continue
+    printf '  %s:%s cites Run %s, but the baseline is Run %s\n' \
+      "$label" "$lineno" "$cited" "$AUDIT_RUN" >&2
+    drift=$((drift + 1))
+  done <<<"$citations"
 
   if (( drift > 0 )); then
     printf '\nERROR: %d public audit-run reference(s) disagree with the baseline (Run %s) declared in %s\n' \

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - `README.md` and `CONTRIBUTING.md` now tell contributors to use npm and Node 22 (public-docs#47, run-42 finding PB30). Both files instructed contributors to run `pnpm`, while `.github/workflows/deploy.yml` installs Node 22 and runs `npm ci` against `package-lock.json`, so anyone following the repository's own documentation produced a lockfile CI does not use. The README's local-development block and CONTRIBUTING's local-check block are now the npm commands CI actually runs, and the README says in so many words that CI is npm-authoritative and that a `pnpm-lock.yaml` must not be committed.
+- Public audit-run baseline bumped 41 → 42 via `npm run bump:audit-run -- 42` (PB22): run 42's outputs, including a pass-3 synthesis marked complete, merged to `fseven-docs` `main` as `c029787` on 2026-09-19 (fseven-docs#138). The two run-41 history entries below no longer quote a bare run token, so this bump could not rewrite them.
 
 ### Removed
 - Retired the release-evidence-pack process (public-docs#33, finding PB26): the three templates under `docs/releases/evidence/templates/`, their naming convention and their trigger table are gone, because the process never produced a completed pack. `docs/releases/evidence/README.md` now says that release evidence is kept in `fseven-docs/docs/audits/`.
@@ -21,8 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Security architecture: qualified SPKI certificate pinning claims (infrastructure present, operational pins per-deployment)
 - Encryption: clarified certificate pinning status
 - Agent security: added note on signing key management in update verification pipeline
-- Public audit references now use Run 41 as the latest security audit baseline.
-- Claims registry updated to Run 41 and now registers material integration provider, Mode 3 capture, and Trust Center dependency-audit claims.
+- Public audit references now use the registry's `audit_run` baseline as the latest security audit (the 38 → 41 bump above).
+- Claims registry updated to the 38 → 41 baseline and now registers material integration provider, Mode 3 capture, and Trust Center dependency-audit claims.
 - Remediated the public-docs build-time npm advisory tail by pinning vite to ^6.4.3 (clears the esbuild/vite/vitepress advisory cluster); `npm audit` now reports 0 vulnerabilities.
 - Removed the committed `pnpm-lock.yaml` so `package-lock.json` (consumed by CI `npm ci`) is the single authoritative lockfile.
 

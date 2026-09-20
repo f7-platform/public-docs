@@ -12,7 +12,7 @@ security errata are written for the current release only.
 documented behavior, in the published site, or in the underlying products
 (controller, agent, dashboard).
 
-Email **security@f7-platform.io** with:
+Email **security@fseven.ai** with:
 
 - A description of the vulnerability.
 - The page URL or repository file affected (if it is a documentation issue).

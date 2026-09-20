@@ -21,13 +21,15 @@ release notes under [`docs/releases/`](docs/releases).
 
 ## Local development
 
-Requires Node 20+ and pnpm.
+Requires Node 22 and npm. CI is npm-authoritative (`npm ci` against
+`package-lock.json`); do not commit a `pnpm-lock.yaml`.
 
 ```bash
-pnpm install
-pnpm dev          # http://localhost:5173
-pnpm build        # static site → .vitepress/dist
-pnpm check:claims # validate public claims script
+npm ci
+npm run dev            # http://localhost:5173
+npm run test:claims    # fixture tests of the claim checker
+npm run check:claims   # validate public claims against the registry
+npm run build          # static site → .vitepress/dist
 ```
 
 ## Supported platforms

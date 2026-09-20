@@ -13,7 +13,7 @@ F7 is designed for enterprise deployment. Our security and privacy controls are 
 
 ## Security Questionnaire Quick Reference
 
-This table addresses the most common vendor security questionnaire items. Every answer is backed by implemented functionality — not planned features.
+This table is an informal quick reference to the most common vendor security questionnaire items; its answers are one-line summaries rather than registered claims. The claims this site registers, each with its source evidence and audit references, are listed on the [Public Claims Registry](/compliance/claims-registry) page.
 
 | # | Question | Answer |
 |---|----------|--------|

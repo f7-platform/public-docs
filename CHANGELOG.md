@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Removed the committed `pnpm-lock.yaml` so `package-lock.json` (consumed by CI `npm ci`) is the single authoritative lockfile.
 
 ### Fixed
+- `SECURITY.md` now gives `security@fseven.ai` as the vulnerability-disclosure contact, the address every published page already gives, in place of an address on a domain that appears nowhere else in the platform and has no mail exchanger (public-docs#46, finding PB31).
 - The claims checker asserted the existence of files inside the private sibling product repos, which are not checked out in this public repo's own CI. The check therefore failed 100% of the time in CI regardless of correctness, which blocked the Trust Center deploy — no publish has succeeded since 2026-05-09, so the live site still served a nine-run-stale audit baseline while the repo said otherwise. Cross-repo evidence paths are now verified wherever the sibling repo is available (meta-repo workspace, local dev) and reported as unverified where it is not; the shape checks (safe relative path, no repo-boundary crossing, known repo) still hard-fail everywhere.
 
 ### Added

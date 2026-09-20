@@ -4,7 +4,7 @@ The public claims registry (`claims-registry.json` in this directory) is a machi
 
 ## Purpose
 
-1. **Accuracy enforcement** — `scripts/check-public-claims.sh` reads the registry and fails CI if any `not-available` claim appears in content.
+1. **Accuracy enforcement** — `scripts/check-public-claims.sh` reads the registry and fails CI if the summary registered for a `not-available` claim appears, as that exact phrase, on any page under `content/`. It is a phrase check: wording that describes the same unshipped feature in other words is not caught by it, and is forbidden only where the script lists it explicitly.
 2. **Audit traceability** — each claim links back to the audit run finding IDs that drove its inclusion.
 3. **Release gate** — the registry is reviewed each release cycle; claims with `in-progress` status must be promoted or downgraded before major public releases.
 
@@ -14,14 +14,14 @@ The public claims registry (`claims-registry.json` in this directory) is a machi
 |---|---|
 | `active` | Feature ships and the claim is accurate |
 | `in-progress` | Feature is in development; claim is scoped/qualified on the page |
-| `not-available` | Feature not yet shipped; claim is **forbidden** from appearing in content |
+| `not-available` | Feature not yet shipped; the summary registered here is **forbidden** from appearing on any page under `content/`, and CI fails when it does |
 
 ## Maintenance
 
 When adding a new public claim:
 
 1. Add an entry to `claims-registry.json` with an evidence reference and `release_status`.
-2. If status is `not-available`, add a `check_absent` pattern to `scripts/check-public-claims.sh`.
+2. If status is `not-available`, the summary you register is enforced on its own — CI fails if that exact phrase is published. For every *other* wording of the same unshipped claim that must never appear, add a `check_absent` pattern to `scripts/check-public-claims.sh`.
 3. Run `bash scripts/check-public-claims.sh` locally before committing.
 4. Reference the claim ID in any PR description that adds content touching the claim.
 

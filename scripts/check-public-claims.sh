@@ -394,18 +394,23 @@ if command -v jq &>/dev/null; then
     validate_evidence_path "$claim_id" "$evidence"
   done < <(jq -r '.claims[] | .id as $id | (.evidence // [])[] | [$id, .] | @tsv' "$REGISTRY")
 
+  # A "not-available" claim names a feature that is not shipped, so the summary
+  # the registry registers for it must not appear on any published page. The
+  # match is that whole summary as a fixed string, case-insensitively — the
+  # phrase, which is what the registry registers and all it registers. The
+  # registry JSON is excluded because it carries every summary by definition.
+  # A page that names the same feature in other words ("a personal dashboard is
+  # planned") is not this check's business; where such wording is forbidden it
+  # is listed as a check_absent pattern above.
   while IFS= read -r claim_id; do
-    # Each not-available claim id is checked via its "summary" keyword
     summary=$(jq -r --arg id "$claim_id" \
       '.claims[] | select(.id == $id) | .summary' "$REGISTRY")
-    # Use the first 6 significant words as a grep anchor (heuristic)
-    keyword=$(echo "$summary" | grep -oE '\b[a-zA-Z]{4,}\b' | head -1)
-    if [[ -n "$keyword" ]]; then
-      if grep -RInl --exclude="claims-registry.json" -- "$keyword" "$CONTENT_DIR" | grep -vqF "claims-registry"; then
-        # Only a problem if the full summary phrase appears
-        :
-      fi
-    fi
+    [[ -n "$summary" ]] || continue
+    while IFS= read -r hit; do
+      [[ -n "$hit" ]] || continue
+      hit="${hit#"$ROOT_DIR"/}"
+      record_failure "not-available claim $claim_id appears on the public surface at $hit: \"$summary\" — a not-available claim's registered summary is forbidden under content/"
+    done < <(grep -RIn -iF --exclude="claims-registry.json" -- "$summary" "$CONTENT_DIR" | cut -d: -f1,2 || true)
   done < <(jq -r '.claims[] | select(.release_status == "not-available") | .id' "$REGISTRY")
   printf 'claims registry validation: OK (%s)\n' "$REGISTRY"
 else

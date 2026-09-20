@@ -29,11 +29,12 @@ contributions to the public docs are welcome here.
    released. The `Public Repository Protocol` (see
    `fseven-docs/docs/PUBLIC-REPO-PROTOCOL.md` in the platform repo) governs
    what may appear here.
-4. **Run local checks**:
+4. **Run local checks** (CI is npm-authoritative):
    ```bash
-   pnpm install
-   pnpm build           # site builds without errors
-   pnpm check:claims    # public-claims script passes
+   npm ci
+   npm run test:claims    # fixture tests of the claim checker pass
+   npm run check:claims   # public-claims script passes
+   npm run build          # site builds without errors
    ```
    The claims checker needs bash 3.2 or newer; macOS's stock `/bin/bash` is
    enough, and the checker refuses with exit 2 under anything older.

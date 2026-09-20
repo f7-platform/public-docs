@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- `README.md` and `CONTRIBUTING.md` now tell contributors to use npm and Node 22 (public-docs#47, run-42 finding PB30). Both files instructed contributors to run `pnpm`, while `.github/workflows/deploy.yml` installs Node 22 and runs `npm ci` against `package-lock.json`, so anyone following the repository's own documentation produced a lockfile CI does not use. The README's local-development block and CONTRIBUTING's local-check block are now the npm commands CI actually runs, and the README says in so many words that CI is npm-authoritative and that a `pnpm-lock.yaml` must not be committed.
+
 ### Removed
 - Retired the release-evidence-pack process (public-docs#33, finding PB26): the three templates under `docs/releases/evidence/templates/`, their naming convention and their trigger table are gone, because the process never produced a completed pack. `docs/releases/evidence/README.md` now says that release evidence is kept in `fseven-docs/docs/audits/`.
 

@@ -67,6 +67,9 @@ build_fixture() {
 # FAQ
 
 The platform is tracked through an ongoing security audit program (most recently Run 41).
+
+Fixture pages may describe a withdrawn claim in other words, as this line does,
+without ever quoting the phrase the registry registers for it.
 MD
 
   cat >"$docs_root/content/compliance/soc2.md" <<'MD'
@@ -136,6 +139,15 @@ MD
       ],
       "audit_refs": ["PDC5", "PUBDOC-3"],
       "release_status": "active"
+    },
+    {
+      "id": "CLM-013",
+      "summary": "Fixture withdrawn claim phrase that must never appear on a page",
+      "source_files": [],
+      "evidence": [],
+      "audit_refs": ["PDC5"],
+      "release_status": "not-available",
+      "notes": "Fixture-only withdrawn claim. Its first significant word is shared with every fixture page, so the base fixture passing proves the checker matches the summary phrase and not a keyword from it (PB29)."
     }
   ]
 }
@@ -242,6 +254,29 @@ registry.claims[0].evidence = [];
 fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
 NODE
 expect_fail "active claim without registry evidence" "$platform_root"
+
+# ── withdrawn claims must not reach the surface (PB29) ────────────────────────
+# A not-available claim names a feature that is not shipped; the checker fails
+# when the summary registered for it is published. The pass case is what makes
+# the failure case mean anything: the base fixture's withdrawn summary begins
+# with "Fixture", the word every fixture page is full of, and faq.md describes
+# the same withdrawn claim in other words. Both must pass unremarked, or the
+# check is a keyword scan rather than the phrase check the registry page
+# promises. The loop this replaced greped that first word and did nothing with
+# the hits, so no withdrawn claim could fail the build.
+
+platform_root="$(build_fixture)"
+expect_pass "withdrawn claim absent from the surface" "$platform_root"
+
+# content/privacy/index.md is an empty fixture page, so the phrase lands on line
+# 1 and the reported location below is exact. The third argument names the claim
+# id, the summary and that location: if the loop's record_failure is dropped or
+# stops naming the claim, this case fails.
+platform_root="$(build_fixture)"
+printf '%s\n' 'Fixture withdrawn claim phrase that must never appear on a page.' \
+  >>"$platform_root/public-docs/content/privacy/index.md"
+expect_fail "withdrawn claim's summary phrase on a published page" "$platform_root" \
+  'not-available claim CLM-013 appears on the public surface at content/privacy/index.md:1: "Fixture withdrawn claim phrase that must never appear on a page"'
 
 # ── audit-run baseline: single source of truth (PB12) ─────────────────────────
 # The base fixture already proves two things by passing above:

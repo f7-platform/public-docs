@@ -68,16 +68,15 @@ body:
       description: The repository where the fix lands. Cross-repo work is split into one issue per repo.
       options:
         - "public-docs — this repository"
+        - "fseven-agent"
         - "fseven-atlas-mvp"
         - "fseven-backbone"
-        - "fseven-schemas"
+        - "fseven-controller"
         - "fseven-docs"
         - "fseven-identity-providers"
-        - "fseven-controller"
-        - "fseven-agent"
         - "fseven-platform"
         - "fseven-relay"
-        - "public-docs"
+        - "fseven-schemas"
         - "public-agent-binaries"
         - "public-atlas-binaries"
       default: 0

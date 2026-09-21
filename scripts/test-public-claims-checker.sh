@@ -146,6 +146,7 @@ MD
       "source_files": [],
       "evidence": [],
       "audit_refs": ["PDC5"],
+      "forbidden_phrases": ["can already open the withdrawn feature"],
       "release_status": "not-available",
       "notes": "Fixture-only withdrawn claim. Its first significant word is shared with every fixture page, so the base fixture passing proves the checker matches the summary phrase and not a keyword from it (PB29)."
     }
@@ -277,6 +278,57 @@ printf '%s\n' 'Fixture withdrawn claim phrase that must never appear on a page.'
   >>"$platform_root/public-docs/content/privacy/index.md"
 expect_fail "withdrawn claim's summary phrase on a published page" "$platform_root" \
   'not-available claim CLM-013 appears on the public surface at content/privacy/index.md:1: "Fixture withdrawn claim phrase that must never appear on a page"'
+
+# ── a claim's forbidden_phrases (public-docs#53) ──────────────────────────────
+# The summary is one phrase, so a page asserting the same withdrawn feature in
+# other words passed. A claim may carry forbidden_phrases, each matched the way
+# the summary is: a fixed string, case-insensitively, anywhere under content/.
+# The base fixture's CLM-013 carries one, and faq.md does not contain it, so the
+# base pass above also proves an absent phrase is not a failure.
+
+# The paraphrase is written in a different case from the registry entry, so the
+# match must be case-insensitive for this case to fail.
+platform_root="$(build_fixture)"
+printf '%s\n' 'Every fixture reader can already open the Withdrawn Feature today.' \
+  >>"$platform_root/public-docs/content/privacy/index.md"
+expect_fail "withdrawn claim's forbidden phrase on a published page" "$platform_root" \
+  'claim CLM-013 forbidden phrase appears on the public surface at content/privacy/index.md:1: "can already open the withdrawn feature"'
+
+# An empty entry would make grep -F match every line of every page; a checker
+# that skipped it instead would hide a registry mistake. Either way it is refused.
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[3].forbidden_phrases.push('  ');
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_fail "blank forbidden phrase in the registry" "$platform_root" \
+  'claims registry forbidden_phrases for CLM-013 must be an array of non-blank strings'
+
+# The real CLM-009 entry, copied into the fixture, must refuse each of the three
+# wordings the hand-written "current personal-dashboard capability" deny-list
+# carried, which that deny-list no longer carries. Its summary matches none of
+# them, so without forbidden_phrases every one of these would publish.
+for wording in \
+  'Employees see their own data on a personal dashboard.' \
+  'Every employee sees their own behavioral data.' \
+  'F7 gives every employee visibility into their own behavioral data.'; do
+  platform_root="$(build_fixture)"
+  node - "$platform_root/public-docs/content/compliance/claims-registry.json" \
+    "$REPO_ROOT/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const [file, real] = process.argv.slice(2);
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+const clm009 = JSON.parse(fs.readFileSync(real, 'utf8')).claims.find((c) => c.id === 'CLM-009');
+registry.claims.push(clm009);
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+  printf '%s\n' "$wording" >>"$platform_root/public-docs/content/privacy/index.md"
+  expect_fail "CLM-009 wording on a published page: $wording" "$platform_root" \
+    'claim CLM-009 forbidden phrase appears on the public surface at content/privacy/index.md:1'
+done
 
 # ── audit-run baseline: single source of truth (PB12) ─────────────────────────
 # The base fixture already proves two things by passing above:

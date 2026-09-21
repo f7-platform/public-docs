@@ -280,9 +280,11 @@ check_absent \
   "specific HRIS connector names" \
   '\b(Workday|BambooHR|SAP SuccessFactors|Rippling|HiBob)\b'
 
+# Wordings of the unshipped personal dashboard are CLM-009's forbidden_phrases
+# in the claims registry (public-docs#53), not a pattern here.
 check_absent \
-  "current personal-dashboard capability" \
-  'Employees see their own data on a personal dashboard|Every employee sees their own behavioral data|gives every employee visibility into their own behavioral data|personal-data endpoints'
+  "internal personal-data endpoint reference" \
+  'personal-data endpoints'
 
 # Endpoint paths that are not yet public API — never document internal routes
 check_absent \
@@ -399,9 +401,9 @@ if command -v jq &>/dev/null; then
   # match is that whole summary as a fixed string, case-insensitively — the
   # phrase, which is what the registry registers and all it registers. The
   # registry JSON is excluded because it carries every summary by definition.
-  # A page that names the same feature in other words ("a personal dashboard is
-  # planned") is not this check's business; where such wording is forbidden it
-  # is listed as a check_absent pattern above.
+  # Other wordings of the same unshipped feature are the claim's own
+  # forbidden_phrases, enforced below; a page that names the feature in passing
+  # ("a personal dashboard is planned") matches neither and is not refused.
   while IFS= read -r claim_id; do
     summary=$(jq -r --arg id "$claim_id" \
       '.claims[] | select(.id == $id) | .summary' "$REGISTRY")
@@ -412,6 +414,37 @@ if command -v jq &>/dev/null; then
       record_failure "not-available claim $claim_id appears on the public surface at $hit: \"$summary\" — a not-available claim's registered summary is forbidden under content/"
     done < <(grep -RIn -iF --exclude="claims-registry.json" -- "$summary" "$CONTENT_DIR" | cut -d: -f1,2 || true)
   done < <(jq -r '.claims[] | select(.release_status == "not-available") | .id' "$REGISTRY")
+
+  # A claim may carry forbidden_phrases: other wordings of it that must never be
+  # published, kept next to the claim they belong to rather than in a check_absent
+  # deny-list here (public-docs#53). Each is matched as the summary is above — a
+  # fixed string, case-insensitively, under content/ with the registry JSON
+  # excluded — and on every claim that carries the field, whatever its status.
+  # A blank entry would match every line, so it is refused rather than skipped.
+  while IFS= read -r claim_id; do
+    record_failure "claims registry forbidden_phrases for $claim_id must be an array of non-blank strings"
+  done < <(jq -r '
+    .claims[]
+    | select(has("forbidden_phrases"))
+    | select((.forbidden_phrases | type) != "array"
+        or any(.forbidden_phrases[]; type != "string" or test("^\\s*$")))
+    | .id
+  ' "$REGISTRY")
+
+  while IFS=$'\t' read -r claim_id phrase; do
+    while IFS= read -r hit; do
+      [[ -n "$hit" ]] || continue
+      hit="${hit#"$ROOT_DIR"/}"
+      record_failure "claim $claim_id forbidden phrase appears on the public surface at $hit: \"$phrase\" — a claim's forbidden_phrases are forbidden under content/"
+    done < <(grep -RIn -iF --exclude="claims-registry.json" -- "$phrase" "$CONTENT_DIR" | cut -d: -f1,2 || true)
+  done < <(jq -r '
+    .claims[]
+    | .id as $id
+    | select((.forbidden_phrases | type) == "array")
+    | .forbidden_phrases[]
+    | select(type == "string" and (test("^\\s*$") | not))
+    | [$id, .] | @tsv
+  ' "$REGISTRY")
   printf 'claims registry validation: OK (%s)\n' "$REGISTRY"
 else
   printf '\nERROR: jq is required for claims registry validation\n' >&2

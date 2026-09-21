@@ -120,12 +120,23 @@
     {
       "id": "CLM-009",
       "summary": "Personal behavioral data visible to individual employee on personal dashboard",
+      "forbidden_phrases": [
+        "their own data on a personal dashboard",
+        "employees see their own",
+        "employees can see their own",
+        "employees can view their own",
+        "every employee sees their own",
+        "every employee can see their own",
+        "gives employees visibility into their own",
+        "gives every employee visibility into their own",
+        "employees have visibility into their own"
+      ],
       "source_files": [],
       "evidence": [],
       "audit_refs": ["PDC5"],
       "release_status": "not-available",
       "soc2_criteria": [],
-      "notes": "FORBIDDEN CLAIM: personal-dashboard feature is not yet shipped. This claim must never appear in public-docs. Checked by scripts/check-public-claims.sh."
+      "notes": "FORBIDDEN CLAIM: personal-dashboard feature is not yet shipped. This claim must never appear in public-docs. Checked by scripts/check-public-claims.sh against the summary and each forbidden_phrases entry. The phrases are present-tense stems of the three wordings the retired check_absent pattern 'current personal-dashboard capability' carried; none occurs in the planned-feature lines that name the personal dashboard today, which say will, will be able to, or planned. Add a wording here, not to the script, when another one must never be published."
     },
     {
       "id": "CLM-010",

@@ -6,9 +6,8 @@ contributions to the public docs are welcome here.
 
 ## What belongs here
 
-- `content/` — published pages (overview, install, privacy, security,
-  compliance, FAQ).
-- `docs/releases/` — release notes by version.
+- `content/` — published pages (overview, privacy, security, compliance,
+  legal, FAQ). The site is built from this directory only.
 - `scripts/` — site build/check helpers (e.g. `check-public-claims.sh`).
 - `package.json` / VitePress configuration.
 
@@ -24,7 +23,7 @@ contributions to the public docs are welcome here.
 1. **Open an issue first** — describe the problem, missing information, or
    proposed addition so it can be triaged before you write a PR.
 2. **Fork and branch** — create a feature branch from `main`.
-3. **Edit content** — update files under `content/` or `docs/releases/`. Keep
+3. **Edit content** — update files under `content/`. Keep
    claims precise and avoid implying capabilities that are not implemented or
    released. The `Public Repository Protocol` (see
    `fseven-docs/docs/PUBLIC-REPO-PROTOCOL.md` in the platform repo) governs

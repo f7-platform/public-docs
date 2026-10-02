@@ -20,7 +20,7 @@ See [`CLAUDE.md`](../CLAUDE.md) for the authoritative repo-level contributor gui
 
 ## Forbidden Claims (until implemented)
 
-- "Authenticode-signed Windows installer" — currently only macOS-style signing is in CI
+- "Authenticode-signed Windows installer" — the agent release workflow now signs and verifies the Windows installer, but no non-prerelease agent installer published on `public-agent-binaries` was built by a run that signed it; lift this once one is
 - Specific HRIS connector names unless verified against implemented controller code in the same change
 - Compensation data ingestion, salary fields, stock value fields, benefits value fields, or compensation masking as a current customer-facing capability
 - Specific SLM architecture or parameter count

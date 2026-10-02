@@ -80,7 +80,7 @@ Our [Compliance Overview](/compliance/) includes a quick-reference table address
 The F7 agent is a lightweight binary deployed to employee devices. Enrollment uses a one-time token that binds the device to your organization — no shared secrets or manual configuration required.
 
 ### What operating systems are supported?
-The F7 agent supports macOS and Windows, with Linux support planned.
+The F7 agent runs on macOS (Apple Silicon and Intel), Windows (x86_64) and Linux (x86_64).
 
 ### Does the agent affect device performance?
 The agent is designed to be lightweight. The on-device AI model runs during idle periods and does not interfere with foreground work.

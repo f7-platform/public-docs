@@ -28,6 +28,23 @@ fi
 
 set -euo pipefail
 
+# ── native Windows jq writes CRLF (public-docs#60) ────────────────────────────
+# A jq.exe run from Git Bash ends every output line with \r\n, so the last
+# field each `read` loop below takes from jq keeps a trailing \r, which bash
+# arithmetic and phrase matching both reject. When jq is seen to do that, every
+# jq call in this script goes through `jq -b` (--binary, plain LF), or through
+# `tr -d '\r'` for a jq too old to accept -b. A jq that writes LF, as on Linux
+# CI, is called exactly as before. The probes turn \r into R before $(...)
+# reads it, because Git Bash's command substitution drops a \r on its own.
+if command -v jq &>/dev/null && [[ "$(command jq -n 1 | tr '\r' R)" == 1R ]]; then
+  if [[ "$( (command jq -b -n 1 || true) 2>/dev/null | tr '\r' R)" == 1 ]]; then
+    jq() { command jq -b "$@"; }
+  else
+    # pipefail (set above) keeps jq's own exit status, which `jq -e` relies on.
+    jq() { command jq "$@" | tr -d '\r'; }
+  fi
+fi
+
 DEFAULT_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ROOT_DIR="${PUBLIC_DOCS_ROOT:-$DEFAULT_ROOT_DIR}"
 PLATFORM_ROOT="${PUBLIC_DOCS_PLATFORM_ROOT:-$(cd "$ROOT_DIR/.." && pwd)}"

@@ -2,9 +2,14 @@
 
 All notable changes to the F7 public documentation will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), with dated releases in place of version numbers: the site deploys on every merge to `main`, so a release is a dated section cut over the entries merged since the last one. `[Unreleased]` holds the entries merged since the newest cut, and a released section is historical record that `npm run check:claims` and `npm run bump:audit-run` leave as it is.
 
 ## [Unreleased]
+
+### Changed
+- `CHANGELOG.md` has its first released section, dated 2026-10-25, so the rule that exempts released sections as historical record now has something to apply to (finding PB44). Every entry used to sit under `[Unreleased]`, so the claims check scanned the whole file and the audit-run bump rewrote all of it as live text, and past entries had to be reworded to avoid naming a run. The entries that were under `[Unreleased]` are now under `[2026-10-25]`, unchanged.
+
+## [2026-10-25]
 
 ### Fixed
 - The four tables on the data collection page render again, and `SECURITY.md` covers only what this repository publishes (findings PB39 and PB40). The delimiter rows under the Job Metadata, Org Hierarchy, Employment Lifecycle and Identity tables in `content/privacy/data-collection.md` carried four cells under three-column headers, so those tables did not render as tables; each delimiter row now has three cells. `SECURITY.md` said older release notes stay published and that a correction would be linked from the next release-notes entry, and it listed `docs/releases/` in scope, but only the pages under `content/` are published; it now scopes itself to `content/` and says a correction is published on the corrected page and recorded in `CHANGELOG.md`.

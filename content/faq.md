@@ -12,7 +12,7 @@ The optional Mode 3 — Interpret vision feature processes screen frames **local
 
 ### Who can see my data?
 - **You** will be able to see your own data through a personal dashboard (planned)
-- **Your manager** can see analytics for their direct and indirect reports only — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
+- **Your manager** can see team-level aggregates for their direct and indirect reports, never your individual scores or raw activity — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
 - **Admins** see organization-level analytics and configuration pages, with audit logging for individual-data access
 - **Aggregate views** enforce k-anonymity — groups smaller than 5 people are suppressed to prevent re-identification
 - **F7 staff** cannot see your data — it's encrypted and tenant-isolated
@@ -28,7 +28,7 @@ Work-pattern metadata: application names, click/keystroke counts (not content), 
 Prompt text, file contents, emails, chat messages, screenshots, clipboard contents, passwords, full URLs, or personal app activity for excluded apps. See [What We Never Capture](/privacy/data-collection#what-f7-never-captures).
 
 ### Can I pause F7?
-**Yes.** You can pause observation at any time using the agent's tray icon. You can also exclude specific apps and restrict observation to work hours. See [Employee Controls](/privacy/employee-controls).
+**Through your organization.** Your organization's F7 administrator can pause observation for you or your team, exclude specific apps, and restrict observation to work hours. Ask your IT or HR team to request any of these. See [Employee Controls](/privacy/employee-controls).
 
 ### Can I see what F7 has collected about me?
 **Yes.** A personal dashboard is planned that will show all data associated with your account. In the meantime, you can request your data through your organization's F7 administrator.

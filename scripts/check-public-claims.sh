@@ -73,14 +73,39 @@ failures=0
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
+# grep_surface <grep options and pattern> — every scan of content/ goes through
+# this one grep, with the registry file excluded (it intentionally documents
+# forbidden claims). It sets surface_hits to grep's output and surface_status to
+# grep's exit status, so each caller can tell the three outcomes apart: 0 is a
+# match, 1 is a clean surface, and 2 is a page grep could not read, which must
+# not pass as a clean one (PB42). Running grep as an `if` condition, or ending
+# it in `|| true`, read that 2 as clean.
+surface_hits=""
+surface_status=0
+grep_surface() {
+  surface_status=0
+  surface_hits="$(grep -RIn --exclude="claims-registry.json" "$@" "$CONTENT_DIR")" ||
+    surface_status=$?
+}
+
+# record_read_error <what was being checked> — grep_surface returned above 1.
+record_read_error() {
+  record_failure "grep could not read the public surface (exit $surface_status) while checking $1; a page it cannot read is not a clean page"
+}
+
 check_absent() {
   local label="$1"
   local pattern="$2"
-  # Exclude the registry file itself (it intentionally documents forbidden claims)
-  if grep -RInE --exclude="claims-registry.json" -- "$pattern" "$CONTENT_DIR"; then
-    printf '\nERROR: forbidden public-docs claim found: %s\n' "$label" >&2
-    failures=$((failures + 1))
-  fi
+  grep_surface -E -- "$pattern"
+  case "$surface_status" in
+    0)
+      printf '%s\n' "$surface_hits"
+      printf '\nERROR: forbidden public-docs claim found: %s\n' "$label" >&2
+      failures=$((failures + 1))
+      ;;
+    1) ;;
+    *) record_read_error "forbidden claim: $label" ;;
+  esac
 }
 
 check_present() {
@@ -276,8 +301,12 @@ validate_evidence_path() {
     rel_path="$anchor"
   fi
 
+  # The repositories evidence may name. The list is kept by hand: the platform's
+  # repository manifest lives in a private repository that this repository's CI
+  # never checks out, so there is nothing here to derive it from. Add a
+  # repository when a claim's evidence first names it (PB41).
   case "$repo" in
-    fseven-agent|fseven-controller|fseven-schemas|fseven-docs|fseven-atlas|fseven-atlas-mvp|public-agent-binaries|public-docs) ;;
+    fseven-agent|fseven-controller|fseven-schemas|fseven-docs|fseven-atlas|fseven-atlas-mvp|fseven-backbone|public-agent-binaries|public-atlas-binaries|public-docs) ;;
     *)
       record_failure "claims registry evidence for $claim_id uses unknown repo boundary: $repo"
       return
@@ -315,6 +344,14 @@ check_absent \
   "premature SOC 2 certified declarative claim" \
   'F7 is SOC 2 (Type II )?certified|F7 has obtained SOC 2|F7 received SOC 2|completed a SOC 2 audit|F7 completed SOC 2'
 
+# A SOC 2 report exists only once the planned audit is done, so a page must not
+# offer one or name it as something in hand (PB36): "request the current SOC 2
+# report", a "Requesting the SOC 2 Report" heading, "our SOC 2 report". A page
+# may still name the audit as planned and ask about certification as a question.
+check_absent \
+  "SOC 2 report offered before the audit" \
+  '[Rr]equest(ing)? (the|a|our|F7'"'"'s) (current |latest )?SOC 2 (Type I+ )?[Rr]eport|[Tt]he current SOC 2 (Type I+ )?[Rr]eport|([Oo]ur|F7'"'"'s) SOC 2 (Type I+ )?[Rr]eport|SOC 2 (Type I+ )?[Rr]eport (is )?(available|on request)'
+
 # License overclaims — must not claim open-source where proprietary
 check_absent \
   "open-source license overclaim" \
@@ -335,13 +372,26 @@ check_absent \
   "unimplemented third-party app API integration examples" \
   'OpenAI / ChatGPT|Anthropic / Claude|Google Gemini|Microsoft 365 / SharePoint|Grammarly, Notion, Confluence|GitHub Copilot, GitLab Duo|third-party applications via their APIs'
 
+# CLM-011: Mode 3 frames stay on the device, and the current macOS capture path
+# streams them through stdout, so a page may say that. It may not say a frame is
+# discarded at once or never touches the disk, in any verb form (PB34):
+# "discarded immediately", "discards them immediately", "discarded after
+# inference", "immediately discards each frame". Up to two words may stand
+# between the verb and the timing ("discards each frame immediately").
 check_absent \
   "absolute Mode 3 no-disk/immediate-discard claim" \
-  'never persisted to disk|persisted to disk|discarded immediately|immediately discarded'
+  'persisted to disk|[Dd]iscard(s|ed|ing)?( [[:alnum:]]+){0,2} (immediately|instantly|right away|at once|after (local |on-device )?(inference|use|processing|classification))|([Ii]mmediately|[Ii]nstantly) discard'
 
 check_absent \
   "overbroad dependency-audit cadence claim" \
   'automated dependency auditing on every code change|Automated in CI on every commit|`npm audit` on every build|dependency auditing.*every commit|dependency auditing.*every code change'
+
+# The legal pages once gave "F7 Platform, Inc., [address to be published]" as a
+# mailing address (PB43). No postal address is on record, so the pages give the
+# email contacts only; a placeholder must not stand in for one again.
+check_absent \
+  "placeholder postal address" \
+  '[Aa]ddress (is )?to be (published|confirmed|announced|added)|\[[Aa]ddress'
 
 # ── required files (structural checks) ───────────────────────────────────────
 
@@ -371,26 +421,34 @@ if command -v jq &>/dev/null; then
     record_failure "claims registry audit_run ($registry_audit_run) disagrees with the enforced baseline ($AUDIT_RUN)"
   fi
 
+  # require_claim_registration <id> <audit ref> <source file> [statuses] — the
+  # claim is registered with that audit ref, that source file and evidence, and
+  # carries one of the space-separated release statuses (active by default).
   require_claim_registration() {
     local claim_id="$1"
     local audit_ref="$2"
     local source_file="$3"
-    if ! jq -e --arg id "$claim_id" --arg ref "$audit_ref" --arg src "$source_file" '
+    local statuses="${4:-active}"
+    if ! jq -e --arg id "$claim_id" --arg ref "$audit_ref" --arg src "$source_file" \
+      --arg statuses "$statuses" '
       .claims[]
       | select(.id == $id)
-      | select(.release_status == "active")
+      | select(.release_status as $s | $statuses | split(" ") | index($s))
       | select((.audit_refs // []) | index($ref))
       | select((.source_files // []) | index($src))
       | select((.evidence // []) | length > 0)
     ' "$REGISTRY" >/dev/null; then
-      printf '\nERROR: claims registry missing active evidence registration: %s (%s, %s)\n' "$claim_id" "$audit_ref" "$source_file" >&2
+      printf '\nERROR: claims registry missing %s evidence registration: %s (%s, %s)\n' \
+        "${statuses// / or }" "$claim_id" "$audit_ref" "$source_file" >&2
       failures=$((failures + 1))
     fi
   }
 
-  require_claim_registration "CLM-010" "PUBDOC-1" "content/privacy/data-collection.md"
-  require_claim_registration "CLM-011" "PUBDOC-2" "content/privacy/index.md"
-  require_claim_registration "CLM-011" "AGT-LOCAL-2" "content/legal/privacy-policy.md"
+  # CLM-010 and CLM-011 describe the device agent and controller, which are
+  # shelved (PB32); their registrations stand whichever of the two they carry.
+  require_claim_registration "CLM-010" "PUBDOC-1" "content/privacy/data-collection.md" "active shelved"
+  require_claim_registration "CLM-011" "PUBDOC-2" "content/privacy/index.md" "active shelved"
+  require_claim_registration "CLM-011" "AGT-LOCAL-2" "content/legal/privacy-policy.md" "active shelved"
   require_claim_registration "CLM-012" "PUBDOC-3" "content/compliance/soc2.md"
   require_claim_registration "CLM-012" "PDC5" "content/security/index.md"
 
@@ -398,6 +456,19 @@ if command -v jq &>/dev/null; then
     validate_repo_relative_path "$claim_id" "public-docs" "$source_file" "source_file"
   done < <(jq -r '.claims[] | .id as $id | (.source_files // [])[] | [$id, .] | @tsv' "$REGISTRY")
 
+  # Every claim carries one of the release statuses claims-registry.md defines.
+  # A status outside them would slip past every status-keyed rule below unread.
+  while IFS=$'\t' read -r claim_id release_status; do
+    case "$release_status" in
+      active|in-progress|not-available|shelved) ;;
+      *) record_failure "claim $claim_id has an unknown release_status \"$release_status\" (expected active, in-progress, not-available or shelved)" ;;
+    esac
+  done < <(jq -r '.claims[] | [.id, (.release_status // "" | tostring)] | @tsv' "$REGISTRY")
+
+  # A shelved claim describes a product that is no longer offered, and the pages
+  # carrying it say so (PB32). Neither the evidence rule here nor the
+  # not-available summary ban below applies to it: its evidence is kept as a
+  # record and its summary may still be quoted, as a shelved product's.
   while IFS=$'\t' read -r claim_id release_status evidence_count audit_ref_count; do
     if [[ "$release_status" == "active" || "$release_status" == "in-progress" ]]; then
       if (( evidence_count == 0 )); then
@@ -425,11 +496,13 @@ if command -v jq &>/dev/null; then
     summary=$(jq -r --arg id "$claim_id" \
       '.claims[] | select(.id == $id) | .summary' "$REGISTRY")
     [[ -n "$summary" ]] || continue
+    grep_surface -iF -- "$summary"
+    (( surface_status <= 1 )) || record_read_error "not-available claim $claim_id"
     while IFS= read -r hit; do
       [[ -n "$hit" ]] || continue
       hit="${hit#"$ROOT_DIR"/}"
       record_failure "not-available claim $claim_id appears on the public surface at $hit: \"$summary\" — a not-available claim's registered summary is forbidden under content/"
-    done < <(grep -RIn -iF --exclude="claims-registry.json" -- "$summary" "$CONTENT_DIR" | cut -d: -f1,2 || true)
+    done < <(printf '%s\n' "$surface_hits" | cut -d: -f1,2)
   done < <(jq -r '.claims[] | select(.release_status == "not-available") | .id' "$REGISTRY")
 
   # A claim may carry forbidden_phrases: other wordings of it that must never be
@@ -449,11 +522,13 @@ if command -v jq &>/dev/null; then
   ' "$REGISTRY")
 
   while IFS=$'\t' read -r claim_id phrase; do
+    grep_surface -iF -- "$phrase"
+    (( surface_status <= 1 )) || record_read_error "claim $claim_id forbidden phrase \"$phrase\""
     while IFS= read -r hit; do
       [[ -n "$hit" ]] || continue
       hit="${hit#"$ROOT_DIR"/}"
       record_failure "claim $claim_id forbidden phrase appears on the public surface at $hit: \"$phrase\" — a claim's forbidden_phrases are forbidden under content/"
-    done < <(grep -RIn -iF --exclude="claims-registry.json" -- "$phrase" "$CONTENT_DIR" | cut -d: -f1,2 || true)
+    done < <(printf '%s\n' "$surface_hits" | cut -d: -f1,2)
   done < <(jq -r '
     .claims[]
     | .id as $id

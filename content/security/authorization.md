@@ -50,7 +50,7 @@ Each purpose can be independently **enabled or disabled** per organization, allo
 
 When a user with the `manager` role requests employee data, the PDP evaluates the **full reporting chain** — not just direct reports:
 
-- A manager sees data for all employees who report to them directly or indirectly
+- A manager sees team-level aggregates covering all employees who report to them directly or indirectly, never an individual's scores or raw activity
 - The reporting chain is computed via a **recursive query with cycle detection** to handle complex organizational structures
 - If an employee's manager changes, their data visibility updates automatically
 

@@ -51,14 +51,14 @@ F7 offers an optional advanced feature (Mode 3 — Interpret) that uses an on-de
 | Data | Manager | Admin |
 |------|---------|-------|
 | Individual's raw activity | No | Audit-logged access only |
-| Individual's scores | For direct and indirect reports only | Audit-logged access |
-| Team aggregates | For their team only | Yes |
+| Individual's scores | No — team aggregates only | Audit-logged access |
+| Team aggregates | For teams in their reporting chain only | Yes |
 | Organization aggregates | No | Yes |
 | Small-group aggregates (< 5 people) | Suppressed (k-anonymity) | Suppressed (k-anonymity) |
 
 Access control is enforced by a **Policy Decision Point (PDP)** that evaluates the requesting user's relationship to the data on every request:
 
-- **Manager-chain scoping:** Managers see data only for employees in their direct and indirect reporting chain — not all employees at their level
+- **Manager-chain scoping:** Managers see team-level aggregates only for employees in their direct and indirect reporting chain — not all employees at their level, and never an individual's scores
 - **k-Anonymity:** Aggregate views suppress groups smaller than a configurable threshold (default: 5) to prevent identification of individuals through small-group data
 - **Purpose-specific toggles:** Each data purpose (`user_data`, `app_categories`, `team_data`) can be independently enabled or disabled per organization
 

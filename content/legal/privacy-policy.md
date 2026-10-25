@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Effective Date:** March 13, 2026
-**Last Updated:** March 13, 2026
+**Last Updated:** October 25, 2026
 
 This Privacy Policy describes how F7 Platform, Inc. ("F7," "we," "us," or "our") collects, uses, and discloses information in connection with the F7 AI Workforce Intelligence Platform (the "Service").
 
@@ -142,12 +142,18 @@ F7 is a workplace tool and is not directed at children under 16. We do not knowi
 
 We may update this Privacy Policy from time to time. We will notify customers of material changes via email or in-product notification.
 
+Changes to this policy since its effective date:
+
+- **May 3, 2026:** Section 2 describes Mode 3 — Interpret, the opt-in on-device vision model, and its screen frames.
+- **May 14, 2026:** Section 2 describes third-party integrations as event metadata from the listed providers, and how current macOS builds handle Mode 3 capture.
+- **September 8, 2026:** Section 2 adds the Atlas Rewind subsection, which describes the picture-only screen frames Rewind captures in Atlas.
+- **October 25, 2026:** Section 11 no longer lists a mailing address; this list was added.
+
 ## 11. Contact Us
 
 For privacy inquiries:
 
 - **Email:** privacy@fseven.ai
-- **Mail:** F7 Platform, Inc., [address to be published]
 
 ---
 

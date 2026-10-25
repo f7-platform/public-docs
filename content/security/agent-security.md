@@ -32,7 +32,7 @@ Raw observation → Privacy filter → Local AI model → Encrypted local store 
 |-----------|--------|
 | Read file contents | **No** — only file metadata (name, type) for recently-saved files |
 | Record keystrokes | **No** — only aggregate keystroke counts |
-| Capture screenshots | **No** — the optional vision model processes frames locally and discards them immediately |
+| Capture screenshots | **No** — the optional vision model processes screen frames on the device and never uploads them; current macOS builds stream capture bytes through stdout for local inference |
 | Access clipboard | **No** — never under any circumstances |
 | Read email or chat content | **No** — only time-in-app and domain |
 | Access passwords or credentials | **No** — the agent never reads credential stores |
@@ -41,13 +41,13 @@ Raw observation → Privacy filter → Local AI model → Encrypted local store 
 
 ## Employee Controls
 
-Every employee has direct control over the agent:
+These controls are set by your organization's F7 administrator through the controller; employees can request a change through their organization:
 
 | Control | How It Works |
 |---------|-------------|
-| **Pause observation** | Click the system tray icon to pause — no data is captured while paused |
-| **Exclude apps** | Add apps to a blocklist — excluded apps generate zero telemetry |
-| **Work hours only** | Configure observation to run only during defined work hours |
+| **Pause observation** | An administrator pauses the agent for an employee or team — no data is captured while paused |
+| **Exclude apps** | The organization keeps an app exclusion list — excluded apps generate zero telemetry |
+| **Work hours only** | The organization can restrict observation to defined work hours |
 | **Personal dashboard** | Planned self-service access to data captured about your work patterns |
 
 ## Credential Protection
@@ -100,5 +100,5 @@ Telemetry uploads are signed with a per-device HMAC key issued at enrollment and
 ---
 
 ::: info Designed for Trust
-The F7 agent processes data locally first. By the time any data reaches the server, it's already structured metadata — no content, no PII. Employees have full visibility into what's captured and direct controls to limit data collection.
+The F7 agent processes data locally first. By the time any data reaches the server, it's already structured metadata — no content, no PII. This Trust Center publishes what is captured, and employees can request the data held about them through their organization's F7 administrator.
 :::

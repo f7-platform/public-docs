@@ -164,10 +164,12 @@ JSON
 CHECKER_OUT="$TEMP_DIR/checker.out"
 CHECKER_ERR="$TEMP_DIR/checker.err"
 checker_status=0
+checker_runs=0
 
 run_checker() {
   local platform_root="$1"
   checker_status=0
+  checker_runs=$((checker_runs + 1))
   env -u PUBLIC_DOCS_EXPECTED_AUDIT_RUN \
     PUBLIC_DOCS_ROOT="$platform_root/public-docs" \
     PUBLIC_DOCS_PLATFORM_ROOT="$platform_root" \
@@ -187,9 +189,11 @@ fail_on_crash() {
   fi
 }
 
+# The optional third argument is a line the pass must print on stdout.
 expect_pass() {
   local label="$1"
   local platform_root="$2"
+  local printed="${3:-}"
 
   run_checker "$platform_root"
   fail_on_crash "$label"
@@ -198,15 +202,21 @@ expect_pass() {
     cat "$CHECKER_ERR" >&2
     exit 1
   fi
+  if [[ -n "$printed" ]] && ! grep -qF -- "$printed" "$CHECKER_OUT"; then
+    printf 'FAIL: %s passed, but did not print: %s\n' "$label" "$printed" >&2
+    cat "$CHECKER_OUT" >&2
+    exit 1
+  fi
 }
 
 # Exactly 1 is the checker's refusal. Any other non-zero status — a crash, or
 # the version floor's 2 — would otherwise read as a correct refusal (PB23).
-# The optional third argument is a line the refusal must report on stderr.
+# Every argument after the second is a line the refusal must report on stderr.
 expect_fail() {
   local label="$1"
   local platform_root="$2"
-  local reported="${3:-}"
+  local reported
+  shift 2
 
   run_checker "$platform_root"
   fail_on_crash "$label"
@@ -216,11 +226,32 @@ expect_fail() {
     cat "$CHECKER_OUT" "$CHECKER_ERR" >&2
     exit 1
   fi
-  if [[ -n "$reported" ]] && ! grep -qF -- "$reported" "$CHECKER_ERR"; then
-    printf 'FAIL: %s failed, but did not report: %s\n' "$label" "$reported" >&2
-    cat "$CHECKER_ERR" >&2
-    exit 1
-  fi
+  for reported in "$@"; do
+    if ! grep -qF -- "$reported" "$CHECKER_ERR"; then
+      printf 'FAIL: %s failed, but did not report: %s\n' "$label" "$reported" >&2
+      cat "$CHECKER_ERR" >&2
+      exit 1
+    fi
+  done
+}
+
+# add_page_line <platform root> <line> — appends a line to a fixture page that
+# starts empty, so the line lands on line 1 of content/privacy/index.md.
+add_page_line() {
+  printf '%s\n' "$2" >>"$1/public-docs/content/privacy/index.md"
+}
+
+# add_real_claim <platform root> <claim id> — copies a claim from the real
+# registry into the fixture's, so a case tests the entry the site publishes.
+add_real_claim() {
+  node - "$1/public-docs/content/compliance/claims-registry.json" \
+    "$REPO_ROOT/content/compliance/claims-registry.json" "$2" <<'NODE'
+const fs = require('node:fs');
+const [file, real, id] = process.argv.slice(2);
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims.push(JSON.parse(fs.readFileSync(real, 'utf8')).claims.find((c) => c.id === id));
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
 }
 
 platform_root="$(build_fixture)"
@@ -409,4 +440,241 @@ fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
 NODE
 expect_fail "sibling repo present but evidence path missing" "$platform_root"
 
-printf 'public claims checker fixture tests passed\n'
+# ── every forbidden-claim pattern fires (public-docs#65) ──────────────────────
+# No case made any check_absent pattern fire, so a pattern that could never
+# match, or one whose label was lost, passed the suite. Each row below is one
+# check_absent label and a sentence its pattern must refuse; the case fails
+# unless the checker exits 1 and names that label. The Mode 3 label has two
+# rows, one per verb form PB34 found published.
+FIRED_LABELS="$TEMP_DIR/fired-labels.txt"
+: >"$FIRED_LABELS"
+while IFS='|' read -r label sentence; do
+  [[ -n "$label" ]] || continue
+  platform_root="$(build_fixture)"
+  add_page_line "$platform_root" "$sentence"
+  expect_fail "forbidden claim '$label' fires on: $sentence" "$platform_root" \
+    "ERROR: forbidden public-docs claim found: $label"
+  printf '%s\n' "$label" >>"$FIRED_LABELS"
+done <<'CASES'
+unimplemented compensation ingestion or masking|The platform ingests salary data from payroll.
+specific HRIS connector names|Connect Workday to import your employee directory.
+internal personal-data endpoint reference|Employees reach their records through personal-data endpoints.
+internal API endpoint paths|Call /api/v1/internal/users to list every account.
+premature SOC 2 certified declarative claim|F7 is SOC 2 Type II certified.
+SOC 2 report offered before the audit|Contact security@fseven.ai to request the current SOC 2 report.
+open-source license overclaim|F7 is fully open-source.
+blanket URL-path not-captured (contradicts AI-provider path capture)|Destination domain only; never URL paths.
+unimplemented third-party app API integration examples|Connect OpenAI / ChatGPT to import usage counts.
+absolute Mode 3 no-disk/immediate-discard claim|The optional vision model processes frames locally and discards them immediately.
+absolute Mode 3 no-disk/immediate-discard claim|Mode 3 vision frames are processed locally and discarded after inference.
+overbroad dependency-audit cadence claim|Dependency auditing is Automated in CI on every commit.
+placeholder postal address|- **Mail:** F7 Platform, Inc., [address to be published]
+CASES
+
+# The suite fails when the checker gains a check_absent call without a case
+# here, or loses the label a case names: every label the checker passes to
+# check_absent must be one a case above fired, and at least as many distinct
+# labels must have fired as the checker makes calls.
+checker_labels="$(awk '/^check_absent \\$/ { getline; sub(/^[[:space:]]*"/, ""); sub(/"[[:space:]]*\\$/, ""); print }' \
+  "$REPO_ROOT/scripts/check-public-claims.sh")"
+check_absent_calls="$(grep -cE '^[[:space:]]*check_absent([[:space:]]|$)' "$REPO_ROOT/scripts/check-public-claims.sh" || true)"
+fired_cases="$(sort -u "$FIRED_LABELS" | grep -c . || true)"
+if (( check_absent_calls == 0 || check_absent_calls != $(printf '%s\n' "$checker_labels" | grep -c .) )); then
+  printf 'FAIL: read %d check_absent calls but %d labels from the checker; the label parse is out of step with it\n' \
+    "$check_absent_calls" "$(printf '%s\n' "$checker_labels" | grep -c .)" >&2
+  exit 1
+fi
+if (( check_absent_calls > fired_cases )); then
+  printf 'FAIL: the checker makes %d check_absent calls but only %d cases fire one\n' \
+    "$check_absent_calls" "$fired_cases" >&2
+  exit 1
+fi
+while IFS= read -r label; do
+  if ! grep -qxF -- "$label" "$FIRED_LABELS"; then
+    printf 'FAIL: no case fires the check_absent label: %s\n' "$label" >&2
+    exit 1
+  fi
+done <<<"$checker_labels"
+
+# ── the wordings those patterns protect still pass ────────────────────────────
+# Each pass case is a sentence a published page carries today, for a pattern
+# whose own comment names what it must let through.
+while IFS='|' read -r pattern sentence; do
+  [[ -n "$pattern" ]] || continue
+  platform_root="$(build_fixture)"
+  add_page_line "$platform_root" "$sentence"
+  expect_pass "$pattern still allows: $sentence" "$platform_root"
+done <<'CASES'
+Mode 3 (CLM-011's stdout wording)|Frames are never uploaded; current macOS builds stream capture bytes through stdout for local inference and scrub stale legacy vision temp files on startup.
+Mode 3 (the agent page's wording)|The optional vision model processes screen frames on the device and never uploads them; current macOS builds stream capture bytes through stdout for local inference.
+SOC 2 certified (a question heading)|### Is F7 SOC 2 certified?
+SOC 2 report (the planned audit)|There is no SOC 2 report yet: the independent SOC 2 Type II audit is planned and has not taken place.
+URL path (AI-provider path capture)|The active domain, optional API endpoint path for AI-provider classification, and approximate byte counts only.
+CASES
+
+# ── CLM-009's forbidden phrases (PB35) ─────────────────────────────────────────
+# The personal dashboard is not shipped, so a page must not say employees can
+# already see everything captured about them. The phrase is written in a
+# different case from the registry entry; the planned-feature wording passes.
+platform_root="$(build_fixture)"
+add_real_claim "$platform_root" CLM-009
+add_page_line "$platform_root" "Employees have Full Visibility into what's captured about them."
+expect_fail "CLM-009 wording on a published page: full visibility into what's captured" "$platform_root" \
+  "claim CLM-009 forbidden phrase appears on the public surface at content/privacy/index.md:1: \"full visibility into what's captured\""
+
+platform_root="$(build_fixture)"
+add_real_claim "$platform_root" CLM-009
+add_page_line "$platform_root" "F7 will include a personal dashboard that gives employees direct visibility into the data captured about their work patterns."
+expect_pass "CLM-009's planned-feature wording" "$platform_root"
+
+# ── a page grep cannot read is not a clean page (PB42) ─────────────────────────
+# grep exits 2 when it cannot read a file. check_absent ran grep as an if
+# condition and the not-available and forbidden-phrase scans ended in || true,
+# so a page no scan could read passed every one of them. A file with no read
+# permission makes GNU and BSD grep exit 2, except for root, who reads it
+# anyway; there GNU grep -R, which follows symbolic links, fails on a link to
+# itself. Each method is tried on the grep the checker will run, and only when
+# neither makes it exit 2 is the case skipped, with the reason printed.
+make_unreadable_page() {
+  local dir="$1/public-docs/content/privacy" probe_status
+  printf 'Fixture page grep must not be able to read.\n' >"$dir/unreadable.md"
+  chmod 000 "$dir/unreadable.md"
+  probe_status=0
+  grep -RIn -e 'fixture-probe-that-matches-nothing' -- "$dir" >/dev/null 2>&1 || probe_status=$?
+  if (( probe_status == 2 )); then
+    printf 'a page with no read permission\n'
+    return
+  fi
+  rm -f "$dir/unreadable.md"
+  ln -s unreadable.md "$dir/unreadable.md"
+  probe_status=0
+  grep -RIn -e 'fixture-probe-that-matches-nothing' -- "$dir" >/dev/null 2>&1 || probe_status=$?
+  if (( probe_status == 2 )); then
+    printf 'a symbolic link to itself\n'
+    return
+  fi
+  rm -f "$dir/unreadable.md"
+}
+
+platform_root="$(build_fixture)"
+unreadable_method="$(make_unreadable_page "$platform_root")"
+if [[ -n "$unreadable_method" ]]; then
+  expect_fail "a page grep cannot read ($unreadable_method)" "$platform_root" \
+    "grep could not read the public surface (exit 2) while checking forbidden claim: unimplemented compensation ingestion or masking" \
+    "grep could not read the public surface (exit 2) while checking not-available claim CLM-013" \
+    "grep could not read the public surface (exit 2) while checking claim CLM-013 forbidden phrase \"can already open the withdrawn feature\""
+else
+  printf 'SKIP: a page grep cannot read: neither a file with no read permission nor a symbolic link to itself makes this grep exit 2 (uid %s, %s)\n' \
+    "$(id -u)" "$(grep --version 2>/dev/null | head -n 1)"
+fi
+
+# ── evidence repositories (PB41) ───────────────────────────────────────────────
+# public-atlas-binaries and fseven-backbone are repositories evidence may name.
+# Neither is checked out beside the fixture, so the path is reported unverified,
+# not failed; a repository outside the list still fails.
+for evidence_repo in public-atlas-binaries fseven-backbone; do
+  platform_root="$(build_fixture)"
+  node - "$platform_root/public-docs/content/compliance/claims-registry.json" "$evidence_repo" <<'NODE'
+const fs = require('node:fs');
+const [file, repo] = process.argv.slice(2);
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[0].evidence.push(`${repo}: README.md — fixture evidence in a repository not checked out here`);
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+  expect_pass "evidence naming $evidence_repo" "$platform_root" \
+    "NOTICE: evidence path for CLM-010 not verified — $evidence_repo is not checked out here"
+done
+
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[0].evidence.push('fseven-nowhere: README.md — a repository the checker does not know');
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_fail "evidence naming an unknown repository" "$platform_root" \
+  "claims registry evidence for CLM-010 uses unknown repo boundary: fseven-nowhere"
+
+# ── release statuses ───────────────────────────────────────────────────────────
+# A status outside the ones claims-registry.md defines would slip past every
+# status-keyed rule, so it is refused.
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[2].release_status = 'actve';
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_fail "unknown release status" "$platform_root" \
+  'claim CLM-012 has an unknown release_status "actve"'
+
+# ── shelved claims (PB32) ──────────────────────────────────────────────────────
+# The device agent, controller and dashboards are shelved, and the claims about
+# them carry release_status "shelved". A shelved claim needs no evidence and its
+# summary may be quoted, because the pages say the product is shelved; an
+# active claim without evidence still fails (the case near the top).
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims.push({
+  id: 'CLM-014',
+  summary: 'Fixture shelved product claim quoted on a page',
+  source_files: [],
+  evidence: [],
+  audit_refs: [],
+  release_status: 'shelved',
+});
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+add_page_line "$platform_root" 'The shelved agent page says: Fixture shelved product claim quoted on a page.'
+expect_pass "shelved claim with no evidence, its summary on a page" "$platform_root"
+
+# CLM-010 and CLM-011 describe the shelved product, so their registrations
+# stand when they are shelved; CLM-012's still requires active.
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[0].release_status = 'shelved';
+registry.claims[1].release_status = 'shelved';
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_pass "CLM-010 and CLM-011 registered as shelved" "$platform_root"
+
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[2].release_status = 'shelved';
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_fail "CLM-012 registered as shelved" "$platform_root" \
+  "claims registry missing active evidence registration: CLM-012 (PDC5, content/security/index.md)"
+
+# The site itself: the eight claims about the shelved product carry the status,
+# and the four pages a reader meets first say the product is shelved.
+for claim_id in CLM-001 CLM-002 CLM-003 CLM-004 CLM-005 CLM-006 CLM-010 CLM-011; do
+  real_status="$(node -e '
+const [file, id] = process.argv.slice(1);
+const claim = JSON.parse(require("node:fs").readFileSync(file, "utf8")).claims.find((c) => c.id === id);
+process.stdout.write(claim ? String(claim.release_status) : "missing");
+' "$REPO_ROOT/content/compliance/claims-registry.json" "$claim_id")"
+  if [[ "$real_status" != shelved ]]; then
+    printf 'FAIL: %s describes the shelved product but its release_status is %s\n' "$claim_id" "$real_status" >&2
+    exit 1
+  fi
+done
+for page in overview/what-is-f7.md index.md faq.md compliance/index.md; do
+  if ! grep -qiE 'device agent.*shelved|shelved the device agent' "$REPO_ROOT/content/$page"; then
+    printf 'FAIL: content/%s does not say the device agent, controller and dashboards are shelved\n' "$page" >&2
+    exit 1
+  fi
+done
+
+printf 'public claims checker fixture tests passed (%d cases)\n' "$checker_runs"

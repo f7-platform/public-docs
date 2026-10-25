@@ -300,7 +300,7 @@ Behavioral intelligence raises legitimate questions about employee experience an
 | **"Will this be used in my performance review?"** | F7 is designed for workforce intelligence and development conversations. Individual-level behavioral scores are not exportable. Team-level aggregates are. |
 | **"What if I work in ways the system can't see?"** | F7 is transparent about its observation limits. When the system doesn't have enough signal to assess behavioral patterns, it says so — rather than guessing. |
 | **"Can I see what F7 knows about me?"** | Data access is available through your organization's F7 administrator today. A personal dashboard for direct self-service access is planned. |
-| **"Can I pause or exclude apps?"** | Yes. Employees can pause observation and exclude specific applications from tracking. |
+| **"Can I pause or exclude apps?"** | Through your organization. Your organization's F7 administrator can pause observation and exclude specific applications from tracking; ask your IT or HR team. |
 
 For full privacy details, see the [Privacy Overview](/privacy/) and [Data We Collect](/overview/data-we-collect).
 

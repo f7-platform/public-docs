@@ -80,7 +80,6 @@ These Terms are governed by the laws of the State of Delaware, without regard to
 For questions about these Terms:
 
 - **Email:** legal@fseven.ai
-- **Mail:** F7 Platform, Inc., [address to be published]
 
 ---
 

@@ -1,6 +1,6 @@
 # Sub-processors
 
-**Last Updated:** March 13, 2026
+**Last Updated:** May 14, 2026
 
 F7 Platform, Inc. uses the following sub-processors to provide the F7 AI Workforce Intelligence Platform. We notify customers before engaging new sub-processors.
 

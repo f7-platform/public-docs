@@ -51,7 +51,7 @@ F7 implements a **hybrid Relationship-Based Access Control (ReBAC) + Attribute-B
 |------|---------|
 | **Owner** | Full organization administration + all data |
 | **Admin** | Organization configuration + all analytics |
-| **Manager** | Their direct reports' analytics and scores |
+| **Manager** | Team-level aggregates for their direct and indirect reports; no individual scores |
 | **Viewer** | Read-only access to permitted dashboards |
 
 ### Beyond Static Roles: Policy Decision Point

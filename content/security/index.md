@@ -35,7 +35,7 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 | Memory-safe language? | **Yes** — Rust |
 | Dependency auditing? | **Yes** — Trust Center deploy CI audits all of its dependencies before publishing; product dependency evidence is release-scoped |
 | Right to erasure? | **Yes** — Full data deletion on request |
-| Can employees pause collection? | **Yes** — Tray icon, per-app exclusion, work-hours mode |
+| Can employees pause collection? | **On request** — an administrator pauses observation, keeps the app exclusion list and sets work hours |
 
 ## Audit & Testing
 

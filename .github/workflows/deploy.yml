@@ -31,17 +31,17 @@ jobs:
 
       - run: npm ci
 
-      # Gate on advisories in dependencies we actually ship. This is a static
-      # VitePress site with zero production dependencies, so --omit=dev scopes
-      # the runtime-security gate to what reaches users (currently nothing).
-      # The full build-time tail is now also clean: the prior advisories
-      # (esbuild GHSA-67mh-4wv8-2f99, vite GHSA-4w7w-66w2-5vf9 /
-      # GHSA-v6wh-96g9-6wx3 / GHSA-fx2h-pf6j-xcff, vitepress transitive) are
-      # remediated via the package.json `overrides` pin to vite ^6.4.3 (which
-      # pulls esbuild >=0.25), and postcss GHSA-qx2v-qp2m-jg93 via the
-      # postcss ^8.5.10 pin — addressing audit findings DEP6 / PB1 (run-36).
-      # `npm audit` (all deps) currently reports 0 vulnerabilities.
-      - run: npm audit --omit=dev --audit-level=moderate
+      # Fixture tests of the dependency-advisory checker, so a checker that has
+      # stopped being able to fail is caught before it is trusted below.
+      - run: npm run test:audit
+
+      # Audit every package in the lockfile, dev dependencies included, against
+      # the exceptions in audit-waivers.json. The site declares no runtime
+      # dependencies and is built entirely from dev ones, so an audit scoped
+      # with --omit=dev had nothing to examine and could not fail (PB33). What
+      # this step blocks, and how to record an exception, is in CONTRIBUTING.md,
+      # "Dependency advisories".
+      - run: npm run check:audit
 
       - run: npm run test:claims
 

@@ -27,6 +27,8 @@ Requires Node 22 and npm. CI is npm-authoritative (`npm ci` against
 ```bash
 npm ci
 npm run dev            # http://localhost:5173
+npm run test:audit     # fixture tests of the dependency-advisory checker
+npm run check:audit    # audit the full lockfile against audit-waivers.json
 npm run test:claims    # fixture tests of the claim checker
 npm run check:claims   # validate public claims against the registry
 npm run build          # static site → .vitepress/dist

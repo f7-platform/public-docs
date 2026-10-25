@@ -28,7 +28,7 @@ This table is an informal quick reference to the most common vendor security que
 | 8 | Is PII collected? | **Minimal** — Metadata only, never content |
 | 9 | Is right to erasure supported? | **Yes** — Full data deletion on request |
 | 10 | Can employees pause collection? | **Yes** — Tray icon, app exclusion, work-hours mode |
-| 11 | Are dependencies audited? | **Yes** — Trust Center deploy CI runs `npm audit --audit-level=moderate` before publishing; product dependency evidence is release-scoped by owning repo |
+| 11 | Are dependencies audited? | **Yes** — Trust Center deploy CI audits all of its dependencies at moderate severity or above before publishing, with dated, reasoned exceptions; product dependency evidence is release-scoped by owning repo |
 | 12 | Can it be deployed on-premise? | **Yes** — Single-binary deployment available |
 | 13 | Is rate limiting enforced? | **Yes** — Per-endpoint rate limits |
 | 14 | Are security headers implemented? | **Yes** — HSTS, CSP, X-Frame-Options, and more |

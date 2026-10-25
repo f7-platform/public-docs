@@ -33,13 +33,13 @@ Security and privacy are foundational design constraints in F7 — not afterthou
 | Audit logging? | **Yes** — Immutable (trigger-protected), 24-month retention |
 | Modern password hashing? | **Yes** — Argon2id |
 | Memory-safe language? | **Yes** — Rust |
-| Dependency auditing? | **Yes** — Automated in CI pipeline |
+| Dependency auditing? | **Yes** — Trust Center deploy CI audits all of its dependencies before publishing; product dependency evidence is release-scoped |
 | Right to erasure? | **Yes** — Full data deletion on request |
 | Can employees pause collection? | **Yes** — Tray icon, per-app exclusion, work-hours mode |
 
 ## Audit & Testing
 
-F7 undergoes regular internal security audits following a structured three-pass methodology. This Trust Center's deploy workflow runs `npm audit --audit-level=moderate` before publishing to catch known vulnerabilities in its documentation dependencies; product dependency evidence is tracked in release evidence for the owning private repositories.
+F7 undergoes regular internal security audits following a structured three-pass methodology. This Trust Center's deploy workflow audits all of its documentation dependencies for known vulnerabilities at moderate severity or above before publishing, and fails on any such advisory that has no dated, reasoned exception; product dependency evidence is tracked in release evidence for the owning private repositories.
 
 Independent third-party penetration testing and SOC 2 Type II certification are on our roadmap.
 

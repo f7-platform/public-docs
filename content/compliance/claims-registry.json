@@ -190,7 +190,9 @@
         "content/compliance/soc2.md"
       ],
       "evidence": [
-        "public-docs: .github/workflows/deploy.yml — runs npm audit --audit-level=moderate before claim checks and build",
+        "public-docs: .github/workflows/deploy.yml — runs the full-lockfile dependency audit before claim checks and build",
+        "public-docs: scripts/check-npm-audit.mjs — fails on any advisory at moderate or above without a dated, reasoned, unexpired exception",
+        "public-docs: audit-waivers.json — the dated, reasoned exceptions the dependency audit honours",
         "public-docs: scripts/check-public-claims.sh — rejects overbroad every-commit/every-code-change dependency-audit claims"
       ],
       "audit_refs": ["PDC5", "PUBDOC-3"],

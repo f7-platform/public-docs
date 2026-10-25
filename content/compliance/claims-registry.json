@@ -14,7 +14,7 @@
         "fseven-controller: server/src/services/ingestion.rs — telemetry ingestion uses structured activity fields"
       ],
       "audit_refs": ["AO1", "AO3"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.1"],
       "notes": ""
     },
@@ -37,7 +37,7 @@
         "fseven-agent: agent-core/src/auth.rs — agent stores device credential and refresh/access-token lifecycle"
       ],
       "audit_refs": ["TH2", "TH3"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.1", "CC6.2"],
       "notes": ""
     },
@@ -49,7 +49,7 @@
         "fseven-controller: server/src/auth/tokens.rs — argon2 crate, Argon2 credential hashing and verification"
       ],
       "audit_refs": ["TH3"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.1"],
       "notes": ""
     },
@@ -62,7 +62,7 @@
         "fseven-agent: agent-core/src/config_poller/security.rs — pinned HTTP client and TLS configuration"
       ],
       "audit_refs": ["TH5"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.7"],
       "notes": ""
     },
@@ -75,7 +75,7 @@
         "fseven-controller: server/src/auth/authorization.rs — policy enforcement and obligations"
       ],
       "audit_refs": ["AO2"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.3"],
       "notes": ""
     },
@@ -87,7 +87,7 @@
         "fseven-controller: server/src/middleware/obligations.rs — k-anonymity threshold enforcement"
       ],
       "audit_refs": ["AO3"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["CC6.3"],
       "notes": ""
     },
@@ -156,7 +156,7 @@
         "public-docs: content/privacy/data-collection.md — public provider list scoped to implemented event/webhook sources"
       ],
       "audit_refs": ["PUBDOC-1"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": [],
       "notes": "Do not add AI/productivity/writing/dev-tool API provider examples unless the controller integration model implements them."
     },
@@ -179,7 +179,7 @@
         "public-docs: content/legal/privacy-policy.md — discloses startup scrub for stale legacy vision temp files"
       ],
       "audit_refs": ["PUBDOC-2", "AGT-LOCAL-2"],
-      "release_status": "active",
+      "release_status": "shelved",
       "soc2_criteria": ["P3.1"],
       "notes": "Current source uses screencapture stdout on macOS and retains stale legacy temp-file scrub for crash leftovers from older builds."
     },

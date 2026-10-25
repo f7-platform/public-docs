@@ -164,10 +164,12 @@ JSON
 CHECKER_OUT="$TEMP_DIR/checker.out"
 CHECKER_ERR="$TEMP_DIR/checker.err"
 checker_status=0
+checker_runs=0
 
 run_checker() {
   local platform_root="$1"
   checker_status=0
+  checker_runs=$((checker_runs + 1))
   env -u PUBLIC_DOCS_EXPECTED_AUDIT_RUN \
     PUBLIC_DOCS_ROOT="$platform_root/public-docs" \
     PUBLIC_DOCS_PLATFORM_ROOT="$platform_root" \
@@ -608,4 +610,71 @@ NODE
 expect_fail "unknown release status" "$platform_root" \
   'claim CLM-012 has an unknown release_status "actve"'
 
-printf 'public claims checker fixture tests passed\n'
+# ── shelved claims (PB32) ──────────────────────────────────────────────────────
+# The device agent, controller and dashboards are shelved, and the claims about
+# them carry release_status "shelved". A shelved claim needs no evidence and its
+# summary may be quoted, because the pages say the product is shelved; an
+# active claim without evidence still fails (the case near the top).
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims.push({
+  id: 'CLM-014',
+  summary: 'Fixture shelved product claim quoted on a page',
+  source_files: [],
+  evidence: [],
+  audit_refs: [],
+  release_status: 'shelved',
+});
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+add_page_line "$platform_root" 'The shelved agent page says: Fixture shelved product claim quoted on a page.'
+expect_pass "shelved claim with no evidence, its summary on a page" "$platform_root"
+
+# CLM-010 and CLM-011 describe the shelved product, so their registrations
+# stand when they are shelved; CLM-012's still requires active.
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[0].release_status = 'shelved';
+registry.claims[1].release_status = 'shelved';
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_pass "CLM-010 and CLM-011 registered as shelved" "$platform_root"
+
+platform_root="$(build_fixture)"
+node - "$platform_root/public-docs/content/compliance/claims-registry.json" <<'NODE'
+const fs = require('node:fs');
+const file = process.argv[2];
+const registry = JSON.parse(fs.readFileSync(file, 'utf8'));
+registry.claims[2].release_status = 'shelved';
+fs.writeFileSync(file, `${JSON.stringify(registry, null, 2)}\n`);
+NODE
+expect_fail "CLM-012 registered as shelved" "$platform_root" \
+  "claims registry missing active evidence registration: CLM-012 (PDC5, content/security/index.md)"
+
+# The site itself: the eight claims about the shelved product carry the status,
+# and the four pages a reader meets first say the product is shelved.
+for claim_id in CLM-001 CLM-002 CLM-003 CLM-004 CLM-005 CLM-006 CLM-010 CLM-011; do
+  real_status="$(node -e '
+const [file, id] = process.argv.slice(1);
+const claim = JSON.parse(require("node:fs").readFileSync(file, "utf8")).claims.find((c) => c.id === id);
+process.stdout.write(claim ? String(claim.release_status) : "missing");
+' "$REPO_ROOT/content/compliance/claims-registry.json" "$claim_id")"
+  if [[ "$real_status" != shelved ]]; then
+    printf 'FAIL: %s describes the shelved product but its release_status is %s\n' "$claim_id" "$real_status" >&2
+    exit 1
+  fi
+done
+for page in overview/what-is-f7.md index.md faq.md compliance/index.md; do
+  if ! grep -qiE 'device agent.*shelved|shelved the device agent' "$REPO_ROOT/content/$page"; then
+    printf 'FAIL: content/%s does not say the device agent, controller and dashboards are shelved\n' "$page" >&2
+    exit 1
+  fi
+done
+
+printf 'public claims checker fixture tests passed (%d cases)\n' "$checker_runs"

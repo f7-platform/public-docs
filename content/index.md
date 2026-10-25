@@ -16,6 +16,10 @@ hero:
       link: /compliance/
 
 features:
+  - icon: ⏸️
+    title: Device Agent Shelved
+    details: The F7 device agent, controller and dashboards described on this site are shelved and not offered. The pages describe how they were designed and how they worked.
+    link: /overview/what-is-f7
   - icon: 🔒
     title: Security by Design
     details: Built in Rust — a memory-safe language. Six layers of defense from device to database. Modern cryptography throughout.

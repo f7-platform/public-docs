@@ -15,6 +15,7 @@ The public claims registry (`claims-registry.json` in this directory) is a machi
 | `active` | Feature ships and the claim is accurate |
 | `in-progress` | Feature is in development; claim is scoped/qualified on the page |
 | `not-available` | Feature not yet shipped; the summary registered here is **forbidden** from appearing on any page under `content/`, and CI fails when it does |
+| `shelved` | The claim describes a product that is shelved and not offered: the F7 device agent, controller and dashboards. The pages carrying it say the product is shelved. Its evidence is kept as a record; CI does not require it, and its summary may appear on a page |
 
 ## Forbidden Phrases
 

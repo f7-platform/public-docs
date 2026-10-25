@@ -76,6 +76,8 @@ Our [Compliance Overview](/compliance/) includes a quick-reference table address
 
 ## Deployment
 
+The F7 device agent, controller and dashboards are shelved and not offered, and no agent installer is published. The answers in this section describe how the agent was designed to be deployed and how it worked.
+
 ### How is the agent installed?
 The F7 agent is a lightweight binary deployed to employee devices. Enrollment uses a one-time token that binds the device to your organization — no shared secrets or manual configuration required.
 

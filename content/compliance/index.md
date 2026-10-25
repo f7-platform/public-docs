@@ -13,7 +13,7 @@ F7 is designed for enterprise deployment. Our security and privacy controls are 
 
 ## Security Questionnaire Quick Reference
 
-This table is an informal quick reference to the most common vendor security questionnaire items; its answers are one-line summaries rather than registered claims. The claims this site registers, each with its source evidence and audit references, are listed on the [Public Claims Registry](/compliance/claims-registry) page.
+This table is an informal quick reference to the most common vendor security questionnaire items; its answers are one-line summaries rather than registered claims. The claims this site registers, each with its source evidence and audit references, are listed on the [Public Claims Registry](/compliance/claims-registry) page. The answers describe the F7 device agent, controller and dashboards, which are shelved and not offered; they record how those components were built, not a product you can deploy today.
 
 | # | Question | Answer |
 |---|----------|--------|

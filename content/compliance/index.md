@@ -13,7 +13,7 @@ F7 is designed for enterprise deployment. Our security and privacy controls are 
 
 ## Security Questionnaire Quick Reference
 
-This table addresses the most common vendor security questionnaire items. Every answer is backed by implemented functionality — not planned features.
+This table is an informal quick reference to the most common vendor security questionnaire items; its answers are one-line summaries rather than registered claims. The claims this site registers, each with its source evidence and audit references, are listed on the [Public Claims Registry](/compliance/claims-registry) page. The answers describe the F7 device agent, controller and dashboards, which are shelved and not offered; they record how those components were built, not a product you can deploy today.
 
 | # | Question | Answer |
 |---|----------|--------|
@@ -27,8 +27,8 @@ This table addresses the most common vendor security questionnaire items. Every 
 | 7 | Is the application memory-safe? | **Yes** — Written in Rust |
 | 8 | Is PII collected? | **Minimal** — Metadata only, never content |
 | 9 | Is right to erasure supported? | **Yes** — Full data deletion on request |
-| 10 | Can employees pause collection? | **Yes** — Tray icon, app exclusion, work-hours mode |
-| 11 | Are dependencies audited? | **Yes** — Trust Center deploy CI runs `npm audit --audit-level=moderate` before publishing; product dependency evidence is release-scoped by owning repo |
+| 10 | Can employees pause collection? | **On request** — an administrator pauses observation, keeps the app exclusion list and sets work hours; employees ask through their organization |
+| 11 | Are dependencies audited? | **Yes** — Trust Center deploy CI audits all of its dependencies at moderate severity or above before publishing, with dated, reasoned exceptions; product dependency evidence is release-scoped by owning repo |
 | 12 | Can it be deployed on-premise? | **Yes** — Single-binary deployment available |
 | 13 | Is rate limiting enforced? | **Yes** — Per-endpoint rate limits |
 | 14 | Are security headers implemented? | **Yes** — HSTS, CSP, X-Frame-Options, and more |

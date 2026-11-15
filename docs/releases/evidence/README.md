@@ -1,36 +1,3 @@
-# Release Evidence Packs — Overview
+# Release Evidence
 
-This directory contains templates and completed release evidence packs.
-
-## Structure
-
-```
-evidence/
-├── templates/                          # Reusable evidence pack templates
-│   ├── installer-evidence-pack.md      # Public installer artifacts + signing
-│   ├── public-docs-claims-evidence-pack.md  # Public docs claims accuracy review
-│   └── schema-license-parity-evidence-pack.md  # Schema/license contract parity
-└── {type}-{VERSION_OR_DATE}.md         # Completed packs (one per release)
-```
-
-## When to Complete a Pack
-
-| Pack template | When to fill |
-|---|---|
-| `installer-evidence-pack.md` | Each `fseven-agent` binary release |
-| `public-docs-claims-evidence-pack.md` | Before each public-docs deploy with new capability claims |
-| `schema-license-parity-evidence-pack.md` | Each `fseven-schemas` migration or new contract |
-
-## Completing a Pack
-
-1. Copy the template: `cp templates/installer-evidence-pack.md installer-vX.Y.Z.md`
-2. Fill all fields and run the referenced commands.
-3. Check all boxes or note exceptions.
-4. Commit the completed pack to this directory.
-5. Reference the pack filename in the release PR description.
-
-## Naming Convention
-
-- `installer-v{VERSION}.md` — e.g., `installer-v1.2.0.md`
-- `public-docs-claims-{YYYYMMDD}.md` — e.g., `public-docs-claims-20260115.md`
-- `schema-license-parity-{YYYYMMDD}.md`
+This repository used to carry a release-evidence-pack process: three pack templates, a naming convention and a table of releases that should each produce a pack. The process never produced a completed pack, so it was retired (public-docs#33) rather than left in place as a control that does not operate. Release evidence is kept in `fseven-docs`, under the audit outputs in `fseven-docs/docs/audits/`, where each audit run records what it verified about the releases and public claims it covered. Nothing about how binaries are released changed with this retirement.

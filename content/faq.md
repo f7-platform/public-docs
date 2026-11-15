@@ -12,7 +12,7 @@ The optional Mode 3 — Interpret vision feature processes screen frames **local
 
 ### Who can see my data?
 - **You** will be able to see your own data through a personal dashboard (planned)
-- **Your manager** can see analytics for their direct and indirect reports only — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
+- **Your manager** can see team-level aggregates for their direct and indirect reports, never your individual scores or raw activity — enforced by a Policy Decision Point (PDP) that evaluates reporting chains on every request
 - **Admins** see organization-level analytics and configuration pages, with audit logging for individual-data access
 - **Aggregate views** enforce k-anonymity — groups smaller than 5 people are suppressed to prevent re-identification
 - **F7 staff** cannot see your data — it's encrypted and tenant-isolated
@@ -28,7 +28,7 @@ Work-pattern metadata: application names, click/keystroke counts (not content), 
 Prompt text, file contents, emails, chat messages, screenshots, clipboard contents, passwords, full URLs, or personal app activity for excluded apps. See [What We Never Capture](/privacy/data-collection#what-f7-never-captures).
 
 ### Can I pause F7?
-**Yes.** You can pause observation at any time using the agent's tray icon. You can also exclude specific apps and restrict observation to work hours. See [Employee Controls](/privacy/employee-controls).
+**Through your organization.** Your organization's F7 administrator can pause observation for you or your team, exclude specific apps, and restrict observation to work hours. Ask your IT or HR team to request any of these. See [Employee Controls](/privacy/employee-controls).
 
 ### Can I see what F7 has collected about me?
 **Yes.** A personal dashboard is planned that will show all data associated with your account. In the meantime, you can request your data through your organization's F7 administrator.
@@ -48,7 +48,7 @@ Prompt text, file contents, emails, chat messages, screenshots, clipboard conten
 See [Encryption](/security/encryption) for details.
 
 ### Is F7 built with security in mind?
-F7 is written in **Rust**, a memory-safe language that eliminates entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time. The platform uses modern cryptography throughout and is tracked through an ongoing security audit program (most recently Run 38).
+F7 is written in **Rust**, a memory-safe language that eliminates entire classes of vulnerabilities (buffer overflows, use-after-free, data races) at compile time. The platform uses modern cryptography throughout and is tracked through an ongoing security audit program (most recently Run 42).
 
 ### Where is my data stored?
 For cloud deployments, data is stored in the United States on Railway infrastructure with PostgreSQL. For on-premise deployments, data stays entirely in your infrastructure. See [Sub-processors](/legal/subprocessors).
@@ -76,11 +76,13 @@ Our [Compliance Overview](/compliance/) includes a quick-reference table address
 
 ## Deployment
 
+The F7 device agent, controller and dashboards are shelved and not offered, and no agent installer is published. The answers in this section describe how the agent was designed to be deployed and how it worked.
+
 ### How is the agent installed?
 The F7 agent is a lightweight binary deployed to employee devices. Enrollment uses a one-time token that binds the device to your organization — no shared secrets or manual configuration required.
 
 ### What operating systems are supported?
-The F7 agent supports macOS and Windows, with Linux support planned.
+The F7 agent runs on macOS (Apple Silicon and Intel), Windows (x86_64) and Linux (x86_64).
 
 ### Does the agent affect device performance?
 The agent is designed to be lightweight. The on-device AI model runs during idle periods and does not interfere with foreground work.

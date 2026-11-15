@@ -21,12 +21,12 @@ F7 processes data only as directed by the deploying organization. A [Data Proces
 |---------|-------------|-----------------|
 | **Art. 5(1)(a)** | Lawfulness, fairness, transparency | Organizational deployment with employee notification; published Trust Center details what's captured |
 | **Art. 5(1)(b)** | Purpose limitation | Each captured field has a documented purpose (scoring inputs only) |
-| **Art. 5(1)(c)** | Data minimization | Metadata only — never content, clipboard, or passwords transmitted. Mode 3 vision frames (opt-in) are processed locally and discarded after inference. |
+| **Art. 5(1)(c)** | Data minimization | Metadata only — never content, clipboard, or passwords transmitted. Mode 3 vision frames (opt-in) stay on the device; current macOS builds stream capture bytes through stdout for local inference. |
 | **Art. 5(1)(d)** | Accuracy | Real-time capture with session boundaries; daily rollups reconciled |
 | **Art. 5(1)(e)** | Storage limitation | Configurable retention: 90 days raw, 12 months rollups |
 | **Art. 5(1)(f)** | Integrity and confidentiality | TLS 1.3 in transit; AES-256-GCM at rest; role-based access control |
 | **Art. 12** | Transparent information | Published Trust Center details all captured data; personal dashboard planned |
-| **Art. 13** | Information at collection | Agent tray icon indicates active observation; Trust Center published publicly |
+| **Art. 13** | Information at collection | The deploying organization informs its employees; Trust Center published publicly |
 | **Art. 15** | Right of access | Data access available via administrator; personal dashboard planned |
 | **Art. 17** | Right to erasure | Full data deletion on request — agent wipes local data, server deletes all records |
 | **Art. 20** | Right to data portability | Data export available via administrator; personal dashboard with self-service export planned |
@@ -53,7 +53,7 @@ With the controller's authorization, F7 can ingest event metadata from configure
 F7 never transmits prompt text, file contents, email or chat messages, screenshots, clipboard contents, or browsing history. Mode 3 — Interpret (opt-in) processes screen frames locally on-device; frames never leave the device, and current macOS builds stream capture bytes through stdout for local inference while scrubbing stale legacy vision temp files on startup. See [What We Never Collect](/privacy/data-collection#what-f7-never-captures) for the full list.
 
 ### Employee Controls
-Employees can pause observation, exclude specific apps, restrict to work hours, and access their own data. See [Employee Controls](/privacy/employee-controls).
+Your organization's F7 administrator can pause observation, exclude specific apps, and restrict observation to work hours. Employees can request any of these, and request the data held about them, through that administrator. See [Employee Controls](/privacy/employee-controls).
 
 ### Data Retention
 Retention periods are configurable by the deploying organization. Defaults: 90 days for raw telemetry, 12 months for aggregated rollups. See [Data Retention](/privacy/data-retention).

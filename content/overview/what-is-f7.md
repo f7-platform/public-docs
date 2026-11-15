@@ -1,5 +1,9 @@
 # What Is F7?
 
+::: warning The device agent, controller and dashboards are shelved
+F7 has shelved the device agent, the controller and the dashboards this site describes, and does not offer them. No agent installer is published. The pages on this site describe how those components were designed and how they worked; they do not describe a product you can deploy today.
+:::
+
 F7 is a **workforce transformation platform** that observes how teams work with AI — and continuously coaches them to work better. Organizations use F7 to measure AI adoption across their workforce, develop individual capabilities through 24/7 automated coaching, and make data-driven decisions about where to invest, elevate, and redeploy. The coaching engine runs autonomously on every device; no HR program management required.
 
 ## The Problem F7 Solves

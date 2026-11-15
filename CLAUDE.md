@@ -45,7 +45,7 @@ CI (`.github/workflows/deploy.yml`) is **npm-authoritative** (`npm ci` against
 (it is git-ignored to keep a single authoritative lockfile):
 
 ```bash
-npm ci && npm run test:claims && npm run check:claims && npm run build
+npm ci && npm run test:audit && npm run check:audit && npm run test:claims && npm run check:claims && npm run build
 ```
 
 Never push content that breaks the docs build. Fix locally first — do not iterate on CI remotely.

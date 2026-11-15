@@ -1,0 +1,4 @@
+{
+  "$comment": "Dated, reasoned exceptions to the dependency-advisory gate (scripts/check-npm-audit.mjs). Each entry needs id, severity, packages, reachability, fix, reviewed and expires (at most 90 days after reviewed). See CONTRIBUTING.md, \"Dependency advisories\".",
+  "waivers": []
+}

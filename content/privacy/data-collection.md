@@ -79,7 +79,7 @@ F7 does **not** independently collect this data — it is supplied entirely by t
 ### Job Metadata
 
 | Field | Example | Purpose |
-|-------|---------|---------||
+|-------|---------|---------|
 | Job title | "Senior Backend Engineer" | Role-level segmentation and benchmarking |
 | Employment type | Full-time, part-time, contractor | Workforce composition analytics |
 | Cost center | "Engineering - Platform" | Financial attribution |
@@ -88,7 +88,7 @@ F7 does **not** independently collect this data — it is supplied entirely by t
 ### Org Hierarchy
 
 | Field | Example | Purpose |
-|-------|---------|---------||
+|-------|---------|---------|
 | Department / team | "Engineering" → "Platform Team" | Reporting structure (up to 16 levels) |
 | Manager | Manager email or UPN | Manager-level dashboards |
 | Headcount | 12 people on team | Team sizing (includes non-enrolled employees) |
@@ -96,7 +96,7 @@ F7 does **not** independently collect this data — it is supplied entirely by t
 ### Employment Lifecycle
 
 | Field | Example | Purpose |
-|-------|---------|---------||
+|-------|---------|---------|
 | Hire date | 2024-03-15 | Tenure analysis |
 | Termination date | (when applicable) | Automatic deactivation |
 | Active status | Active / Inactive | Accurate headcount |
@@ -104,7 +104,7 @@ F7 does **not** independently collect this data — it is supplied entirely by t
 ### Identity (for account linkage)
 
 | Field | Example | Purpose |
-|-------|---------|---------||
+|-------|---------|---------|
 | Email | user@company.com | Primary join key for HR sync |
 | Display name | "Jane Smith" | Dashboard display |
 | User principal name | user@company.onmicrosoft.com | IdP sync key |

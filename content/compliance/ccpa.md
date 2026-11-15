@@ -16,7 +16,7 @@ F7 processes workforce data on behalf of customers (the deploying organization).
 | **Right to non-discrimination** (§1798.125) | Exercising privacy rights (pausing observation, excluding apps) does not affect employment status or F7 scoring |
 | **Right to correct** (CPRA §1798.106) | Data is captured in real-time from device activity — corrections are handled through the deploying organization's HR processes |
 | **Right to limit use of sensitive PI** (CPRA §1798.121) | F7 captures only work-pattern metadata — no sensitive personal information as defined by CPRA |
-| **Notice at collection** (§1798.100(b)) | Agent tray icon indicates observation is active; Trust Center publishes data categories collected |
+| **Notice at collection** (§1798.100(b)) | The deploying organization informs its employees; Trust Center publishes data categories collected |
 
 ## Data Categories
 

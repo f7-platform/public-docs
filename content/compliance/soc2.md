@@ -15,7 +15,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 | Criteria | Requirement | F7 Controls |
 |----------|------------|-------------|
 | **CC1.1** | Integrity and ethical values | Privacy-by-design principles; metadata-only capture; published guarantees on what is never collected |
-| **CC5.1** | Control activities over technology | Six authentication layers; role-based access control; input validation; rate limiting; security headers |
+| **CC5.1** | Control activities over technology | Six security layers; role-based access control; input validation; rate limiting; security headers |
 | **CC6.1** | Logical access controls | EdDSA-signed agent JWTs with per-device credentials; Argon2id admin password hashing; OAuth 2.0/OIDC SSO with PKCE; constant-time secret comparison |
 | **CC6.2** | Credential issuance controls | Enrollment tokens with usage limits, expiry, and organization binding |
 | **CC6.3** | Access restricted to authorized users | Hybrid ReBAC+ABAC PDP authorization; four roles with manager-chain scoping; purpose-specific enforcement toggles; app-category delegation; k-anonymity; row-level database security |
@@ -24,7 +24,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 | **CC6.8** | Prevention of unauthorized changes | Cryptographic integrity verification on configuration; digital signing on licensing data; trigger-protected immutable audit log |
 | **CC7.1** | Detection of unauthorized activity | Rate limiting; audit logging; CSP violation reporting; license tamper detection |
 | **CC7.2** | Anomaly monitoring | Clock-jump detection; token replay detection with full device revocation |
-| **CC8.1** | Change management | Changelog requirements; `npm audit --audit-level=moderate` in Trust Center deploy CI; proto-drift detection across services |
+| **CC8.1** | Change management | Changelog requirements; Trust Center deploy CI audits all of its dependencies at moderate severity or above, with dated, reasoned exceptions; proto-drift detection across services |
 | **CC9.1** | Vendor risk mitigation | Trust Center dependency audit before publication; release-scoped product dependency evidence; memory-safe language (Rust); vetted cryptographic libraries |
 
 ### Availability
@@ -51,7 +51,7 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 
 | Criteria | Requirement | F7 Controls |
 |----------|------------|-------------|
-| **P1.1** | Privacy notice | Agent tray icon; this published Trust Center; personal dashboard planned |
+| **P1.1** | Privacy notice | Employee notice by the deploying organization; this published Trust Center; personal dashboard planned |
 | **P2.1** | Consent | Organizational deployment consent; personal dashboard will be opt-in |
 | **P3.1** | Collection limited to purpose | Metadata-only capture; documented field purposes |
 | **P4.1** | Restricted use | Data used only for scoring and analytics |
@@ -64,13 +64,13 @@ F7 has implemented controls across all five SOC 2 trust service criteria. An ind
 F7 maintains an ongoing security program:
 
 - **Run 42 security audit baseline** with documented findings, remediation, and delta tracking
-- **Automated Trust Center dependency auditing** (`npm audit --audit-level=moderate`) before GitHub Pages publication
+- **Automated Trust Center dependency auditing** of all its dependencies at moderate severity or above, with dated, reasoned exceptions, before GitHub Pages publication
 - **Memory-safe codebase** (Rust) eliminating buffer overflows, use-after-free, and data races at compile time
 - **Third-party penetration testing** planned
 
-## Requesting the SOC 2 Report
+## SOC 2 Audit Status and Security Reviews
 
-Contact **security@fseven.ai** to request the current SOC 2 report or to schedule a security review call.
+There is no SOC 2 report yet: the independent SOC 2 Type II audit is planned and has not taken place. Contact **security@fseven.ai** for the status of the planned audit or to schedule a security review call.
 
 ---
 

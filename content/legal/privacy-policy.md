@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Effective Date:** March 13, 2026
-**Last Updated:** March 13, 2026
+**Last Updated:** October 25, 2026
 
 This Privacy Policy describes how F7 Platform, Inc. ("F7," "we," "us," or "our") collects, uses, and discloses information in connection with the F7 AI Workforce Intelligence Platform (the "Service").
 
@@ -142,12 +142,23 @@ F7 is a workplace tool and is not directed at children under 16. We do not knowi
 
 We may update this Privacy Policy from time to time. We will notify customers of material changes via email or in-product notification.
 
+Changes to this policy since its effective date, by the date each was published:
+
+- **March 23, 2026:** Section 2 stopped listing compensation figures (salary, stock and benefits) and HR-system integrations among the data an employer may provide.
+- **March 24, 2026:** Section 2 listed both again.
+- **May 3, 2026:** Section 2's network metadata changed from the destination domain and port only to the destination domain, an optional HTTP method and API endpoint path for AI-provider classification, and approximate byte counts. "What the Agent Never Collects" became "What the Agent Never Transmits", and a note on Mode 3 — Interpret, the opt-in on-device vision model, was added.
+- **May 4, 2026:** Section 2 no longer lists compensation figures (salary, stock and benefits) or HR-system integrations among the data an employer may provide; employer data arrives through configured identity, directory or file-based syncs.
+- **May 11, 2026:** Section 2's network metadata no longer includes the HTTP method, and the API endpoint path is recorded only for AI-provider API calls.
+- **May 14, 2026:** Section 2 describes third-party integrations as event metadata from the listed providers, in place of usage metadata from AI platforms, productivity suites, writing tools and developer tools. The Mode 3 note says frames are never transmitted off the device and describes a temporary local file on macOS.
+- **May 17, 2026:** The Mode 3 note says current macOS builds stream capture bytes through stdout for local inference and clean up older temporary files on startup.
+- **September 8, 2026:** Section 1 adds Atlas customers and their users, and section 2 adds the Atlas Rewind subsection, which describes the picture-only screen frames Rewind captures in Atlas.
+- **October 25, 2026:** Section 11 no longer lists a mailing address, and this list was added.
+
 ## 11. Contact Us
 
 For privacy inquiries:
 
 - **Email:** privacy@fseven.ai
-- **Mail:** F7 Platform, Inc., [address to be published]
 
 ---
 

@@ -3,7 +3,7 @@
 ## Supported Versions
 
 Documentation in this repository tracks the **current** released version of
-fseven. Older release notes remain published for historical reference but
+fseven. Only the pages under `content/` are published to the docs site, and
 security errata are written for the current release only.
 
 ## Reporting a Vulnerability
@@ -31,16 +31,16 @@ that window before disclosing publicly.
 If a published claim on the docs site is shown to be inaccurate or misleading
 in a way that affects security posture, we will:
 
-1. Correct the affected page on the next site deploy.
-2. Note the correction in `CHANGELOG.md`.
-3. If the misstatement materially affected customer-facing controls, link the
-   correction from the next release-notes entry.
+1. Correct the affected page under `content/` on the next site deploy.
+2. Record the correction in `CHANGELOG.md`, naming the page and what changed.
+
+The corrected page and its changelog entry are how a correction is published.
 
 ## Scope
 
 This policy covers:
 
-- The content published from this repository (`content/`, `docs/releases/`).
+- The content published from this repository (`content/`).
 - The build/deploy scripts (`scripts/`).
 
 Vulnerabilities in the controller, agent, or dashboard runtime should follow

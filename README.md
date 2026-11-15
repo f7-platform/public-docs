@@ -1,14 +1,14 @@
 # public-docs
 
 Customer-facing documentation site for **fseven**, published from this
-repository via VitePress. Source files live under [`content/`](content) and
-release notes under [`docs/releases/`](docs/releases).
+repository via VitePress. The published pages live under [`content/`](content);
+nothing outside it is published.
 
 ## What this repo is
 
 - A static documentation site source.
-- The single public source of truth for: overview, install/use docs, privacy,
-  security posture, compliance summaries, FAQ, and release notes.
+- The single public source of truth for: overview, privacy, security posture,
+  compliance summaries, legal terms, and FAQ.
 - A protocol-bound public repository governed by
   [`fseven-docs/docs/PUBLIC-REPO-PROTOCOL.md`](https://github.com/f7-platform/fseven-docs/blob/main/docs/PUBLIC-REPO-PROTOCOL.md).
 
@@ -27,6 +27,8 @@ Requires Node 22 and npm. CI is npm-authoritative (`npm ci` against
 ```bash
 npm ci
 npm run dev            # http://localhost:5173
+npm run test:audit     # fixture tests of the dependency-advisory checker
+npm run check:audit    # audit the full lockfile against audit-waivers.json
 npm run test:claims    # fixture tests of the claim checker
 npm run check:claims   # validate public claims against the registry
 npm run build          # static site → .vitepress/dist
